@@ -1,5 +1,5 @@
 
-# maths
+# maths [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 A C++11+ linear algebra library I am using for multiple projects. 
 
 It contains templated vector, matrix and quaternion structures with all the appropriate overloaded operators, functions and an assortment of intersection tests and utility functions.
