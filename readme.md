@@ -8,4 +8,6 @@ Everyone has their own maths library and there are numerous freely available C++
 
 A 3D interactive demo of the intersection functions used for debugging and testing purposes can be found in my other repository [pmtech](https://github.com/polymonster/pmtech). 
 
-[![Maths Functions](http://www.polymonster.co.uk/assets/demos/maths_functions.gif)](https://youtu.be/uR9lfvPL7eE)
+![sdf shadow](https://polymonster.github.io/assets/gifs/sdf-shadow.gif)
+
+[![Maths Functions](https://polymonster.github.io/assets/demos/maths_functions.gif)](https://youtu.be/uR9lfvPL7eE)
