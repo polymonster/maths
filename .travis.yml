@@ -1,0 +1,7 @@
+language: cpp
+
+matrix:
+  include:
+    - compiler: clang
+      os: osx
+      script: ./_travis.sh
