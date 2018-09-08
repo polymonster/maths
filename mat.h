@@ -2,7 +2,7 @@
 #define _mat_h_
 
 #include "vec.h"
-#include <string> //memcpy
+#include <string.h> // memcpy linux
 
 // Mat stored in row major order as such:
 // row0 = m[0], m[1], m[2], m[3]
