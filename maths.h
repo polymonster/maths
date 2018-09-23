@@ -44,6 +44,7 @@ namespace maths
     // Sphere
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
+    bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
 
     // Line Segment
     float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
@@ -54,6 +55,7 @@ namespace maths
     vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
     vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
     vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+    vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
     vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
 
@@ -231,7 +233,23 @@ namespace maths
 
         return d < r0;
     }
+    
+    // Returns true if sphere with centre s0 and radius r0 contains point p0
+    inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
+    {
+        return dist2(p0, s0) < r0 * r0;
+    }
+    
+    // Returns the closest point from p0 on sphere s0 with radius r0
+    inline vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
+    {
+        vec3f v = normalised(p0 - s0);
+        vec3f cp = s0 + v * r0;
+        
+        return cp;
+    }
 
+    // Returns closest point on aabb defined by aabb_min -> aabb_max to the point s0
     inline vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max)
     {
         vec3f t1 = max_union(s0, aabb_min);
