@@ -45,17 +45,18 @@ namespace maths
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
     bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
+    
+    // Closest Point
+    vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
+    vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
+    vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+    vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
 
     // Line Segment
     float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
-
-    vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
-    vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
-    vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
-    vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
     vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
 
@@ -367,11 +368,13 @@ namespace maths
         float w31 = invdet * (m13 * b - d * a);
         float w12 = 1 - w23 - w31;
         if (w23 >= 0 && w31 >= 0 && w12 >= 0)
-        { // if we're inside the triangle
+        {
+            // if we're inside the triangle
             return dist(x0, w23 * x1 + w31 * x2 + w12 * x3);
         }
         else
-        {                // we have to clamp to one of the edges
+        {
+            // we have to clamp to one of the edges
             if (w23 > 0) // this rules out edge 2-3 for us
                 return min(point_segment_distance(x0, x1, x2), point_segment_distance(x0, x1, x3));
             else if (w31 > 0) // this rules out edge 1-3
