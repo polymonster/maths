@@ -4,11 +4,6 @@
 #include "vec.h"
 #include <string.h> // memcpy linux
 
-// Mat stored in row major order as such:
-// row0 = m[0], m[1], m[2], m[3]
-// row1 = m[1], m[2], m[3], m[4]
-// and so on..
-
 template <u32 R, u32 C, typename T>
 struct Mat
 {
@@ -110,15 +105,15 @@ inline Vec<3, T> Mat<R, C, T>::get_translation() const
 }
 
 template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_up() const
+inline Vec<3, T> Mat<R, C, T>::get_right() const
 {
-    return Vec<3, T>(m[4], m[5], m[6]);
+    return Vec<3, T>(m[0], m[4], m[2]);
 }
 
 template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_right() const
+inline Vec<3, T> Mat<R, C, T>::get_up() const
 {
-    return Vec<3, T>(m[0], m[1], m[2]);
+    return Vec<3, T>(m[4], m[5], m[6]);
 }
 
 template <u32 R, u32 C, typename T>
