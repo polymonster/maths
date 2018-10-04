@@ -245,10 +245,14 @@ namespace maths
     // Return true if point p is inside cone define by position cp facing direction cv with height h and radius r
     inline bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f cv, f32 h, f32 r)
     {
-        vec3f v = normalised(p - cp);
-        f32 cos_theta = 1.0 - dot(v, cv);
+        vec3f l2 = cp + cv * h;
         
-        if(cos_theta < r)
+        f32 dh = distance_on_line(cp, l2, p) / h;
+        vec3f x0 = closest_point_on_line(cp, l2, p);
+        
+        f32 d = dist(x0, p);
+        
+        if(d < dh*r && dh < 1.0f)
             return true;
         
         return false;
