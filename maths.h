@@ -12,13 +12,12 @@ constexpr double M_TWO_PI      = M_PI * 2.0;
 
 namespace maths
 {
-    typedef enum
+    enum e_classifications
     {
         INTERSECTS = 0,
         BEHIND     = 1,
         INFRONT    = 2,
-
-    } e_classifications;
+    };
 
     // Collection of tests and useful maths functions, see inline implementation below or cpp file for comments
 
@@ -34,44 +33,46 @@ namespace maths
     vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
 
-    // Plane
+    // Plane / Triangle
     f32   plane_distance(const vec3f& x0, const vec3f& xN);
     f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
-    vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
-    u32   aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
-    u32   sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
+    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
 
-    // Sphere
+    // Overlaps
+    u32  aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
+    u32  sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
-    bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
+    // todo: aabb vs aabb
+    // todo: obb vs obb
     
-    // Closest Point
+    // Closest Point / Point Test
+    bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
+    bool point_inside_aabb(const vec3f& min, const vec3f& max, const vec3f& p0);
+    bool point_inside_obb(const mat4& mat, const vec3f& p);
+    bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
+    bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f cv, f32 h, f32 r );
+    
     vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
     vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
     vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
     vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-
-    // Line Segment
+    vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
+    vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
+    
     float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
-    bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
-    bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
-    f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
-    vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
-
-    // Traingle
-    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
-    bool  point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
-    vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
-
-    // Box
-    bool point_inside_aabb(const vec3f& min, const vec3f& max, const vec3f& p0);
-    bool point_inside_obb(const mat4& mat, const vec3f& p);
+    
+    // Ray / Line
+    f32 distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+    vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
+    bool line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
+    bool line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
 
-    // Inline functions ---------------------------------------------------------------------------------------------------
+    // Implementation -------------------------------------------------------------------------------------------------------
+    // Possibly move larger functions to cpp --------------------------------------------------------------------------------
 
     inline f32 deg_to_rad(f32 degree_angle)
     {
@@ -239,6 +240,18 @@ namespace maths
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
         return dist2(p0, s0) < r0 * r0;
+    }
+    
+    // Return true if point p is inside cone define by position cp facing direction cv with height h and radius r
+    inline bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f cv, f32 h, f32 r)
+    {
+        vec3f v = normalised(p - cp);
+        f32 cos_theta = 1.0 - dot(v, cv);
+        
+        if(cos_theta < r)
+            return true;
+        
+        return false;
     }
     
     // Returns the closest point from p0 on sphere s0 with radius r0
