@@ -740,13 +740,13 @@ T component_wise_max(const Vec<N, T>& v)
 template <unsigned int N, class T>
 inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T f)
 {
-    return value0*(1 - f) + value1* f;
+    return value0 * (1 - f) + value1 * f;
 }
 
 template <unsigned int N, class T>
 inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, const Vec<N, T>& f)
 {
-    return value0*(1 - f) + value1* f;
+    return value0 * (1 - f) + value1 * f;
 }
 
 template <unsigned int N, class T>

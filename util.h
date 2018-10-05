@@ -19,8 +19,8 @@ const double M_PI = 3.1415926535897932384626433832795;
 #endif
 
 typedef uint32_t u32;
-typedef float f32;
-typedef double f64;
+typedef float    f32;
+typedef double   f64;
 
 using std::max;
 using std::min;
