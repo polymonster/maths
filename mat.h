@@ -48,9 +48,6 @@ struct Mat
     Vec<R, T> get_row(u32 index) const;
     Vec<C, T> get_column(u32 index) const;
     Vec<3, T> get_translation() const;
-    Vec<3, T> get_up() const;
-    Vec<3, T> get_right() const;
-    Vec<3, T> get_fwd() const;
 
     void set_row(u32 index, const Vec<R, T>& row);
     void set_column(u32 index, const Vec<C, T>& col);
@@ -102,24 +99,6 @@ template <u32 R, u32 C, typename T>
 inline Vec<3, T> Mat<R, C, T>::get_translation() const
 {
     return Vec<3, T>(m[3], m[7], m[11]);
-}
-
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_right() const
-{
-    return Vec<3, T>(m[0], m[4], m[2]);
-}
-
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_up() const
-{
-    return Vec<3, T>(m[4], m[5], m[6]);
-}
-
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_fwd() const
-{
-    return Vec<3, T>(m[8], m[9], m[10]);
 }
 
 template <u32 R, u32 C, typename T>

@@ -197,13 +197,6 @@ struct Vec<2, T>
         return Vec<2, T>(0, 1);
     }
 
-    // temporary
-    inline void vfloor()
-    {
-        x = (float)floor((double)x);
-        y = (float)floor((double)y);
-    }
-
     inline static Vec<2, T> vmax(Vec<2, T> a, Vec<2, T> b)
     {
         Vec<2, T> v(max(a.x, b.x), max(a.y, b.y));
@@ -350,14 +343,6 @@ struct Vec<3, T>
     inline static Vec<3, T> magenta()
     {
         return Vec<3, T>(1, 0, 1);
-    }
-
-    // temporary
-    inline void vfloor()
-    {
-        x = (float)floor((double)x);
-        y = (float)floor((double)y);
-        z = (float)floor((double)z);
     }
 
     inline static Vec<3, T> vmax(Vec<3, T> a, Vec<3, T> b)
@@ -544,6 +529,10 @@ typedef Vec3f  vec3i;
 
 typedef Vec4f vec4f;
 typedef Vec4i vec4i;
+
+typedef Vec4f float4;
+typedef Vec3f float3;
+typedef Vec2f float2;
 
 // For bullet
 struct lw_vec3f
@@ -736,7 +725,6 @@ T component_wise_max(const Vec<N, T>& v)
     return _max;
 }
 
-// Lerp
 template <unsigned int N, class T>
 inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T f)
 {
@@ -779,7 +767,6 @@ inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N,
     return res;
 }
 
-// Saturate
 template <unsigned int N, class T>
 inline Vec<N, T> saturate(Vec<N, T>& a)
 {
@@ -796,7 +783,6 @@ inline Vec<N, T> saturate(Vec<N, T>& a)
     return res;
 }
 
-// All
 template <unsigned int N, class T>
 inline bool all(const Vec<N, T>& a)
 {
@@ -807,7 +793,6 @@ inline bool all(const Vec<N, T>& a)
     return true;
 }
 
-// Any
 template <unsigned int N, class T>
 inline bool any(const Vec<N, T>& a)
 {
@@ -818,7 +803,6 @@ inline bool any(const Vec<N, T>& a)
     return false;
 }
 
-// Smooth_step
 template <unsigned int N, class T>
 inline Vec<N, T> smooth_step(T r, const Vec<N, T>& edge0, const Vec<N, T>& edge1)
 {
@@ -829,7 +813,6 @@ inline Vec<N, T> smooth_step(T r, const Vec<N, T>& edge0, const Vec<N, T>& edge1
     return res;
 }
 
-// Step
 template <unsigned int N, class T>
 inline Vec<N, T> step(const Vec<N, T>& value0, const Vec<N, T>& value1)
 {
@@ -918,8 +901,6 @@ inline T infnorm(const Vec<N, T>& a)
         d = max(std::fabs(a.v[i]), d);
     return d;
 }
-
-// UK Reprasent Math (s), Normali(s)e
 
 template <unsigned int N, class T>
 inline void normalise(Vec<N, T>& a)

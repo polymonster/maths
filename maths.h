@@ -23,7 +23,7 @@ namespace maths
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
-    
+
     // Angles
     f32   deg_to_rad(f32 degree_angle);
     f32   rad_to_deg(f32 radian_angle);
@@ -237,20 +237,20 @@ namespace maths
 
         return d < r0;
     }
-    
+
     // Returns true if the aabb's define by minx and maxx overlap
     inline bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1)
     {
         // discard non overlaps quickly
-        for(u32 i = 0; i < 3; ++i)
+        for (u32 i = 0; i < 3; ++i)
         {
-            if(min0[i] > max1[i])
+            if (min0[i] > max1[i])
                 return false;
-            
-            if(max0[i] < min1[i])
+
+            if (max0[i] < min1[i])
                 return false;
         }
-        
+
         return true;
     }
 
