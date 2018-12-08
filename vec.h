@@ -1104,16 +1104,16 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3, T& a4, T& a5)
 template <unsigned int N, class T>
 inline Vec<N, int> round(const Vec<N, T>& a)
 {
-    Vec<N, int> rounded;
+    Vec<N, T> rounded;
     for (unsigned int i = 0; i < N; ++i)
         rounded.v[i] = lround(a.v[i]);
     return rounded;
 }
 
 template <unsigned int N, class T>
-inline Vec<N, int> floor(const Vec<N, T>& a)
+inline Vec<N, T> floor(const Vec<N, T>& a)
 {
-    Vec<N, int> rounded;
+    Vec<N, T> rounded;
     for (unsigned int i = 0; i < N; ++i)
         rounded.v[i] = (int)floor(a.v[i]);
     return rounded;
@@ -1122,7 +1122,7 @@ inline Vec<N, int> floor(const Vec<N, T>& a)
 template <unsigned int N, class T>
 inline Vec<N, int> ceil(const Vec<N, T>& a)
 {
-    Vec<N, int> rounded;
+    Vec<N, T> rounded;
     for (unsigned int i = 0; i < N; ++i)
         rounded.v[i] = (int)ceil(a.v[i]);
     return rounded;
