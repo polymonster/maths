@@ -131,13 +131,17 @@ inline Quaternion& Quaternion::operator*=(const Quaternion& rhs)
 
 inline void Quaternion::euler_angles(f32 z_theta, f32 y_theta, f32 x_theta)
 {
-    f32 cos_z_2 = cosf(0.5f * z_theta);
-    f32 cos_y_2 = cosf(0.5f * y_theta);
-    f32 cos_x_2 = cosf(0.5f * x_theta);
+    f32 half_z = 0.5f * z_theta;
+    f32 half_x = 0.5f * z_theta;
+    f32 half_y = 0.5f * z_theta;
+    
+    f32 cos_z_2 = cosf(half_z);
+    f32 cos_y_2 = cosf(half_y);
+    f32 cos_x_2 = cosf(half_x);
 
-    f32 sin_z_2 = sinf(0.5f * z_theta);
-    f32 sin_y_2 = sinf(0.5f * y_theta);
-    f32 sin_x_2 = sinf(0.5f * x_theta);
+    f32 sin_z_2 = sinf(half_z);
+    f32 sin_y_2 = sinf(half_y);
+    f32 sin_x_2 = sinf(half_x);
 
     // compute quaternion
     w = cos_z_2 * cos_y_2 * cos_x_2 + sin_z_2 * sin_y_2 * sin_x_2;
