@@ -10,40 +10,40 @@ struct Quaternion
 {
     f32 x, y, z, w;
 
-    // Constructor
-    Quaternion()
-    {
-        x = 0.0f;
-        y = 0.0f;
-        z = 0.0f;
-        w = 1.0f;
-    };
-
-    // Operators
+    Quaternion();
+    Quaternion(f32 z_theta, f32 y_theta, f32 x_theta);
     Quaternion operator*(const f32& scale) const;
     Quaternion operator/(const f32& scale) const;
     Quaternion operator+(const Quaternion& q) const;
     Quaternion operator=(const vec4f& v) const;
     Quaternion operator-() const;
-
     Quaternion  operator*(const Quaternion& rhs) const;
     Quaternion& operator*=(const Quaternion& rhs);
-
-    // Computation Functions
+    Quaternion lerp(const Quaternion& l, const Quaternion& r, f32 t);
+    Quaternion slerp(const Quaternion& l, const Quaternion& r, f32 t);
     void euler_angles(f32 z_theta, f32 y_theta, f32 x_theta);
     void normalise();
     f32  dot(const Quaternion& l, const Quaternion& r);
-
-    Quaternion lerp(const Quaternion& l, const Quaternion& r, f32 t);
-    Quaternion slerp(const Quaternion& l, const Quaternion& r, f32 t);
-
     void  axis_angle(vec3f axis, f32 w);
     void  axis_angle(f32 lx, f32 ly, f32 lz, f32 lw);
     void  axis_angle(vec4f v);
-    void  get_matrix(mat4& lmatrix);
+    void  get_matrix(mat4& lmatrix) const;
     void  from_matrix(mat4 m);
-    vec3f to_euler();
+    vec3f to_euler() const;
 };
+
+inline Quaternion::Quaternion()
+{
+    x = 0.0f;
+    y = 0.0f;
+    z = 0.0f;
+    w = 1.0f;
+};
+
+inline Quaternion::Quaternion(f32 z_theta, f32 y_theta, f32 x_theta)
+{
+    euler_angles(z_theta, y_theta, x_theta);
+}
 
 inline Quaternion Quaternion::operator*(const f32& scale) const
 {
@@ -220,10 +220,8 @@ inline void Quaternion::axis_angle(vec4f v)
     axis_angle(v.x, v.y, v.z, v.w);
 }
 
-inline void Quaternion::get_matrix(mat4& lmatrix)
+inline void Quaternion::get_matrix(mat4& lmatrix) const
 {
-    normalise();
-
     lmatrix.m[0] = 1.0f - 2.0f * y * y - 2.0f * z * z;
     lmatrix.m[1] = 2.0f * x * y - 2.0f * z * w;
     lmatrix.m[2] = 2.0f * x * z + 2.0f * y * w;
@@ -255,7 +253,7 @@ inline void Quaternion::from_matrix(mat4 m)
     z         = (m.m[4] - m.m[1]) / w4;
 }
 
-inline vec3f Quaternion::to_euler()
+inline vec3f Quaternion::to_euler() const
 {
     vec3f euler;
 
