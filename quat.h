@@ -132,8 +132,8 @@ inline Quaternion& Quaternion::operator*=(const Quaternion& rhs)
 inline void Quaternion::euler_angles(f32 z_theta, f32 y_theta, f32 x_theta)
 {
     f32 half_z = 0.5f * z_theta;
-    f32 half_x = 0.5f * z_theta;
-    f32 half_y = 0.5f * z_theta;
+    f32 half_x = 0.5f * x_theta;
+    f32 half_y = 0.5f * y_theta;
     
     f32 cos_z_2 = cosf(half_z);
     f32 cos_y_2 = cosf(half_y);
