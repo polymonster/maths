@@ -27,7 +27,7 @@ struct Quaternion
     void  axis_angle(vec3f axis, f32 w);
     void  axis_angle(f32 lx, f32 ly, f32 lz, f32 lw);
     void  axis_angle(vec4f v);
-    void  get_matrix(mat4& lmatrix) const;
+    void  get_matrix(mat4& lmatrix);
     void  from_matrix(mat4 m);
     vec3f to_euler() const;
 };
@@ -224,8 +224,10 @@ inline void Quaternion::axis_angle(vec4f v)
     axis_angle(v.x, v.y, v.z, v.w);
 }
 
-inline void Quaternion::get_matrix(mat4& lmatrix) const
+inline void Quaternion::get_matrix(mat4& lmatrix)
 {
+    normalise();
+    
     lmatrix.m[0] = 1.0f - 2.0f * y * y - 2.0f * z * z;
     lmatrix.m[1] = 2.0f * x * y - 2.0f * z * w;
     lmatrix.m[2] = 2.0f * x * z + 2.0f * y * w;
