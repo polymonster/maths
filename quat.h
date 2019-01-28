@@ -6,24 +6,33 @@
 #include <float.h>
 #include <math.h>
 
-struct Quaternion
+struct Quat
 {
-    f32 x, y, z, w;
+    union
+    {
+        struct
+        {
+            f32 x, y, z, w;
+        };
+        
+        struct
+        {
+            f32 v[4];
+        };
+    };
 
-    Quaternion();
-    Quaternion(f32 z_theta, f32 y_theta, f32 x_theta);
-    Quaternion operator*(const f32& scale) const;
-    Quaternion operator/(const f32& scale) const;
-    Quaternion operator+(const Quaternion& q) const;
-    Quaternion operator=(const vec4f& v) const;
-    Quaternion operator-() const;
-    Quaternion  operator*(const Quaternion& rhs) const;
-    Quaternion& operator*=(const Quaternion& rhs);
-    Quaternion lerp(const Quaternion& l, const Quaternion& r, f32 t);
-    Quaternion slerp(const Quaternion& l, const Quaternion& r, f32 t);
+    Quat();
+    Quat(f32 z_theta, f32 y_theta, f32 x_theta);
+    
+    Quat operator*(const f32& scale) const;
+    Quat operator/(const f32& scale) const;
+    Quat operator+(const Quat& q) const;
+    Quat operator=(const vec4f& v) const;
+    Quat operator-() const;
+    Quat  operator*(const Quat& rhs) const;
+    Quat& operator*=(const Quat& rhs);
+
     void euler_angles(f32 z_theta, f32 y_theta, f32 x_theta);
-    void normalise();
-    f32  dot(const Quaternion& l, const Quaternion& r);
     void  axis_angle(vec3f axis, f32 w);
     void  axis_angle(f32 lx, f32 ly, f32 lz, f32 lw);
     void  axis_angle(vec4f v);
@@ -32,7 +41,67 @@ struct Quaternion
     vec3f to_euler() const;
 };
 
-inline Quaternion::Quaternion()
+// free funcs
+inline f32 dot(const Quat& l, const Quat& r)
+{
+    return l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
+}
+
+inline void normalise(Quat& q)
+{
+    f32 rmag = 1.0 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+    for(u32 i = 0; i < 4; ++i)
+        q.v[i] *= rmag;
+}
+
+inline Quat normalised(Quat& q)
+{
+    Quat q2 = q;
+    normalise(q2);
+    return q2;
+}
+
+inline Quat lerp(const Quat& l, const Quat& r, f32 t)
+{
+    Quat lerped = (l * (1.0f - t) + r * t);
+    normalise(lerped);
+    
+    return lerped;
+}
+
+inline Quat slerp(const Quat& l, const Quat& r, f32 t)
+{
+    Quat out_quat;
+    
+    f64 dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
+    f64 theta, st, sut, sout, coeff1, coeff2;
+    
+    // quats are equal
+    if(dotproduct >= 1.0)
+        return l;
+    
+    theta = (f32)acosf(dotproduct);
+    if (theta < 0.0)
+        theta = -theta;
+    
+    st     = (f32)sinf(theta);
+    sut    = (f32)sinf(t * theta);
+    sout   = (f32)sinf((1.0f - t) * theta);
+    coeff1 = sout / st;
+    coeff2 = sut / st;
+    
+    out_quat.x = coeff1 * l.x + coeff2 * r.x;
+    out_quat.y = coeff1 * l.y + coeff2 * r.y;
+    out_quat.z = coeff1 * l.z + coeff2 * r.z;
+    out_quat.w = coeff1 * l.w + coeff2 * r.w;
+    
+    normalise(out_quat);
+    
+    return out_quat;
+}
+
+// constructors
+inline Quat::Quat()
 {
     x = 0.0f;
     y = 0.0f;
@@ -40,73 +109,64 @@ inline Quaternion::Quaternion()
     w = 1.0f;
 };
 
-inline Quaternion::Quaternion(f32 z_theta, f32 y_theta, f32 x_theta)
+inline Quat::Quat(f32 z_theta, f32 y_theta, f32 x_theta)
 {
     euler_angles(z_theta, y_theta, x_theta);
 }
 
-inline Quaternion Quaternion::operator*(const f32& scale) const
+// operators
+inline Quat Quat::operator*(const f32& scale) const
 {
-    Quaternion out_quat;
-    out_quat.x = x * scale;
-    out_quat.y = y * scale;
-    out_quat.z = z * scale;
-    out_quat.w = w * scale;
+    Quat out_quat;
+    for(u32 i = 0; i < 4; ++i)
+        out_quat.v[i] = v[i] * scale;
 
     return out_quat;
 }
 
-inline Quaternion Quaternion::operator/(const f32& scale) const
+inline Quat Quat::operator/(const f32& scale) const
 {
-    Quaternion out_quat;
-    out_quat.x = x / scale;
-    out_quat.y = y / scale;
-    out_quat.z = z / scale;
-    out_quat.w = w / scale;
+    Quat out_quat;
+    for(u32 i = 0; i < 4; ++i)
+        out_quat.v[i] = v[i] / scale;
 
     return out_quat;
 }
 
-inline Quaternion Quaternion::operator+(const Quaternion& q) const
+inline Quat Quat::operator+(const Quat& q) const
 {
-    Quaternion out_quat;
+    Quat out_quat;
 
-    out_quat.x = x + q.x;
-    out_quat.y = y + q.y;
-    out_quat.z = z + q.w;
-    out_quat.w = w + q.z;
+    for(u32 i = 0; i < 4; ++i)
+        out_quat.v[i] = v[i] + q.v[i];
 
     return out_quat;
 }
 
-inline Quaternion Quaternion::operator=(const vec4f& v) const
+inline Quat Quat::operator=(const vec4f& _v) const
 {
-    Quaternion out_quat;
+    Quat out_quat;
 
-    out_quat.x = v.x;
-    out_quat.y = v.y;
-    out_quat.z = v.z;
-    out_quat.w = v.w;
-
+    for(u32 i = 0; i < 4; ++i)
+        out_quat.v[i] = _v[i];
+    
     return out_quat;
 }
 
-inline Quaternion Quaternion::operator-() const // Unary minus
+inline Quat Quat::operator-() const // Unary minus
 {
-    Quaternion out_quat;
-
-    out_quat.x = -x;
-    out_quat.y = -y;
-    out_quat.z = -z;
-    out_quat.w = -w;
+    Quat out_quat;
+    
+    for(u32 i = 0; i < 4; ++i)
+        out_quat.v[i] = -v[i];
 
     return out_quat;
 }
 
 // non commutative multiply
-inline Quaternion Quaternion::operator*(const Quaternion& rhs) const
+inline Quat Quat::operator*(const Quat& rhs) const
 {
-    Quaternion res;
+    Quat res;
 
     res.w = w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z;
     res.x = w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y;
@@ -116,9 +176,9 @@ inline Quaternion Quaternion::operator*(const Quaternion& rhs) const
     return res;
 }
 
-inline Quaternion& Quaternion::operator*=(const Quaternion& rhs)
+inline Quat& Quat::operator*=(const Quat& rhs)
 {
-    Quaternion res;
+    Quat res;
 
     res.w = w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z;
     res.x = w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y;
@@ -129,7 +189,8 @@ inline Quaternion& Quaternion::operator*=(const Quaternion& rhs)
     return *this;
 }
 
-inline void Quaternion::euler_angles(f32 z_theta, f32 y_theta, f32 x_theta)
+// member funcs
+inline void Quat::euler_angles(f32 z_theta, f32 y_theta, f32 x_theta)
 {
     f32 half_z = 0.5f * z_theta;
     f32 half_x = 0.5f * x_theta;
@@ -143,71 +204,21 @@ inline void Quaternion::euler_angles(f32 z_theta, f32 y_theta, f32 x_theta)
     f32 sin_y_2 = sinf(half_y);
     f32 sin_x_2 = sinf(half_x);
 
-    // compute quaternion
+    // compute Quat
     w = cos_z_2 * cos_y_2 * cos_x_2 + sin_z_2 * sin_y_2 * sin_x_2;
     x = cos_z_2 * cos_y_2 * sin_x_2 - sin_z_2 * sin_y_2 * cos_x_2;
     y = cos_z_2 * sin_y_2 * cos_x_2 + sin_z_2 * cos_y_2 * sin_x_2;
     z = sin_z_2 * cos_y_2 * cos_x_2 - cos_z_2 * sin_y_2 * sin_x_2;
 
-    normalise();
+    normalise(*this);
 }
 
-inline void Quaternion::normalise()
-{
-    f32 mag = sqrt(w * w + x * x + y * y + z * z);
-
-    w /= mag;
-    x /= mag;
-    y /= mag;
-    z /= mag;
-}
-
-inline f32 Quaternion::dot(const Quaternion& l, const Quaternion& r)
-{
-    return l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
-}
-
-inline Quaternion Quaternion::lerp(const Quaternion& l, const Quaternion& r, f32 t)
-{
-    Quaternion lerped = (l * (1.0f - t) + r * t);
-    lerped.normalise();
-
-    return lerped;
-}
-
-inline Quaternion Quaternion::slerp(const Quaternion& l, const Quaternion& r, f32 t)
-{
-    Quaternion out_quat;
-
-    f32 dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
-    f32 theta, st, sut, sout, coeff1, coeff2;
-
-    theta = (float)acosf(dotproduct);
-    if (theta < 0.0)
-        theta = -theta;
-
-    st     = (f32)sinf(theta);
-    sut    = (f32)sinf(t * theta);
-    sout   = (f32)sinf((1.0f - t) * theta);
-    coeff1 = sout / st;
-    coeff2 = sut / st;
-
-    out_quat.x = coeff1 * l.x + coeff2 * r.x;
-    out_quat.y = coeff1 * l.y + coeff2 * r.y;
-    out_quat.z = coeff1 * l.z + coeff2 * r.z;
-    out_quat.w = coeff1 * l.w + coeff2 * r.w;
-
-    out_quat.normalise();
-
-    return out_quat;
-}
-
-inline void Quaternion::axis_angle(vec3f axis, f32 w)
+inline void Quat::axis_angle(vec3f axis, f32 w)
 {
     axis_angle(axis.x, axis.y, axis.z, w);
 }
 
-inline void Quaternion::axis_angle(f32 lx, f32 ly, f32 lz, f32 lw)
+inline void Quat::axis_angle(f32 lx, f32 ly, f32 lz, f32 lw)
 {
     f32 half_angle = lw * 0.5f;
 
@@ -216,17 +227,17 @@ inline void Quaternion::axis_angle(f32 lx, f32 ly, f32 lz, f32 lw)
     y = ly * sinf(half_angle);
     z = lz * sinf(half_angle);
 
-    normalise();
+    normalise(*this);
 }
 
-inline void Quaternion::axis_angle(vec4f v)
+inline void Quat::axis_angle(vec4f v)
 {
     axis_angle(v.x, v.y, v.z, v.w);
 }
 
-inline void Quaternion::get_matrix(mat4& lmatrix)
+inline void Quat::get_matrix(mat4& lmatrix)
 {
-    normalise();
+    normalise(*this);
     
     lmatrix.m[0] = 1.0f - 2.0f * y * y - 2.0f * z * z;
     lmatrix.m[1] = 2.0f * x * y - 2.0f * z * w;
@@ -249,7 +260,7 @@ inline void Quaternion::get_matrix(mat4& lmatrix)
     lmatrix.m[15] = 1.0f;
 }
 
-inline void Quaternion::from_matrix(mat4 m)
+inline void Quat::from_matrix(mat4 m)
 {
     w = sqrt(1.0 + m.m[0] + m.m[5] + m.m[10]) / 2.0;
 
@@ -259,7 +270,7 @@ inline void Quaternion::from_matrix(mat4 m)
     z         = (m.m[4] - m.m[1]) / w4;
 }
 
-inline vec3f Quaternion::to_euler() const
+inline vec3f Quat::to_euler() const
 {
     vec3f euler;
 
@@ -283,6 +294,6 @@ inline vec3f Quaternion::to_euler() const
     return euler;
 }
 
-typedef Quaternion quat;
+typedef Quat quat;
 
 #endif //_quat_h
