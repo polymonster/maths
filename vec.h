@@ -525,7 +525,7 @@ typedef Vec2f vec2f;
 
 typedef Vec3f  vec3f;
 typedef Vec3ui vec3ui;
-typedef Vec3f  vec3i;
+typedef Vec3i  vec3i;
 
 typedef Vec4f vec4f;
 typedef Vec4i vec4i;
@@ -1102,7 +1102,7 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3, T& a4, T& a5)
 }
 
 template <unsigned int N, class T>
-inline Vec<N, int> round(const Vec<N, T>& a)
+inline Vec<N, T> round(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (unsigned int i = 0; i < N; ++i)
