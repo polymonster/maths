@@ -76,6 +76,12 @@ inline Quat slerp(const Quat& l, const Quat& r, f32 t)
     f64 dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
     f64 theta, st, sut, sout, coeff1, coeff2;
     
+    if(t <= 0.0)
+        return l;
+    
+    if(t >= 1.0)
+        return r;
+    
     // quats are equal
     if(dotproduct >= 1.0)
         return l;
