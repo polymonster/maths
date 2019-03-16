@@ -32,7 +32,7 @@ struct Quat
     Quat  operator*(const Quat& rhs) const;
     Quat& operator*=(const Quat& rhs);
 
-    void euler_angles(f32 z_theta, f32 y_theta, f32 x_theta);
+    void  euler_angles(f32 z_theta, f32 y_theta, f32 x_theta);
     void  axis_angle(vec3f axis, f32 w);
     void  axis_angle(f32 lx, f32 ly, f32 lz, f32 lw);
     void  axis_angle(vec4f v);
@@ -54,6 +54,11 @@ inline void normalise(Quat& q)
         q.v[i] *= rmag;
 }
 
+inline f32 mag2(const Quat& q)
+{
+    return dot(q, q);
+}
+
 inline Quat normalised(Quat& q)
 {
     Quat q2 = q;
@@ -71,39 +76,28 @@ inline Quat lerp(const Quat& l, const Quat& r, f32 t)
 
 inline Quat slerp(const Quat& l, const Quat& r, f32 t)
 {
-    Quat out_quat;
+    static f32 eps = 0.0001f;
     
-    f64 dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
-    f64 theta, st, sut, sout, coeff1, coeff2;
+    f32 magnitude = sqrt(mag2(l) * mag2(r));
+    f32 product = dot(l, r) / magnitude;
+    f32 absproduct = abs(product);
     
-    if(t <= 0.0)
-        return l;
+    if(absproduct < f32(1.0 - eps))
+    {
+        const f32 theta = acos(absproduct);
+        const f32 d = sin(theta);
+        const f32 sign = (product < 0) ? f32(-1) : f32(1);
+        const f32 s0 = sin((f32(1.0) - t) * theta) / d;
+        const f32 s1 = sin(sign * t * theta) / d;
+        
+        Quat q;
+        q.x = l.x * s0 + r.x * s1;
+        q.y = l.y * s0 + r.y * s1;
+        q.z = l.z * s0 + r.z * s1;
+        q.w = l.w * s0 + r.w * s1;
+    }
     
-    if(t >= 1.0)
-        return r;
-    
-    // quats are equal
-    if(dotproduct >= 1.0)
-        return l;
-    
-    theta = (f32)acosf(dotproduct);
-    if (theta < 0.0)
-        theta = -theta;
-    
-    st     = (f32)sinf(theta);
-    sut    = (f32)sinf(t * theta);
-    sout   = (f32)sinf((1.0f - t) * theta);
-    coeff1 = sout / st;
-    coeff2 = sut / st;
-    
-    out_quat.x = coeff1 * l.x + coeff2 * r.x;
-    out_quat.y = coeff1 * l.y + coeff2 * r.y;
-    out_quat.z = coeff1 * l.z + coeff2 * r.z;
-    out_quat.w = coeff1 * l.w + coeff2 * r.w;
-    
-    normalise(out_quat);
-    
-    return out_quat;
+    return l;
 }
 
 // constructors
