@@ -100,6 +100,43 @@ inline Quat slerp(const Quat& l, const Quat& r, f32 t)
     return l;
 }
 
+inline Quat slerp2(const Quat& l, const Quat& r, f32 t)
+{
+    Quat out_quat;
+    
+    f64 dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
+    f64 theta, st, sut, sout, coeff1, coeff2;
+    
+    if(t <= 0.0)
+        return l;
+    
+    if(t >= 1.0)
+        return r;
+    
+    // quats are equal
+    if(dotproduct >= 1.0)
+        return l;
+    
+    theta = (f32)acosf(dotproduct);
+    if (theta < 0.0)
+        theta = -theta;
+    
+    st     = (f32)sinf(theta);
+    sut    = (f32)sinf(t * theta);
+    sout   = (f32)sinf((1.0f - t) * theta);
+    coeff1 = sout / st;
+    coeff2 = sut / st;
+    
+    out_quat.x = coeff1 * l.x + coeff2 * r.x;
+    out_quat.y = coeff1 * l.y + coeff2 * r.y;
+    out_quat.z = coeff1 * l.z + coeff2 * r.z;
+    out_quat.w = coeff1 * l.w + coeff2 * r.w;
+    
+    normalise(out_quat);
+    
+    return out_quat;
+}
+
 // constructors
 inline Quat::Quat()
 {
