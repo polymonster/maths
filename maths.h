@@ -18,6 +18,13 @@ namespace maths
         BEHIND     = 1,
         INFRONT    = 2,
     };
+    
+    struct transform
+    {
+        vec3f translation = vec3f::zero();
+        quat  rotation = quat();
+        vec3f scale = vec3f::one();
+    };
 
     // Collection of tests and useful maths functions
     // see inline implementation below file for explanation of args and return values.

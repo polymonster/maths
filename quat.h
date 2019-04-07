@@ -299,9 +299,13 @@ inline void Quat::get_matrix(mat4& lmatrix)
 
 inline void Quat::from_matrix(mat4 m)
 {
-    // guard agaisnt nans
-    static const double eps = 0.000001;
-    w = sqrt(max(1.0 + m.m[0] + m.m[5] + m.m[10], eps)) / 2.0;
+    double ms = 1.0 + (double)m.m[0] + (double)m.m[5] + (double)m.m[10];
+    
+    w = sqrt(ms) / 2.0;
+    
+    // guards agaisnt nans but the results arent accuracte.
+    if(ms < 0.0)
+        w = 1.0;
 
     double w4 = (4.0 * w);
     x         = (m.m[9] - m.m[6]) / w4;
