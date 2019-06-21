@@ -1,6 +1,7 @@
 
 # maths [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
-A C++ linear algebra library I am using for multiple projects. 
+
+A C++ linear algebra library I am using for multiple projects, I have collected bits and pieces and added it here over the years.
 
 It contains templated vector, matrix and quaternion with overloaded operators, typical math library functions and an assortment of intersection and geometric tests. 
 
