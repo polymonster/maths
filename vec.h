@@ -118,6 +118,27 @@ struct Vec
     }
 };
 
+// vector swizzles.
+template <class T, size_t... SW>
+struct Swizzle
+{
+    T v[sizeof...(SW)];
+    
+    template <class T2, size_t... SW2>
+    Swizzle<T, SW...>& operator=(const Swizzle<T2, SW2...>& lhs)
+    {
+        std::vector<size_t> i1 = {SW...};
+        std::vector<size_t> i2 = {SW2...};
+        
+        // must be same size.. todo enableif
+        size_t ss = i1.size();
+        for(size_t x = 0; x < ss; ++x)
+            v[i1[x]] = lhs.v[i2[x]];
+
+        return *this;
+    }
+};
+
 // Template specialisations for 2, 3, 4
 // To get xyzw, rgba etc
 
@@ -154,6 +175,24 @@ struct Vec<2, T>
     {
         for (unsigned int i = 0; i < 2; ++i)
             v[i] = (T)source[i];
+    }
+    
+    template<class T2, size_t... SW>
+    Vec<2, T>(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+    }
+    
+    template<class T2, size_t... SW>
+    Vec<2, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+        
+        return *this;
     }
 
     Vec<2, T>(T v0, T v1)
@@ -264,6 +303,24 @@ struct Vec<3, T>
 
         v[2] = _z;
     }
+    
+    template<class T2, size_t... SW>
+    Vec<3, T>(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+    }
+    
+    template<class T2, size_t... SW>
+    Vec<3, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+        
+        return *this;
+    }
 
     T& operator[](int index)
     {
@@ -373,12 +430,44 @@ struct Vec<4, T>
         };
         Vec<2, T> xy;
         Vec<3, T> xyz;
+        
+        Swizzle<T, 3, 2, 1, 0> wzyx;
+        Swizzle<T, 0, 0, 0, 0> xxxx;
+        Swizzle<T, 1, 1, 1, 1> yyyy;
+        Swizzle<T, 2, 2, 2, 2> zzzz;
+        Swizzle<T, 3, 3, 3, 3> wwww;
     };
 
     Vec<4, T>(void)
     {
     }
-
+    
+    Vec<4, T>& operator=(const Vec<4, T>& lhs)
+    {
+        for(size_t i = 0; i < 4; ++i)
+            v[i] = lhs.v[i];
+        
+        return *this;
+    }
+    
+    template<class T2, size_t... SW>
+    Vec<4, T>(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+    }
+    
+    template<class T2, size_t... SW>
+    Vec<4, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    {
+        std::vector<size_t> ii = {SW...};
+        for(size_t i = 0; i < ii.size(); ++i)
+            v[i] = lhs.v[ii[i]];
+        
+        return *this;
+    }
+    
     explicit Vec<4, T>(T value_for_all)
     {
         for (unsigned int i = 0; i < 4; ++i)
