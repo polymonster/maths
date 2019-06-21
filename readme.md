@@ -2,9 +2,9 @@
 # maths [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 A C++ linear algebra library I am using for multiple projects. 
 
-It contains templated vector, matrix and quaternion with all the appropriate overloaded operators, functions and an assortment of intersection tests and utility functions.
+It contains templated vector, matrix and quaternion overloaded operators, functions and an assortment of intersection tests and utility functions. Shader style swizzles are also supported on vectors!
 
-Everyone has their own maths library and there are numerous freely available C++ maths libraries which already exist, this is just mine that I collected over the years, some of the code has come from different sources.
+All of the intersection and test functions are based on matrix, vectors and quaternions, there is no "plane", "aabb" or "frustum" types to keep things primitive.
 
 A 3D interactive demo of the intersection functions used for debugging and testing purposes can be found in my other repository [pmtech](https://github.com/polymonster/pmtech).
 
