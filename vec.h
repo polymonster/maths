@@ -2,6 +2,7 @@
 #define _vec_h
 
 #include "util.h"
+#include "swizzle.h"
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -131,6 +132,7 @@ struct Swizzle
         std::vector<size_t> i2 = {SW2...};
         
         // must be same size.. todo enableif
+        // must not have duplicate components in rhs
         size_t ss = i1.size();
         for(size_t x = 0; x < ss; ++x)
             v[i1[x]] = lhs.v[i2[x]];
@@ -151,6 +153,7 @@ struct Vec<2, T>
         {
             T x, y;
         };
+        swizzle_v2;
     };
 
     Vec<2, T>(void)
@@ -263,6 +266,7 @@ struct Vec<3, T>
             T r, g, b;
         };
         Vec<2, T> xy;
+        swizzle_v3;
     };
 
     Vec<3, T>(void)
@@ -420,22 +424,16 @@ struct Vec<4, T>
 {
     union {
         T v[4];
-        struct
-        {
+        struct {
             T x, y, z, w;
         };
-        struct
-        {
+        struct {
             T r, g, b, a;
         };
         Vec<2, T> xy;
         Vec<3, T> xyz;
         
-        Swizzle<T, 3, 2, 1, 0> wzyx;
-        Swizzle<T, 0, 0, 0, 0> xxxx;
-        Swizzle<T, 1, 1, 1, 1> yyyy;
-        Swizzle<T, 2, 2, 2, 2> zzzz;
-        Swizzle<T, 3, 3, 3, 3> wwww;
+        swizzle_v4;
     };
 
     Vec<4, T>(void)

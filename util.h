@@ -430,7 +430,6 @@ inline void quadratic_bspline_weights(T f, T& w0, T& w1, T& w2)
 {
     w0 = T(0.5) * sqr(f - 1);
     w1 = T(0.75) - sqr(f - T(0.5));
-    ;
     w2 = T(0.5) * sqr(f);
 }
 
