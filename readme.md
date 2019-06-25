@@ -4,6 +4,8 @@
 
 Another C++ maths library, this has been built up over the years and is now pretty comprehensive. C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
 
+## Features
+
 ### Scalar
 
 All arithmetic is done using scalar types, I am love SIMD but much prefer writing bespoke SIMD code for dedicated tasks and prefer the simplicity here of the scalar implementation. 
