@@ -120,33 +120,32 @@ struct Vec
 };
 
 // vector swizzles.
-template <typename T, size_t... SW>
+template <typename T, size_t W, size_t... SW>
 struct Swizzle
 {
     T v[sizeof...(SW)];
     
-    template <typename T2, size_t... SW2>
-    Swizzle<T, SW...>& operator=(const Swizzle<T2, SW2...>& lhs)
+    template <typename T2, size_t W2, size_t... SW2>
+    Swizzle<T, W, SW...>& operator=(const Swizzle<T2, W2, SW2...>& lhs)
     {
         std::vector<size_t> i1 = {SW...};
         std::vector<size_t> i2 = {SW2...};
         
-        static_assert(sizeof...(SW) == sizeof...(SW2), "error: assigning swizzle of different dimensions");
+        static_assert(W == W2, "error: assigning swizzle of different dimensions");
         
-        size_t ss = i1.size();
-        for(size_t x = 0; x < ss; ++x)
+        for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[i2[x]];
-
+        
         return *this;
     }
     
     template <size_t N, typename T2>
-    Swizzle<T, SW...>& operator=(const Vec<N, T2>& lhs)
+    Swizzle<T, W, SW...>& operator=(const Vec<N, T2>& lhs)
     {
-        static_assert(sizeof...(SW) == N, "error: assigning vector to swizzle of different dimensions");
+        static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
         
         std::vector<size_t> i1 = {SW...};
-        for(size_t x = 0; x < N; ++x)
+        for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[x];
     }
 };
@@ -187,19 +186,19 @@ struct Vec<2, T>
             v[i] = (T)source[i];
     }
     
-    template<typename T2, size_t... SW>
-    Vec<2, T>(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
     }
     
-    template<typename T2, size_t... SW>
-    Vec<2, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<2, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
         
         return *this;
@@ -315,19 +314,19 @@ struct Vec<3, T>
         v[2] = _z;
     }
     
-    template<typename T2, size_t... SW>
-    Vec<3, T>(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
     }
     
-    template<typename T2, size_t... SW>
-    Vec<3, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<3, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
         
         return *this;
@@ -439,7 +438,6 @@ struct Vec<4, T>
         };
         Vec<2, T> xy;
         Vec<3, T> xyz;
-        
         swizzle_v4;
     };
 
@@ -455,19 +453,19 @@ struct Vec<4, T>
         return *this;
     }
     
-    template<typename T2, size_t... SW>
-    Vec<4, T>(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
     }
     
-    template<typename T2, size_t... SW>
-    Vec<4, T>& operator=(const Swizzle<T2, SW...>& lhs)
+    template<typename T2, size_t W, size_t... SW>
+    Vec<4, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        for(size_t i = 0; i < W; ++i)
             v[i] = lhs.v[ii[i]];
         
         return *this;
