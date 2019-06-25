@@ -15,7 +15,7 @@ All arithmetic is done using scalar types, I love SIMD but find that best result
 All operations and functions for any data types and dimension.
 
 ```c++
-template <size_t N, class T> struct Vec
+template <size_t N, typename T> struct Vec
 template <size_t R, size_t C, typename T> struct Mat
 template <typename T> struct Quat
 ```
