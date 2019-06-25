@@ -8,7 +8,7 @@ Another C++ maths library, this has been built up over the years and is now pret
 
 ### Scalar
 
-All arithmetic is done using scalar types, I am love SIMD but much prefer writing bespoke SIMD code for dedicated tasks and prefer the simplicity here of the scalar implementation. 
+All arithmetic is done using scalar types, I love SIMD but find that best results come from writing bespoke code for a dedicated task or platform and favour the simplicity here of the scalar implementation for general purpose games / graphics code.
 
 ### Templated
 
