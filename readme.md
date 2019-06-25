@@ -1,13 +1,46 @@
 
 # maths [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 
-A C++ linear algebra library I am using for multiple projects, I have collected bits and pieces and added it here over the years.
+A C++ maths library I am using for multiple projects, I have collected bits and pieces and added it here over the years. C++11 or later is required because the vec implementation relies heavily on template parameter pack...
 
-It contains templated vector, matrix and quaternion with overloaded operators, typical math library functions and an assortment of intersection and geometric tests. 
+### Scalar
 
-Shader style swizzles supported on vectors, this is a new feature which needs a little bit more work but the basics are now implemented.
+All arithmetic is done using scalar types, I am love SIMD but much prefer writing bespoke SIMD code for dedicated tasks and prefer the simplicity here of the scalar implementation. 
 
-All arithmetic is done using scalar types, I am a fan of SIMD but much prefer writing bespoke SIMD code for dedicated tasks and prefer the simplicity here of the scalar implementation. 
+### Templated
+
+All operations and functions for any data types and dimension.
+
+```c++
+template <size_t N, class T>
+struct Vec
+
+template <size_t R, size_t C, typename T>
+struct Mat
+```
+
+### Swizzles
+
+For that shader like feeling.
+
+```c++
+// construct from swizzle
+vec4f swizz = v.wzyx;
+
+// assign from swizzle
+swizz = v.xxxx;
+
+// assign swizzle to swizzle
+swizz.wyxz = v.xxyy;
+
+// contstruct truncated
+vec2f v2 = swizz.yz;
+
+// assign truncated
+swizz.wx = v.xy;
+```
+
+### Intersection Tests and Utility Functions
 
 The intersection and geometric test functions are based on matrix, vectors and quaternions, there is no "plane", "aabb" or "frustum" types to keep things primitive.
 
