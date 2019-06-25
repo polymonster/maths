@@ -15,7 +15,7 @@ namespace
 {
     static const f32 k_e = 0.0001f;
     
-    template <u32 N, class T>
+    template <size_t N, class T>
     void require_vec(const Vec<N, T>& x, const Vec<N, T> r)
     {
         for(int i = 0; i < N; ++i)
