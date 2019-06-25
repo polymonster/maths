@@ -1,5 +1,4 @@
-#ifndef _maths_h
-#define _maths_h
+#pragma once
 
 #include "mat.h"
 #include "quat.h"
@@ -635,5 +634,3 @@ namespace maths
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
 } // namespace maths
-
-#endif
