@@ -1,7 +1,8 @@
 
-# maths [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
+# maths  
+[![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 
-A C++ maths library I am using for multiple projects, I have collected bits and pieces and added it here over the years. C++11 or later is required because the vec implementation relies heavily on template parameter pack...
+Another C++ maths library, this has been built up over the years and is now pretty comprehensive. C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
 
 ### Scalar
 
@@ -12,11 +13,9 @@ All arithmetic is done using scalar types, I am love SIMD but much prefer writin
 All operations and functions for any data types and dimension.
 
 ```c++
-template <size_t N, class T>
-struct Vec
-
-template <size_t R, size_t C, typename T>
-struct Mat
+template <size_t N, class T> struct Vec
+template <size_t R, size_t C, typename T> struct Mat
+template <typename T> struct Quat
 ```
 
 ### Swizzles
