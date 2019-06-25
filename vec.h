@@ -120,33 +120,32 @@ struct Vec
 };
 
 // vector swizzles.
-template <typename T, size_t... SW>
+template <typename T, size_t W, size_t... SW>
 struct Swizzle
 {
     T v[sizeof...(SW)];
     
-    template <typename T2, size_t... SW2>
-    Swizzle<T, SW...>& operator=(const Swizzle<T2, SW2...>& lhs)
+    template <typename T2, size_t W2, size_t... SW2>
+    Swizzle<T, W, SW...>& operator=(const Swizzle<T2, W2, SW2...>& lhs)
     {
         std::vector<size_t> i1 = {SW...};
         std::vector<size_t> i2 = {SW2...};
         
-        static_assert(sizeof...(SW) == sizeof...(SW2), "error: assigning swizzle of different dimensions");
+        static_assert(W == W2, "error: assigning swizzle of different dimensions");
         
-        size_t ss = i1.size();
-        for(size_t x = 0; x < ss; ++x)
+        for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[i2[x]];
 
         return *this;
     }
     
     template <size_t N, typename T2>
-    Swizzle<T, SW...>& operator=(const Vec<N, T2>& lhs)
+    Swizzle<T, W, SW...>& operator=(const Vec<N, T2>& lhs)
     {
-        static_assert(sizeof...(SW) == N, "error: assigning vector to swizzle of different dimensions");
+        static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
         
         std::vector<size_t> i1 = {SW...};
-        for(size_t x = 0; x < N; ++x)
+        for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[x];
     }
 };
@@ -439,7 +438,6 @@ struct Vec<4, T>
         };
         Vec<2, T> xy;
         Vec<3, T> xyz;
-        
         swizzle_v4;
     };
 
@@ -586,7 +584,6 @@ struct Vec<4, T>
 };
 
 // Abbreviations
-
 typedef Vec<2, double>         Vec2d;
 typedef Vec<2, float>          Vec2f;
 typedef Vec<2, int>            Vec2i;
@@ -614,39 +611,20 @@ typedef Vec<4, unsigned short> Vec4us;
 typedef Vec<4, char>           Vec4c;
 typedef Vec<4, unsigned char>  Vec4uc;
 
-typedef Vec2i vec2i;
-typedef Vec2f vec2f;
-
-typedef Vec3f  vec3f;
-typedef Vec3ui vec3ui;
-typedef Vec3i  vec3i;
-
-typedef Vec4f vec4f;
-typedef Vec4i vec4i;
-
-typedef Vec4f float4;
-typedef Vec3f float3;
-typedef Vec2f float2;
-
-// For bullet
-struct lw_vec3f
-{
-    float x, y, z;
-
-    inline lw_vec3f& operator=(const vec3f& v)
-    {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-
-        return *this;
-    }
-};
+typedef Vec2i   vec2i;
+typedef Vec2f   vec2f;
+typedef Vec3f   vec3f;
+typedef Vec3ui  vec3ui;
+typedef Vec3i   vec3i;
+typedef Vec4f   vec4f;
+typedef Vec4i   vec4i;
+typedef Vec4f   float4;
+typedef Vec3f   float3;
+typedef Vec2f   float2;
 
 // Operators
-
 template <size_t N, typename T>
-Vec<N, T> operator+=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator+=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] += rhs[i];
@@ -654,7 +632,7 @@ Vec<N, T> operator+=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator+(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator+(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     Vec<N, T> sum(lhs);
     sum += rhs;
@@ -662,7 +640,7 @@ Vec<N, T> operator+(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator-=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] -= rhs[i];
@@ -670,7 +648,7 @@ Vec<N, T> operator-=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-(const Vec<N, T>& rhs) // unary minus
+maths_inline Vec<N, T> operator-(const Vec<N, T>& rhs) // unary minus
 {
     Vec<N, T> negative;
     for (size_t i = 0; i < N; ++i)
@@ -679,7 +657,7 @@ Vec<N, T> operator-(const Vec<N, T>& rhs) // unary minus
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // (binary) subtraction
+maths_inline Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // (binary) subtraction
 {
     Vec<N, T> diff(lhs);
     diff -= rhs;
@@ -687,7 +665,7 @@ Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // (binary) subt
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*=(Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator*=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] *= a;
@@ -695,7 +673,7 @@ Vec<N, T> operator*=(Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*(const Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator*(const Vec<N, T>& lhs, T a)
 {
     Vec<N, T> w(lhs);
     w *= a;
@@ -703,7 +681,7 @@ Vec<N, T> operator*(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator*=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] *= rhs.v[i];
@@ -711,7 +689,7 @@ Vec<N, T> operator*=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator*(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     Vec<N, T> componentwise_product;
     for (size_t i = 0; i < N; ++i)
@@ -720,7 +698,7 @@ Vec<N, T> operator*(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/=(Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator/=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] /= a;
@@ -728,7 +706,7 @@ Vec<N, T> operator/=(Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/(const Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator/(const Vec<N, T>& lhs, T a)
 {
     Vec<N, T> w(lhs);
     w /= a;
@@ -736,7 +714,7 @@ Vec<N, T> operator/(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator/=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] /= rhs.v[i];
@@ -744,7 +722,7 @@ Vec<N, T> operator/=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline Vec<N, T> operator/(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     Vec<N, T> componentwise_divide;
     for (size_t i = 0; i < N; ++i)
@@ -753,21 +731,20 @@ Vec<N, T> operator/(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-bool operator==(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline bool operator==(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     return (equals(lhs, rhs));
 }
 
 template <size_t N, typename T>
-bool operator!=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline bool operator!=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     return (!equals(lhs, rhs));
 }
 
 // Non standard operations with scalars
-
 template <size_t N, typename T>
-Vec<N, T> operator+=(Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator+=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] += a;
@@ -775,7 +752,7 @@ Vec<N, T> operator+=(Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator+(const Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator+(const Vec<N, T>& lhs, T a)
 {
     Vec<N, T> sum(lhs);
     sum += a;
@@ -783,7 +760,7 @@ Vec<N, T> operator+(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-=(Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator-=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] -= a;
@@ -791,7 +768,7 @@ Vec<N, T> operator-=(Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-(const Vec<N, T>& lhs, T a)
+maths_inline Vec<N, T> operator-(const Vec<N, T>& lhs, T a)
 {
     Vec<N, T> sum(lhs);
     sum -= a;
@@ -800,7 +777,7 @@ Vec<N, T> operator-(const Vec<N, T>& lhs, T a)
 
 // Free Functions
 template <size_t N, typename T>
-T component_wise_min(const Vec<N, T>& v)
+maths_inline T component_wise_min(const Vec<N, T>& v)
 {
     T _min = v.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -810,7 +787,7 @@ T component_wise_min(const Vec<N, T>& v)
 }
 
 template <size_t N, typename T>
-T component_wise_max(const Vec<N, T>& v)
+maths_inline T component_wise_max(const Vec<N, T>& v)
 {
     T _max = v.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -820,19 +797,19 @@ T component_wise_max(const Vec<N, T>& v)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T f)
+maths_inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T f)
 {
     return value0 * (1 - f) + value1 * f;
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, const Vec<N, T>& f)
+maths_inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, const Vec<N, T>& f)
 {
     return value0 * (1 - f) + value1 * f;
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> vclamp(const Vec<N, T>& a, T lower, T upper)
+maths_inline Vec<N, T> vclamp(const Vec<N, T>& a, T lower, T upper)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -847,7 +824,7 @@ inline Vec<N, T> vclamp(const Vec<N, T>& a, T lower, T upper)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N, T>& upper)
+maths_inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N, T>& upper)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -862,7 +839,7 @@ inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N,
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> saturate(Vec<N, T>& a)
+maths_inline Vec<N, T> saturate(Vec<N, T>& a)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -878,7 +855,7 @@ inline Vec<N, T> saturate(Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline bool all(const Vec<N, T>& a)
+maths_inline bool all(const Vec<N, T>& a)
 {
     for (size_t i = 0; i < N; ++i)
         if (a[i] == 0)
@@ -888,7 +865,7 @@ inline bool all(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline bool any(const Vec<N, T>& a)
+maths_inline bool any(const Vec<N, T>& a)
 {
     for (size_t i = 0; i < N; ++i)
         if (a[i] != 0)
@@ -898,7 +875,7 @@ inline bool any(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> smooth_step(T r, const Vec<N, T>& edge0, const Vec<N, T>& edge1)
+maths_inline Vec<N, T> smooth_step(T r, const Vec<N, T>& edge0, const Vec<N, T>& edge1)
 {
     Vec<N, T> res;
     for (size_t i = 0; i < N; ++i)
@@ -908,7 +885,7 @@ inline Vec<N, T> smooth_step(T r, const Vec<N, T>& edge0, const Vec<N, T>& edge1
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> step(const Vec<N, T>& value0, const Vec<N, T>& value1)
+maths_inline Vec<N, T> step(const Vec<N, T>& value0, const Vec<N, T>& value1)
 {
     Vec<N, T> res;
     for (size_t i = 0; i < N; ++i)
@@ -918,7 +895,7 @@ inline Vec<N, T> step(const Vec<N, T>& value0, const Vec<N, T>& value1)
 }
 
 template <size_t N, typename T>
-bool equals(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
+maths_inline bool equals(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         if (lhs[i] != rhs[i])
@@ -928,7 +905,7 @@ bool equals(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-bool almost_equal(const Vec<N, T>& lhs, const Vec<N, T>& rhs, const T& epsilon)
+maths_inline bool almost_equal(const Vec<N, T>& lhs, const Vec<N, T>& rhs, const T& epsilon)
 {
     if (dist(lhs, rhs) < epsilon)
         return true;
@@ -937,7 +914,7 @@ bool almost_equal(const Vec<N, T>& lhs, const Vec<N, T>& rhs, const T& epsilon)
 }
 
 template <size_t N, typename T>
-bool nonzero(const Vec<N, T>& v)
+maths_inline bool nonzero(const Vec<N, T>& v)
 {
     for (size_t i = 0; i < N; ++i)
         if (v[i])
@@ -946,7 +923,7 @@ bool nonzero(const Vec<N, T>& v)
 }
 
 template <size_t N, typename T>
-T mag2(const Vec<N, T>& a)
+maths_inline T mag2(const Vec<N, T>& a)
 {
     T l = sqr(a.v[0]);
     for (size_t i = 1; i < N; ++i)
@@ -955,13 +932,13 @@ T mag2(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-T mag(const Vec<N, T>& a)
+maths_inline T mag(const Vec<N, T>& a)
 {
     return sqrt(mag2(a));
 }
 
 template <size_t N, typename T>
-inline T dist2(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline inline T dist2(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     T d = sqr(a.v[0] - b.v[0]);
     for (size_t i = 1; i < N; ++i)
@@ -970,25 +947,25 @@ inline T dist2(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline T dist(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline inline T dist(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     return std::sqrt(dist2(a, b));
 }
 
 template <size_t N, typename T>
-inline void normalize(Vec<N, T>& a)
+maths_inline inline void normalize(Vec<N, T>& a)
 {
     a /= mag(a);
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> normalized(const Vec<N, T>& a)
+maths_inline inline Vec<N, T> normalized(const Vec<N, T>& a)
 {
     return a / mag(a);
 }
 
 template <size_t N, typename T>
-inline T infnorm(const Vec<N, T>& a)
+maths_inline inline T infnorm(const Vec<N, T>& a)
 {
     T d = std::fabs(a.v[0]);
     for (size_t i = 1; i < N; ++i)
@@ -997,19 +974,19 @@ inline T infnorm(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline void normalise(Vec<N, T>& a)
+maths_inline inline void normalise(Vec<N, T>& a)
 {
     a /= mag(a);
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> normalised(const Vec<N, T>& a)
+maths_inline inline Vec<N, T> normalised(const Vec<N, T>& a)
 {
     return a / mag(a);
 }
 
 template <size_t N, typename T>
-void zero(Vec<N, T>& a)
+maths_inline void zero(Vec<N, T>& a)
 {
     for (size_t i = 0; i < N; ++i)
         a.v[i] = 0;
@@ -1034,7 +1011,7 @@ std::istream& operator>>(std::istream& in, Vec<N, T>& v)
 }
 
 template <size_t N, typename T>
-inline bool operator==(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline bool operator==(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     bool         t = (a.v[0] == b.v[0]);
     size_t i = 1;
@@ -1047,7 +1024,7 @@ inline bool operator==(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline bool operator!=(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline bool operator!=(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     bool         t = (a.v[0] != b.v[0]);
     size_t i = 1;
@@ -1060,7 +1037,7 @@ inline bool operator!=(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> operator*(T a, const Vec<N, T>& v)
+maths_inline Vec<N, T> operator*(T a, const Vec<N, T>& v)
 {
     Vec<N, T> w(v);
     w *= a;
@@ -1068,7 +1045,7 @@ inline Vec<N, T> operator*(T a, const Vec<N, T>& v)
 }
 
 template <size_t N, typename T>
-inline T min(const Vec<N, T>& a)
+maths_inline T min(const Vec<N, T>& a)
 {
     T m = a.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -1078,7 +1055,7 @@ inline T min(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     Vec<N, T> m;
     for (size_t i = 0; i < N; ++i)
@@ -1087,7 +1064,7 @@ inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> max_union(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline Vec<N, T> max_union(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     Vec<N, T> m;
     for (size_t i = 0; i < N; ++i)
@@ -1096,7 +1073,7 @@ inline Vec<N, T> max_union(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline T max(const Vec<N, T>& a)
+maths_inline T max(const Vec<N, T>& a)
 {
     T m = a.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -1106,7 +1083,7 @@ inline T max(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline T dot(const Vec<N, T>& a, const Vec<N, T>& b)
+maths_inline T dot(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     T d = a.v[0] * b.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -1115,7 +1092,7 @@ inline T dot(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <typename T>
-inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
+maths_inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
 {
     T c = cos(angle);
     T s = sin(angle);
@@ -1123,32 +1100,32 @@ inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
 }
 
 template <typename T>
-inline Vec<2, T> perp(const Vec<2, T>& a)
+maths_inline Vec<2, T> perp(const Vec<2, T>& a)
 {
     return Vec<2, T>(-a.v[1], a.v[0]);
 } // counter-clockwise rotation by 90 degrees
 
 template <typename T>
-inline T cross(const Vec<2, T>& a, const Vec<2, T>& b)
+maths_inline T cross(const Vec<2, T>& a, const Vec<2, T>& b)
 {
     return a.v[0] * b.v[1] - a.v[1] * b.v[0];
 }
 
 template <typename T>
-inline Vec<3, T> cross(const Vec<3, T>& a, const Vec<3, T>& b)
+maths_inline Vec<3, T> cross(const Vec<3, T>& a, const Vec<3, T>& b)
 {
     return Vec<3, T>(a.v[1] * b.v[2] - a.v[2] * b.v[1], a.v[2] * b.v[0] - a.v[0] * b.v[2], a.v[0] * b.v[1] - a.v[1] * b.v[0]);
 }
 
 template <typename T>
-inline T triple(const Vec<3, T>& a, const Vec<3, T>& b, const Vec<3, T>& c)
+maths_inline T triple(const Vec<3, T>& a, const Vec<3, T>& b, const Vec<3, T>& c)
 {
     return a.v[0] * (b.v[1] * c.v[2] - b.v[2] * c.v[1]) + a.v[1] * (b.v[2] * c.v[0] - b.v[0] * c.v[2]) +
            a.v[2] * (b.v[0] * c.v[1] - b.v[1] * c.v[0]);
 }
 
 template <size_t N, typename T>
-inline size_t hash(const Vec<N, T>& a)
+maths_inline size_t hash(const Vec<N, T>& a)
 {
     size_t h = a.v[0];
     for (size_t i = 1; i < N; ++i)
@@ -1157,7 +1134,7 @@ inline size_t hash(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline void assign(const Vec<N, T>& a, T& a0, T& a1)
+maths_inline void assign(const Vec<N, T>& a, T& a0, T& a1)
 {
     assert(N == 2);
     a0 = a.v[0];
@@ -1165,7 +1142,7 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1)
 }
 
 template <size_t N, typename T>
-inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2)
+maths_inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2)
 {
     assert(N == 3);
     a0 = a.v[0];
@@ -1174,7 +1151,7 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2)
 }
 
 template <size_t N, typename T>
-inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3)
+maths_inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3)
 {
     assert(N == 4);
     a0 = a.v[0];
@@ -1184,7 +1161,7 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3)
 }
 
 template <size_t N, typename T>
-inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3, T& a4, T& a5)
+maths_inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3, T& a4, T& a5)
 {
     assert(N == 6);
     a0 = a.v[0];
@@ -1196,7 +1173,7 @@ inline void assign(const Vec<N, T>& a, T& a0, T& a1, T& a2, T& a3, T& a4, T& a5)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> round(const Vec<N, T>& a)
+maths_inline Vec<N, T> round(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
@@ -1205,7 +1182,7 @@ inline Vec<N, T> round(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> floor(const Vec<N, T>& a)
+maths_inline Vec<N, T> floor(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
@@ -1214,7 +1191,7 @@ inline Vec<N, T> floor(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline Vec<N, int> ceil(const Vec<N, T>& a)
+maths_inline Vec<N, int> ceil(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
@@ -1223,7 +1200,7 @@ inline Vec<N, int> ceil(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> fabs(const Vec<N, T>& a)
+maths_inline Vec<N, T> fabs(const Vec<N, T>& a)
 {
     Vec<N, T> result;
     for (size_t i = 0; i < N; ++i)
@@ -1232,21 +1209,21 @@ inline Vec<N, T> fabs(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
-inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, Vec<N, T>& xmin, Vec<N, T>& xmax)
+maths_inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, Vec<N, T>& xmin, Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
         minmax(x0.v[i], x1.v[i], xmin.v[i], xmax.v[i]);
 }
 
 template <size_t N, typename T>
-inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, Vec<N, T>& xmin, Vec<N, T>& xmax)
+maths_inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, Vec<N, T>& xmin, Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
         minmax(x0.v[i], x1.v[i], x2.v[i], xmin.v[i], xmax.v[i]);
 }
 
 template <size_t N, typename T>
-inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, Vec<N, T>& xmin,
+maths_inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, Vec<N, T>& xmin,
                    Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
@@ -1254,7 +1231,7 @@ inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2
 }
 
 template <size_t N, typename T>
-inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, const Vec<N, T>& x4,
+maths_inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, const Vec<N, T>& x4,
                    Vec<N, T>& xmin, Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
@@ -1262,7 +1239,7 @@ inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2
 }
 
 template <size_t N, typename T>
-inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, const Vec<N, T>& x4,
+maths_inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2, const Vec<N, T>& x3, const Vec<N, T>& x4,
                    const Vec<N, T>& x5, Vec<N, T>& xmin, Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
@@ -1270,7 +1247,7 @@ inline void minmax(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2
 }
 
 template <size_t N, typename T>
-inline void update_minmax(const Vec<N, T>& x, Vec<N, T>& xmin, Vec<N, T>& xmax)
+maths_inline void update_minmax(const Vec<N, T>& x, Vec<N, T>& xmin, Vec<N, T>& xmax)
 {
     for (size_t i = 0; i < N; ++i)
         update_minmax(x[i], xmin[i], xmax[i]);

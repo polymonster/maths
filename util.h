@@ -1,11 +1,22 @@
-#ifndef _util_h_
-#define _util_h_
+#pragma once
 
 #include <algorithm>
 #include <cmath>
 #include <float.h>
 #include <iostream>
 #include <vector>
+
+#define MATHS_ALWAYS_INLINE
+
+#ifndef MATHS_ALWAYS_INLINE
+#define maths_inline inline
+#else
+#ifdef _MSC_VER
+#define maths_inline __forceinline
+#else
+#define maths_inline inline __attribute__((always_inline))
+#endif
+#endif
 
 #ifndef M_PI
 const double M_PI = 3.1415926535897932384626433832795;
@@ -567,5 +578,3 @@ void write_matlab(std::ostream& output, const std::vector<T>& a, const char* var
     output << ";" << std::endl;
     output.precision(old_precision);
 }
-
-#endif
