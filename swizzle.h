@@ -1,5 +1,242 @@
 #pragma once
 
+template <typename T, size_t W, size_t... SW>
+struct Swizzle
+{
+    T v[sizeof...(SW)];
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Swizzle<T, W, SW...>& operator=(const Swizzle<T2, W2, SW2...>& lhs)
+    {
+        static_assert(W == W2, "error: assigning swizzle of different dimensions");
+        std::vector<size_t> i1 = {SW...};
+        std::vector<size_t> i2 = {SW2...};
+        for(size_t x = 0; x < W; ++x)
+            v[i1[x]] = lhs.v[i2[x]];
+        
+        return *this;
+    }
+    
+    template <size_t N, typename T2>
+    Swizzle<T, W, SW...>& operator=(const Vec<N, T2>& lhs)
+    {
+        static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
+        std::vector<size_t> i1 = {SW...};
+        for(size_t x = 0; x < W; ++x)
+            v[i1[x]] = lhs.v[x];
+    }
+    
+    operator Vec<W, T> () const
+    {
+        Vec<W, T> vec;
+        std::vector<size_t> i1 = {SW...};
+        for(size_t x = 0; x < W; ++x)
+            vec[x] = v[i1[x]];
+        return vec;
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T> operator+(const Swizzle<T2, W2, SW2...>& rhs) const
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        return Vec<W, T>(Vec<W, T>(*this) + Vec<W, T>(rhs));
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T> operator-(const Swizzle<T2, W2, SW2...>& rhs) const
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        return Vec<W, T>(Vec<W, T>(*this) - Vec<W, T>(rhs));
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T> operator/(const Swizzle<T2, W2, SW2...>& rhs) const
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        return Vec<W, T>(Vec<W, T>(*this) / Vec<W, T>(rhs));
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T> operator*(const Swizzle<T2, W2, SW2...>& rhs) const
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        return Vec<W, T>(Vec<W, T>(*this) * Vec<W, T>(rhs));
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T>& operator+=(const Swizzle<T2, W2, SW2...>& rhs)
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        *this = Vec<W, T>(*this) += Vec<W, T>(rhs);
+        return Vec<W, T>(*this);
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T>& operator-=(const Swizzle<T2, W2, SW2...>& rhs)
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        *this = Vec<W, T>(*this) -= Vec<W, T>(rhs);
+        return Vec<W, T>(*this);
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T>& operator/=(const Swizzle<T2, W2, SW2...>& rhs)
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        *this = Vec<W, T>(*this) /= Vec<W, T>(rhs);
+        return Vec<W, T>(*this);
+    }
+    
+    template <typename T2, size_t W2, size_t... SW2>
+    Vec<W, T>& operator*=(const Swizzle<T2, W2, SW2...>& rhs)
+    {
+        static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
+        *this = Vec<W, T>(*this) *= Vec<W, T>(rhs);
+        return Vec<W, T>(*this);
+    }
+};
+
+// unary minus
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs)
+{
+    return -Vec<N, T>(lhs);
+}
+
+// add
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator+(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+{
+    return Vec<N, T>(lhs) + Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator+(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    return Vec<N, T>(lhs) + Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator+(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    return Vec<N, T>(lhs) + rhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator+=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    lhs = Vec<N, T>(lhs) + Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator+=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    lhs = Vec<N, T>(lhs) + rhs;
+    return lhs;
+}
+
+// sub
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    return Vec<N, T>(lhs) - Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator-(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+{
+    return Vec<N, T>(lhs) - Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    return Vec<N, T>(lhs) - rhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator-=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    lhs = Vec<N, T>(lhs) - Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator-=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    lhs = Vec<N, T>(lhs) - rhs;
+    return lhs;
+}
+
+// divide
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator/(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    return Vec<N, T>(lhs) / Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator/(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+{
+    return Vec<N, T>(lhs) / Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator/(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    return Vec<N, T>(lhs) / rhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator/=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    lhs = Vec<N, T>(lhs) / Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator/=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    lhs = Vec<N, T>(lhs) / rhs;
+    return lhs;
+}
+
+// multiply
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator*(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    return Vec<N, T>(lhs) * Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator*(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+{
+    return Vec<N, T>(lhs) * Vec<N, T>(rhs);
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T> operator*(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    return Vec<N, T>(lhs) * rhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator*=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+{
+    lhs = Vec<N, T>(lhs) * Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator*=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    lhs = Vec<N, T>(lhs) * rhs;
+    return lhs;
+}
+
+// swizzle permutations
+
 // v2 swizzles
 #define swizzle_v2      \
 Swizzle<T, 2, 0, 0> xx; \

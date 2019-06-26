@@ -1,7 +1,6 @@
 #pragma once
 
 #include "util.h"
-#include "swizzle.h"
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -63,14 +62,14 @@ struct Vec
 
     Vec<N, T>(T v0, T v1)
     {
-        assert(N == 2);
+        static_assert(N == 2, "error: trying to construct vec of incorrect dimension");
         v[0] = v0;
         v[1] = v1;
     }
 
     Vec<N, T>(T v0, T v1, T v2)
     {
-        assert(N == 3);
+        static_assert(N == 3, "error: trying to construct vec of incorrect dimension");
         v[0] = v0;
         v[1] = v1;
         v[2] = v2;
@@ -78,7 +77,7 @@ struct Vec
 
     Vec<N, T>(T v0, T v1, T v2, T v3)
     {
-        assert(N == 4);
+        static_assert(N == 4, "error: trying to construct vec of incorrect dimension");
         v[0] = v0;
         v[1] = v1;
         v[2] = v2;
@@ -87,7 +86,7 @@ struct Vec
 
     Vec<N, T>(T v0, T v1, T v2, T v3, T v4)
     {
-        assert(N == 5);
+        static_assert(N == 5, "error: trying to construct vec of incorrect dimension");
         v[0] = v0;
         v[1] = v1;
         v[2] = v2;
@@ -97,7 +96,7 @@ struct Vec
 
     Vec<N, T>(T v0, T v1, T v2, T v3, T v4, T v5)
     {
-        assert(N == 6);
+        static_assert(N == 6, "error: trying to construct vec of incorrect dimension");
         v[0] = v0;
         v[1] = v1;
         v[2] = v2;
@@ -108,47 +107,16 @@ struct Vec
 
     T& operator[](size_t index)
     {
-        assert(0 <= index && (size_t)index < N);
         return v[index];
     }
 
     const T& operator[](size_t index) const
     {
-        assert(0 <= index && (size_t)index < N);
         return v[index];
     }
 };
 
-// vector swizzles.
-template <typename T, size_t W, size_t... SW>
-struct Swizzle
-{
-    T v[sizeof...(SW)];
-    
-    template <typename T2, size_t W2, size_t... SW2>
-    Swizzle<T, W, SW...>& operator=(const Swizzle<T2, W2, SW2...>& lhs)
-    {
-        std::vector<size_t> i1 = {SW...};
-        std::vector<size_t> i2 = {SW2...};
-        
-        static_assert(W == W2, "error: assigning swizzle of different dimensions");
-        
-        for(size_t x = 0; x < W; ++x)
-            v[i1[x]] = lhs.v[i2[x]];
-        
-        return *this;
-    }
-    
-    template <size_t N, typename T2>
-    Swizzle<T, W, SW...>& operator=(const Vec<N, T2>& lhs)
-    {
-        static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
-        
-        std::vector<size_t> i1 = {SW...};
-        for(size_t x = 0; x < W; ++x)
-            v[i1[x]] = lhs.v[x];
-    }
-};
+#include "swizzle.h"
 
 // Template specialisations for 2, 3, 4
 template <typename T>
@@ -187,7 +155,7 @@ struct Vec<2, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
+    explicit Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < W; ++i)
@@ -315,7 +283,7 @@ struct Vec<3, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
+    explicit Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < W; ++i)
@@ -454,7 +422,7 @@ struct Vec<4, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
+    explicit Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < W; ++i)
@@ -583,68 +551,9 @@ struct Vec<4, T>
     }
 };
 
-// Abbreviations
-
-typedef Vec<2, double>         Vec2d;
-typedef Vec<2, float>          Vec2f;
-typedef Vec<2, int>            Vec2i;
-typedef Vec<2, unsigned int>   Vec2ui;
-typedef Vec<2, short>          Vec2s;
-typedef Vec<2, unsigned short> Vec2us;
-typedef Vec<2, char>           Vec2c;
-typedef Vec<2, unsigned char>  Vec2uc;
-
-typedef Vec<3, double>         Vec3d;
-typedef Vec<3, float>          Vec3f;
-typedef Vec<3, int>            Vec3i;
-typedef Vec<3, unsigned int>   Vec3ui;
-typedef Vec<3, short>          Vec3s;
-typedef Vec<3, unsigned short> Vec3us;
-typedef Vec<3, char>           Vec3c;
-typedef Vec<3, unsigned char>  Vec3uc;
-
-typedef Vec<4, double>         Vec4d;
-typedef Vec<4, float>          Vec4f;
-typedef Vec<4, int>            Vec4i;
-typedef Vec<4, unsigned int>   Vec4ui;
-typedef Vec<4, short>          Vec4s;
-typedef Vec<4, unsigned short> Vec4us;
-typedef Vec<4, char>           Vec4c;
-typedef Vec<4, unsigned char>  Vec4uc;
-
-typedef Vec2i vec2i;
-typedef Vec2f vec2f;
-
-typedef Vec3f  vec3f;
-typedef Vec3ui vec3ui;
-typedef Vec3i  vec3i;
-
-typedef Vec4f vec4f;
-typedef Vec4i vec4i;
-
-typedef Vec4f float4;
-typedef Vec3f float3;
-typedef Vec2f float2;
-
-// For bullet
-struct lw_vec3f
-{
-    float x, y, z;
-
-    inline lw_vec3f& operator=(const vec3f& v)
-    {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-
-        return *this;
-    }
-};
-
 // Operators
-
 template <size_t N, typename T>
-Vec<N, T> operator+=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator+=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] += rhs[i];
@@ -660,7 +569,7 @@ Vec<N, T> operator+(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator-=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] -= rhs[i];
@@ -677,7 +586,7 @@ Vec<N, T> operator-(const Vec<N, T>& rhs) // unary minus
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // (binary) subtraction
+Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // subtraction
 {
     Vec<N, T> diff(lhs);
     diff -= rhs;
@@ -685,7 +594,7 @@ Vec<N, T> operator-(const Vec<N, T>& lhs, const Vec<N, T>& rhs) // (binary) subt
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*=(Vec<N, T>& lhs, T a)
+Vec<N, T>& operator*=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] *= a;
@@ -701,7 +610,7 @@ Vec<N, T> operator*(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator*=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator*=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] *= rhs.v[i];
@@ -718,7 +627,7 @@ Vec<N, T> operator*(const Vec<N, T>& lhs, const Vec<N, T>& rhs)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/=(Vec<N, T>& lhs, T a)
+Vec<N, T>& operator/=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] /= a;
@@ -734,7 +643,7 @@ Vec<N, T> operator/(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator/=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator/=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
 {
     for (size_t i = 0; i < N; ++i)
         lhs.v[i] /= rhs.v[i];
@@ -762,10 +671,8 @@ bool operator!=(Vec<N, T>& lhs, const Vec<N, T>& rhs)
     return (!equals(lhs, rhs));
 }
 
-// Non standard operations with scalars
-
 template <size_t N, typename T>
-Vec<N, T> operator+=(Vec<N, T>& lhs, T a)
+Vec<N, T>& operator+=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] += a;
@@ -781,7 +688,7 @@ Vec<N, T> operator+(const Vec<N, T>& lhs, T a)
 }
 
 template <size_t N, typename T>
-Vec<N, T> operator-=(Vec<N, T>& lhs, T a)
+Vec<N, T>& operator-=(Vec<N, T>& lhs, T a)
 {
     for (size_t i = 0; i < N; ++i)
         lhs[i] -= a;
@@ -1117,14 +1024,14 @@ inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
 {
     T c = cos(angle);
     T s = sin(angle);
-    return Vec<2, T>(c * a[0] - s * a[1], s * a[0] + c * a[1]); // counter-clockwise rotation
+    return Vec<2, T>(c * a[0] - s * a[1], s * a[0] + c * a[1]); // anti-clockwise rotation
 }
 
 template <typename T>
 inline Vec<2, T> perp(const Vec<2, T>& a)
 {
     return Vec<2, T>(-a.v[1], a.v[0]);
-} // counter-clockwise rotation by 90 degrees
+} // anti-clockwise rotation by 90 degrees
 
 template <typename T>
 inline T cross(const Vec<2, T>& a, const Vec<2, T>& b)
@@ -1273,3 +1180,43 @@ inline void update_minmax(const Vec<N, T>& x, Vec<N, T>& xmin, Vec<N, T>& xmax)
     for (size_t i = 0; i < N; ++i)
         update_minmax(x[i], xmin[i], xmax[i]);
 }
+
+// abbreviations
+
+typedef Vec<2, double>         Vec2d;
+typedef Vec<2, float>          Vec2f;
+typedef Vec<2, int>            Vec2i;
+typedef Vec<2, unsigned int>   Vec2ui;
+typedef Vec<2, short>          Vec2s;
+typedef Vec<2, unsigned short> Vec2us;
+typedef Vec<2, char>           Vec2c;
+typedef Vec<2, unsigned char>  Vec2uc;
+
+typedef Vec<3, double>         Vec3d;
+typedef Vec<3, float>          Vec3f;
+typedef Vec<3, int>            Vec3i;
+typedef Vec<3, unsigned int>   Vec3ui;
+typedef Vec<3, short>          Vec3s;
+typedef Vec<3, unsigned short> Vec3us;
+typedef Vec<3, char>           Vec3c;
+typedef Vec<3, unsigned char>  Vec3uc;
+
+typedef Vec<4, double>         Vec4d;
+typedef Vec<4, float>          Vec4f;
+typedef Vec<4, int>            Vec4i;
+typedef Vec<4, unsigned int>   Vec4ui;
+typedef Vec<4, short>          Vec4s;
+typedef Vec<4, unsigned short> Vec4us;
+typedef Vec<4, char>           Vec4c;
+typedef Vec<4, unsigned char>  Vec4uc;
+
+typedef Vec2i   vec2i;
+typedef Vec2f   vec2f;
+typedef Vec3f   vec3f;
+typedef Vec3ui  vec3ui;
+typedef Vec3i   vec3i;
+typedef Vec4f   vec4f;
+typedef Vec4i   vec4i;
+typedef Vec4f   float4;
+typedef Vec3f   float3;
+typedef Vec2f   float2;
