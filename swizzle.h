@@ -122,21 +122,29 @@ Vec<N, T> operator+(const Swizzle<T, N, SW...>& lhs, const T& rhs)
     return Vec<N, T>(lhs) + rhs;
 }
 
+// compound add
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator+=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator+=(Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
 {
     lhs = Vec<N, T>(lhs) + Vec<N, T>(rhs);
     return lhs;
 }
 
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator+=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+Vec<N, T>& operator+=(Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
+{
+    lhs = Vec<N, T>(lhs) + Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator+=(Swizzle<T, N, SW...>& lhs, const T& rhs)
 {
     lhs = Vec<N, T>(lhs) + rhs;
     return lhs;
 }
 
-// sub
+// subtract
 template <size_t N, typename T, size_t ...SW>
 Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
 {
@@ -155,15 +163,23 @@ Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs, const T& rhs)
     return Vec<N, T>(lhs) - rhs;
 }
 
+// compound subtract
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator-=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator-=(Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
 {
     lhs = Vec<N, T>(lhs) - Vec<N, T>(rhs);
     return lhs;
 }
 
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator-=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+Vec<N, T>& operator-=(Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
+{
+    lhs = Vec<N, T>(lhs) - Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator-=(Swizzle<T, N, SW...>& lhs, const T& rhs)
 {
     lhs = Vec<N, T>(lhs) - rhs;
     return lhs;
@@ -188,17 +204,25 @@ Vec<N, T> operator/(const Swizzle<T, N, SW...>& lhs, const T& rhs)
     return Vec<N, T>(lhs) / rhs;
 }
 
+// compound divide
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator/=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator/=(Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
 {
     lhs = Vec<N, T>(lhs) / Vec<N, T>(rhs);
     return lhs;
 }
 
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator/=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+Vec<N, T>& operator/=(Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
 {
-    lhs = Vec<N, T>(lhs) / rhs;
+    lhs = Vec<N, T>(lhs) / Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator/=(Swizzle<T, N, SW...>& lhs, const T& rhs)
+{
+    lhs = Vec<N, T>(lhs) + rhs;
     return lhs;
 }
 
@@ -221,15 +245,23 @@ Vec<N, T> operator*(const Swizzle<T, N, SW...>& lhs, const T& rhs)
     return Vec<N, T>(lhs) * rhs;
 }
 
+// compound multiply
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator*=(const Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
+Vec<N, T>& operator*=(Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
 {
     lhs = Vec<N, T>(lhs) * Vec<N, T>(rhs);
     return lhs;
 }
 
 template <size_t N, typename T, size_t ...SW>
-Vec<N, T>& operator*=(const Swizzle<T, N, SW...>& lhs, const T& rhs)
+Vec<N, T>& operator*=(Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
+{
+    lhs = Vec<N, T>(lhs) * Vec<N, T>(rhs);
+    return lhs;
+}
+
+template <size_t N, typename T, size_t ...SW>
+Vec<N, T>& operator*=(Swizzle<T, N, SW...>& lhs, const T& rhs)
 {
     lhs = Vec<N, T>(lhs) * rhs;
     return lhs;
