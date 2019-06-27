@@ -2,7 +2,13 @@
 # maths  
 [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 
-Another C++ maths library, this has been built up over the years and is now pretty comprehensive. C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
+Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection and test functions.   
+
+## Requirements
+
+Supported Compilers: msvc2017+, Gcc 9.0+, Clang 7.0+
+
+C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
 
 ## Features
 
