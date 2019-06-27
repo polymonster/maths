@@ -14,7 +14,7 @@ C++11 or later is required because the vec implementation relies heavily on temp
 
 ### Scalar
 
-All arithmetic is done using scalar types, I love SIMD but find that best results come from writing bespoke code for a dedicated task or platform and favour the simplicity here of the scalar implementation for general purpose games / graphics code.
+All arithmetic is done using scalar types, I find that best results with SIMD come from writing bespoke code for a dedicated task or platform and favour the simplicity here of the scalar implementation for general purpose games / graphics code.
 
 ### Templated
 
@@ -45,6 +45,12 @@ vec2f v2 = swizz.yz;
 
 // assign truncated
 swizz.wx = v.xy;
+
+// arithmetic on swizzles
+swizz.xyz *= swizz2.www;
+
+// swizzle / scalar arithmentic
+vec2 v2 = swizz.xy * 2.0f;
 ```
 
 ### Intersection Tests and Utility Functions
