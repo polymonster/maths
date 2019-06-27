@@ -23,7 +23,7 @@ namespace
     }
 }
 
-TEST_CASE( "vec3f operator +", "[vec3f]" )
+TEST_CASE( "vec operator +", "[vec]" )
 {
     vec3f v[] = {
         vec3f(1.0f, 2.2f, 4.0f),
@@ -36,4 +36,77 @@ TEST_CASE( "vec3f operator +", "[vec3f]" )
     require_vec(v[0] + v[1], vec3f(7.0f, 82.19f, 205.02f));
     require_vec(v[2] + v[3], vec3f(104.79f, 505.621f, 97.56f));
     require_vec(v[4] + v[1], vec3f(128.0f, 747.901f, 504.929f));
+}
+
+TEST_CASE( "vec operator -", "[vec]" )
+{
+    vec3f v[] = {
+        vec3f(1.0f, 2.2f, 4.0f),
+        vec3f(6.0f, 79.99f, 201.02f),
+        vec3f(3.1f, 505.442f, 86.45f),
+        vec3f(101.69f, 0.179f, 11.11f),
+        vec3f(122.0f, 667.911f, 303.909f),
+    };
+    
+    require_vec(v[0] - v[1], vec3f(-5.0f, -77.79f, -197.02f));
+}
+
+TEST_CASE("construct vec from swizzle", "[swizzle]")
+{
+    vec3f v[] = {
+        {11.0f, 22.0f, 33.0f},
+        {101.0f, 202.0f, 303.0f},
+    };
+    
+    vec3f s1 = v[0].zyx;
+    require_vec(s1, {33.0f, 22.0f, 11.0f});
+    
+    vec3f s2 = v[1].xxx;
+    require_vec(s2, {101.0f, 101.0f, 101.0f});
+}
+
+TEST_CASE("assign vec from swizzle", "[swizzle]")
+{
+    vec3f v[] = {
+        {11.0f, 22.0f, 33.0f},
+        {101.0f, 202.0f, 303.0f},
+    };
+    
+    vec3f s1 = vec3f::zero();
+    s1 = v[0].yyy;
+    require_vec(s1, {22.0f, 22.0f, 22.0f});
+    
+    vec3f s2 = vec3f::one();
+    s2 = v[1].zxy;
+    require_vec(s2, {303.0f, 101.0f, 202.0f});
+}
+
+TEST_CASE("construct truncated vec from swizzle", "[swizzle]")
+{
+    vec3f v[] = {
+        {11.0f, 22.0f, 33.0f},
+        {101.0f, 202.0f, 303.0f},
+    };
+    
+    vec2f s1 = v[0].yz;
+    require_vec(s1, {22.0f, 33.0f});
+    
+    vec2f s2 = v[1].xy;
+    require_vec(s2, {101.0f, 202.0f});
+}
+
+TEST_CASE("assign truncated vec from swizzle", "[swizzle]")
+{
+    vec3f v[] = {
+        {11.0f, 22.0f, 33.0f},
+        {101.0f, 202.0f, 303.0f},
+    };
+    
+    vec2f s1 = vec2f::zero();
+    s1 = v[0].yz;
+    require_vec(s1, {22.0f, 33.0f});
+    
+    vec2f s2 = vec2f::one();
+    s2 = v[1].xy;
+    require_vec(s2, {101.0f, 202.0f});
 }
