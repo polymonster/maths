@@ -11,6 +11,8 @@ typedef unsigned int u32;
 typedef int s32;
 typedef float f32;
 
+using namespace maths;
+
 namespace
 {
     static const f32 k_e = 0.0001f;
@@ -20,6 +22,11 @@ namespace
     {
         for(int i = 0; i < N; ++i)
             REQUIRE( x[i] == Approx(r[i]).epsilon(k_e) );
+    }
+    
+    void require_result(const bool a, const bool b)
+    {
+        REQUIRE( a == b );
     }
 }
 
@@ -109,4 +116,15 @@ TEST_CASE("assign truncated vec from swizzle", "[swizzle]")
     vec2f s2 = vec2f::one();
     s2 = v[1].xy;
     require_vec(s2, {101.0f, 202.0f});
+}
+
+TEST_CASE("ray vs obb", "[intersect]")
+{
+    const mat4 mat = {0.00036914f, -0.98677f, 0.582716f, -3.88f, 0.000385434f, 0.0799017f, 7.19645f, -6.97f, -0.67f, -0.000497855f, 0.00445967f, 1.69f, 0.0f, 0.0f, 0.0f, 1.0f};
+    const vec3f r1 = {0.42, 9.87, -4.97};
+    const vec3f rv = {0.375507, 0.403323, -0.834461};
+    vec3f ip;
+    bool result = ray_vs_obb(mat, r1, rv, ip);
+    std::cout << "res: " << result;
+    require_result(result,0);
 }

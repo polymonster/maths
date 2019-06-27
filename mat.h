@@ -11,7 +11,7 @@ struct Mat
     // Constructors
     Mat(){};
 
-    Mat(f32* data)
+    Mat(T* data)
     {
         for (size_t i = 0; i < R * C; ++i)
             m[i] = data[i];
@@ -27,6 +27,57 @@ struct Mat
                 m.at(r, c) = other.at(r, c);
             }
         }
+    }
+    
+    // common ctrs for initializer lists
+    Mat<R, C, T>(T v00, T v01,
+                 T v10, T v11)
+    {
+        static_assert(R == 2 && C == 2, "error: trying to construct matrix of incorrect dimension");
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v10;
+        m[3] = v11;
+    }
+    
+    Mat<R, C, T>(T v00, T v01, T v02,
+                 T v10, T v11, T v12,
+                 T v20, T v21, T v22)
+    {
+        static_assert(R == 3 && C == 4, "error: trying to construct matrix of incorrect dimension");
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v02;
+        m[3] = v10;
+        m[4] = v11;
+        m[5] = v12;
+        m[6] = v20;
+        m[7] = v21;
+        m[8] = v22;
+    }
+    
+    Mat<R, C, T>(T v00, T v01, T v02, T v03,
+                 T v10, T v11, T v12, T v13,
+                 T v20, T v21, T v22, T v23,
+                 T v30, T v31, T v32, T v33)
+    {
+        static_assert(R == 4 && C == 4, "error: trying to construct matrix of incorrect dimension");
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v02;
+        m[3] = v03;
+        m[4] = v10;
+        m[5] = v11;
+        m[6] = v12;
+        m[7] = v13;
+        m[8] = v20;
+        m[9] = v21;
+        m[10] = v22;
+        m[11] = v23;
+        m[12] = v30;
+        m[13] = v31;
+        m[14] = v32;
+        m[15] = v33;
     }
 
     static Mat<R, C, T> create_identity();
