@@ -23,7 +23,7 @@ namespace
     }
 }
 
-TEST_CASE( "vec3f operator +", "[vec3f]" )
+TEST_CASE( "vec operator +", "[vec]" )
 {
     vec3f v[] = {
         vec3f(1.0f, 2.2f, 4.0f),
