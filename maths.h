@@ -1,5 +1,4 @@
-#ifndef _maths_h
-#define _maths_h
+#pragma once
 
 #include "mat.h"
 #include "quat.h"
@@ -18,18 +17,29 @@ namespace maths
         BEHIND     = 1,
         INFRONT    = 2,
     };
+    
+    struct transform
+    {
+        vec3f translation = vec3f::zero();
+        quat  rotation = quat();
+        vec3f scale = vec3f::one();
+    };
 
     // Collection of tests and useful maths functions
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
-    
+
     // Angles
     f32   deg_to_rad(f32 degree_angle);
     f32   rad_to_deg(f32 radian_angle);
     vec3f azimuth_altitude_to_xyz(f32 azimuth, f32 altitude);
     void  xyz_to_azimuth_altitude(vec3f v, f32& azimuth, f32& altitude);
 
+    // Colours
+    vec3f rgb_to_hsv(vec3f rgb);
+    vec3f hsv_to_rgb(vec3f hsv);
+    
     // Projection
     vec3f project_to_ndc(const vec3f& p, const mat4& view_projection);
     vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
@@ -84,6 +94,71 @@ namespace maths
     inline f32 rad_to_deg(f32 radian_angle)
     {
         return (radian_angle * M_180_OVER_PI);
+    }
+    
+    // Convert rgb [0-1] to hsv [0-1]
+    inline vec3f rgb_to_hsv(vec3f rgb)
+    {
+        f32 r = rgb.r;
+        f32 g = rgb.g;
+        f32 b = rgb.b;
+        
+        vec3f out_hsv;
+        
+        float K = 0.f;
+        if (g < b)
+        {
+            std::swap(g, b);
+            K = -1.f;
+        }
+        if (r < g)
+        {
+            std::swap(r, g);
+            K = -2.f / 6.f - K;
+        }
+        
+        const float chroma = r - (g < b ? g : b);
+        out_hsv.r = fabsf(K + (g - b) / (6.f * chroma + 1e-20f));
+        out_hsv.g = chroma / (r + 1e-20f);
+        out_hsv.b = r;
+        
+        return out_hsv;
+    }
+    
+    // Convert hsv [0-1] to rgb [0-1]
+    inline vec3f hsv_to_rgb(vec3f hsv)
+    {
+        f32 h = hsv.r;
+        f32 s = hsv.g;
+        f32 v = hsv.b;
+        
+        vec3f out_rgb;
+        
+        if (s == 0.0f)
+        {
+            // gray
+            out_rgb.r = out_rgb.g = out_rgb.b = v;
+            return out_rgb;
+        }
+        
+        h = fmodf(h, 1.0f) / (60.0f/360.0f);
+        int   i = (int)h;
+        float f = h - (float)i;
+        float p = v * (1.0f - s);
+        float q = v * (1.0f - s * f);
+        float t = v * (1.0f - s * (1.0f - f));
+        
+        switch (i)
+        {
+            case 0: out_rgb.r = v; out_rgb.g = t; out_rgb.b = p; break;
+            case 1: out_rgb.r = q; out_rgb.g = v; out_rgb.b = p; break;
+            case 2: out_rgb.r = p; out_rgb.g = v; out_rgb.b = t; break;
+            case 3: out_rgb.r = p; out_rgb.g = q; out_rgb.b = v; break;
+            case 4: out_rgb.r = t; out_rgb.g = p; out_rgb.b = v; break;
+            case 5: default: out_rgb.r = v; out_rgb.g = p; out_rgb.b = q; break;
+        }
+        
+        return out_rgb;
     }
 
     // Project point p by view_projection to normalised device coordinates, perfroming homogenous divide
@@ -237,20 +312,20 @@ namespace maths
 
         return d < r0;
     }
-    
+
     // Returns true if the aabb's define by minx and maxx overlap
     inline bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1)
     {
         // discard non overlaps quickly
-        for(u32 i = 0; i < 3; ++i)
+        for (u32 i = 0; i < 3; ++i)
         {
-            if(min0[i] > max1[i])
+            if (min0[i] > max1[i])
                 return false;
-            
-            if(max0[i] < min1[i])
+
+            if (max0[i] < min1[i])
                 return false;
         }
-        
+
         return true;
     }
 
@@ -559,5 +634,3 @@ namespace maths
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
 } // namespace maths
-
-#endif

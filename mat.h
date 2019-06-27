@@ -1,10 +1,9 @@
-#ifndef _mat_h_
-#define _mat_h_
+#pragma once
 
 #include "vec.h"
 #include <string.h> // memcpy linux
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 struct Mat
 {
     T m[R * C];
@@ -14,16 +13,16 @@ struct Mat
 
     Mat(f32* data)
     {
-        for (u32 i = 0; i < R * C; ++i)
+        for (size_t i = 0; i < R * C; ++i)
             m[i] = data[i];
     }
 
     template <size_t R2, size_t C2>
     Mat(const Mat<R2, C2, T>& other)
     {
-        for (u32 r = 0; r < R; ++r)
+        for (size_t r = 0; r < R; ++r)
         {
-            for (u32 c = 0; c < C; ++c)
+            for (size_t c = 0; c < C; ++c)
             {
                 m.at(r, c) = other.at(r, c);
             }
@@ -39,21 +38,18 @@ struct Mat
     Mat<R, C, T>& operator*=(const Mat<R, C, T>& rhs);
     Vec<C, T>     operator*(const Vec<C, T>& rhs) const;
 
-    T&       operator()(u32 r, u32 c);
-    const T& operator()(u32 r, u32 c) const;
+    T&       operator()(size_t r, size_t c);
+    const T& operator()(size_t r, size_t c) const;
 
     // Accessors
-    T&        at(u32 r, u32 c);
-    const T&  at(u32 r, u32 c) const;
-    Vec<R, T> get_row(u32 index) const;
-    Vec<C, T> get_column(u32 index) const;
+    T&        at(size_t r, size_t c);
+    const T&  at(size_t r, size_t c) const;
+    Vec<R, T> get_row(size_t index) const;
+    Vec<C, T> get_column(size_t index) const;
     Vec<3, T> get_translation() const;
-    Vec<3, T> get_up() const;
-    Vec<3, T> get_right() const;
-    Vec<3, T> get_fwd() const;
 
-    void set_row(u32 index, const Vec<R, T>& row);
-    void set_column(u32 index, const Vec<C, T>& col);
+    void set_row(size_t index, const Vec<R, T>& row);
+    void set_column(size_t index, const Vec<C, T>& col);
     void set_translation(const Vec<3, T>& t);
     void set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, const Vec<3, T>& at, const Vec<3, T>& pos);
 
@@ -70,73 +66,55 @@ struct Mat
 };
 
 // Accessor Functions
-template <u32 R, u32 C, typename T>
-inline T& Mat<R, C, T>::at(u32 r, u32 c)
+template <size_t R, size_t C, typename T>
+inline T& Mat<R, C, T>::at(size_t r, size_t c)
 {
     return m[r * C + c];
 }
 
-template <u32 R, u32 C, typename T>
-inline const T& Mat<R, C, T>::at(u32 r, u32 c) const
+template <size_t R, size_t C, typename T>
+inline const T& Mat<R, C, T>::at(size_t r, size_t c) const
 {
     return m[r * C + c];
 }
 
-template <u32 R, u32 C, typename T>
-inline Vec<R, T> Mat<R, C, T>::get_row(u32 index) const
+template <size_t R, size_t C, typename T>
+inline Vec<R, T> Mat<R, C, T>::get_row(size_t index) const
 {
     return Vec<R, T>(&m[index * C]);
 }
 
-template <u32 R, u32 C, typename T>
-inline Vec<C, T> Mat<R, C, T>::get_column(u32 index) const
+template <size_t R, size_t C, typename T>
+inline Vec<C, T> Mat<R, C, T>::get_column(size_t index) const
 {
     Vec<C, T> col;
-    for (u32 i = 0; i < R; ++i)
+    for (size_t i = 0; i < R; ++i)
         col[i] = at(i, index);
 
     return col;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Vec<3, T> Mat<R, C, T>::get_translation() const
 {
     return Vec<3, T>(m[3], m[7], m[11]);
 }
 
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_right() const
-{
-    return Vec<3, T>(m[0], m[4], m[2]);
-}
-
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_up() const
-{
-    return Vec<3, T>(m[4], m[5], m[6]);
-}
-
-template <u32 R, u32 C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_fwd() const
-{
-    return Vec<3, T>(m[8], m[9], m[10]);
-}
-
-template <u32 R, u32 C, typename T>
-inline void Mat<R, C, T>::set_row(u32 index, const Vec<R, T>& row)
+template <size_t R, size_t C, typename T>
+inline void Mat<R, C, T>::set_row(size_t index, const Vec<R, T>& row)
 {
     int i = index * C;
     memcpy(&m[i], &row.v, sizeof(T) * C);
 }
 
-template <u32 R, u32 C, typename T>
-inline void Mat<R, C, T>::set_column(u32 index, const Vec<C, T>& col)
+template <size_t R, size_t C, typename T>
+inline void Mat<R, C, T>::set_column(size_t index, const Vec<C, T>& col)
 {
     for (int r = 0; r < R; ++r)
         at(r, index) = col[r];
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline void Mat<R, C, T>::set_translation(const Vec<3, T>& t)
 {
     m[3]  = t.x;
@@ -144,7 +122,7 @@ inline void Mat<R, C, T>::set_translation(const Vec<3, T>& t)
     m[11] = t.z;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 void Mat<R, C, T>::set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, const Vec<3, T>& at, const Vec<3, T>& pos)
 {
     set_row(0, Vec<4, T>(right, pos.x));
@@ -154,52 +132,52 @@ void Mat<R, C, T>::set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, cons
 }
 
 // Operators
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Vec<C, T> Mat<R, C, T>::operator*(const Vec<C, T>& rhs) const
 {
     return multiply(rhs);
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::operator*(const Mat<R, C, T>& rhs) const
 {
     return multiply(rhs);
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T>& Mat<R, C, T>::operator*=(const Mat<R, C, T>& rhs)
 {
     *this = multiply(rhs);
     return *this;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::operator*(T rhs) const
 {
     return multiply(rhs);
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T>& Mat<R, C, T>::operator*=(T rhs)
 {
     *this = multiply(rhs);
     return *this;
 }
 
-template <u32 R, u32 C, typename T>
-inline T& Mat<R, C, T>::operator()(u32 r, u32 c)
+template <size_t R, size_t C, typename T>
+inline T& Mat<R, C, T>::operator()(size_t r, size_t c)
 {
     return at(r, c);
 }
 
-template <u32 R, u32 C, typename T>
-inline const T& Mat<R, C, T>::operator()(u32 r, u32 c) const
+template <size_t R, size_t C, typename T>
+inline const T& Mat<R, C, T>::operator()(size_t r, size_t c) const
 {
     return at(r, c);
 }
 
 // Computation functions
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::multiply(const Mat<R, C, T>& rhs) const
 {
     Mat<R, C, T> result;
@@ -220,11 +198,11 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(const Mat<R, C, T>& rhs) const
     return result;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
 {
     Mat<R, C, T> result;
-    for (u32 i = 0; i < R * C; ++i)
+    for (size_t i = 0; i < R * C; ++i)
     {
         result.m[i] = m[i] * scalar;
     }
@@ -232,11 +210,11 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
     return result;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Vec<4, T> Mat<R, C, T>::transform_vector(const Vec<4, T>& v) const
 {
     Vec<4, T> result;
-    for (u32 r = 0; r < R; ++r)
+    for (size_t r = 0; r < R; ++r)
     {
         result[r] = dot(v, get_row(r));
     }
@@ -244,12 +222,12 @@ inline Vec<4, T> Mat<R, C, T>::transform_vector(const Vec<4, T>& v) const
     return result;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v, T& w) const
 {
     Vec<4, T> result = Vec<4, T>(v, w);
     Vec<4, T> v4     = Vec<4, T>(v, w);
-    for (u32 r = 0; r < R; ++r)
+    for (size_t r = 0; r < R; ++r)
     {
         result[r] = dot(v4, get_row(r));
     }
@@ -258,12 +236,12 @@ inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v, T& w) const
     return result.xyz;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v) const
 {
     Vec<4, T> result = Vec<4, T>(v, 1.0);
     Vec<4, T> v4     = Vec<4, T>(v, 1.0);
-    for (u32 r = 0; r < R; ++r)
+    for (size_t r = 0; r < R; ++r)
     {
         result[r] = dot(v4, get_row(r));
     }
@@ -271,26 +249,26 @@ inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v) const
     return result.xyz;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline void Mat<R, C, T>::transpose()
 {
     Mat<R, C, T> t = this->transposed();
     *this          = t;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::transposed()
 {
     Mat<R, C, T> t;
 
-    for (u32 r = 0; r < R; ++r)
-        for (u32 c = 0; c < C; ++c)
+    for (size_t r = 0; r < R; ++r)
+        for (size_t c = 0; c < C; ++c)
             t.at(c, r) = at(r, c);
 
     return t;
 }
 
-template <u32 R, u32 C, typename T>
+template <size_t R, size_t C, typename T>
 inline Mat<R, C, T> Mat<R, C, T>::create_identity()
 {
     Mat<R, C, T> identity;
@@ -744,8 +722,5 @@ namespace mat
 typedef Mat<3, 3, f32> Mat3f;
 typedef Mat<4, 4, f32> Mat4f;
 typedef Mat<3, 4, f32> Mat34f;
-
 typedef Mat<3, 3, f32> mat3;
 typedef Mat<4, 4, f32> mat4;
-
-#endif // _MATRIX_H
