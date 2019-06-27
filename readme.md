@@ -2,7 +2,7 @@
 # maths  
 [![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
 
-Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection and geometric test and conversion functions.   
+Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions.   
 
 ## Requirements
 
