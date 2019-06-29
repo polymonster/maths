@@ -21,7 +21,7 @@ namespace
     void require(const Vec<N, T>& x, const Vec<N, T> r)
     {
         for(int i = 0; i < N; ++i)
-            REQUIRE( fabs(x[i]-r[i]) < k_e )
+            REQUIRE( fabs(x[i]-r[i]) < k_e );
     }
     
     void require(const bool a, const bool b)
