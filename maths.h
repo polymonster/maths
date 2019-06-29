@@ -85,7 +85,6 @@ namespace maths
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
 
     // Implementation -------------------------------------------------------------------------------------------------------
-
     inline f32 deg_to_rad(f32 degree_angle)
     {
         return (degree_angle * M_PI_OVER_180);
