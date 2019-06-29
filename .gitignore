@@ -1,4 +1,5 @@
 .test/test
+.gcno
 
 # Windows image file caches
 Thumbs.db
