@@ -1,2 +1,5 @@
 #!/bin/bash
-gcov-5 .test/test.cpp 
+for filename in `find . | egrep '\.cpp'`; 
+do 
+  gcov-5 -n -o . $filename > /dev/null; 
+done
