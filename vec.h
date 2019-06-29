@@ -40,7 +40,7 @@ struct Vec
     {
     }
 
-    explicit Vec<N, T>(T value_for_all)
+    Vec<N, T>(T value_for_all)
     {
         for (size_t i = 0; i < N; ++i)
             v[i] = value_for_all;
@@ -134,7 +134,7 @@ struct Vec<2, T>
     {
     }
 
-    explicit Vec<2, T>(T value_for_all)
+    Vec<2, T>(T value_for_all)
     {
         for (size_t i = 0; i < 2; ++i)
             v[i] = value_for_all;
@@ -247,7 +247,7 @@ struct Vec<3, T>
     {
     }
 
-    explicit Vec<3, T>(T value_for_all)
+    Vec<3, T>(T value_for_all)
     {
         for (size_t i = 0; i < 3; ++i)
             v[i] = value_for_all;
@@ -439,7 +439,7 @@ struct Vec<4, T>
         return *this;
     }
     
-    explicit Vec<4, T>(T value_for_all)
+    Vec<4, T>(T value_for_all)
     {
         for (size_t i = 0; i < 4; ++i)
             v[i] = value_for_all;
