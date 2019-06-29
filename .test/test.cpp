@@ -21,7 +21,7 @@ namespace
     void require(const Vec<N, T>& x, const Vec<N, T> r)
     {
         for(int i = 0; i < N; ++i)
-            REQUIRE( x[i] == Approx(r[i]).epsilon(k_e) );
+            REQUIRE( fabs(x[i]-r[i]) < k_e )
     }
     
     void require(const bool a, const bool b)
@@ -31,7 +31,7 @@ namespace
     
     void require(const float a, const float b)
     {
-        REQUIRE( a == Approx(b).epsilon(k_e) );
+        REQUIRE( fabs(a-b) < k_e );
     }
     
     void require(const u32 a, const u32 b)
