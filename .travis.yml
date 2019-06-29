@@ -4,4 +4,6 @@ matrix:
   include:
     - compiler: clang
       os: osx
-      script: ./.travis.sh
+      script: 
+        - ./.travis.sh
+        - ./.codecov.sh
