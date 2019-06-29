@@ -60,7 +60,7 @@ The intersection and geometric test functions are based on matrix, vectors and q
 
 A 3D interactive demo of the intersection functions used for debugging and testing purposes can be found in my other repository [pmtech](https://github.com/polymonster/pmtech).
 
-[![Maths](images/maths-functions.gif)](https://youtu.be/uR9lfvPL7eE)
+[<img src="https://github.com/polymonster/polymonster.github.io/raw/master/assets/demos/maths-functions.gif" width="1280" />](https://youtu.be/uR9lfvPL7eE)
 
 #### List of functions
 
