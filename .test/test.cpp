@@ -13,6 +13,11 @@ typedef float f32;
 
 using namespace maths;
 
+// template instantiation
+template struct Vec<2, f32>;
+template struct Vec<3, f32>;
+template struct Vec<4, f32>;
+
 namespace
 {
     static const f32 k_e = 0.01f;
