@@ -1,6 +1,7 @@
 
 # maths  
-[![linux](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
+[![gcc_clang](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
+[![vc2017](https://ci.appveyor.com/api/projects/status/uny5ae4bf3kp2p0m?svg=true)](https://ci.appveyor.com/project/polymonster/maths)
 [![codecov](https://codecov.io/gh/polymonster/maths/branch/master/graph/badge.svg)](https://codecov.io/gh/polymonster/maths)
 
 Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions.   
@@ -10,6 +11,18 @@ Another C++ maths library.. you might find this useful for games and graphics de
 Supported Compilers: msvc2017+, Gcc 7.0+, Clang 6.0+
 
 C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
+
+## Usage
+
+The entire library is header only, add the maths directory to your include search path and simply include:
+
+```c++
+#include "maths.h" // instersection, geometric tests and conversion functions
+#include "util.h"  // min, max, swap, smoothstep, scalar functions.. etc
+#include "vec.h"   // vector of any dimension and type
+#include "mat.h"   // matrix of any dimension and type
+#include "quat.h"  // quaternion of any type
+``` 
 
 ## Features
 
