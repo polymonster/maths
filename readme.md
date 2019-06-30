@@ -12,6 +12,18 @@ Supported Compilers: msvc2017+, Gcc 7.0+, Clang 6.0+
 
 C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
 
+## Usage
+
+The entire library is header only, add the maths directory to your include search path and simply include:
+
+```c++
+#include "maths.h" // instersection, geometric tests and conversion functions
+#include "util.h"  // min, max, swap, smoothstep, scalar functions.. etc
+#include "vec.h"   // vector of any dimension and type
+#include "mat.h"   // matrix of any dimension and type
+#include "quat.h"  // quaternion of any type
+``` 
+
 ## Features
 
 ### Scalar
