@@ -30,21 +30,21 @@ struct Mat
     }
     
     // common ctrs for initializer lists
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 2 && C2 == 2 >::type >
     Mat<R, C, T>(T v00, T v01,
                  T v10, T v11)
     {
-        static_assert(R == 2 && C == 2, "error: trying to construct matrix of incorrect dimension");
         m[0] = v00;
         m[1] = v01;
         m[2] = v10;
         m[3] = v11;
     }
     
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 3 && C2 == 3 >::type >
     Mat<R, C, T>(T v00, T v01, T v02,
                  T v10, T v11, T v12,
                  T v20, T v21, T v22)
     {
-        static_assert(R == 3 && C == 4, "error: trying to construct matrix of incorrect dimension");
         m[0] = v00;
         m[1] = v01;
         m[2] = v02;
@@ -56,12 +56,12 @@ struct Mat
         m[8] = v22;
     }
     
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 4 && C2 == 4 >::type >
     Mat<R, C, T>(T v00, T v01, T v02, T v03,
                  T v10, T v11, T v12, T v13,
                  T v20, T v21, T v22, T v23,
                  T v30, T v31, T v32, T v33)
     {
-        static_assert(R == 4 && C == 4, "error: trying to construct matrix of incorrect dimension");
         m[0] = v00;
         m[1] = v01;
         m[2] = v02;
@@ -107,11 +107,11 @@ struct Mat
     // Computation
     Mat<R, C, T> multiply(T scalar) const;
     Mat<R, C, T> multiply(const Mat<R, C, T>& rhs) const;
-
+    Vec<C, T>    multiply(const Vec<C, T>& rhs) const;
     Vec<4, T> transform_vector(const Vec<4, T>& v) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v, T& w) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v) const;
-
+    
     Mat<R, C, T> transposed();
     void         transpose();
 };
@@ -258,6 +258,18 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
         result.m[i] = m[i] * scalar;
     }
 
+    return result;
+}
+
+template <size_t R, size_t C, typename T>
+inline Vec<C, T> Mat<R, C, T>::multiply(const Vec<C, T>& v) const
+{
+    Vec<C, T> result;
+    for (size_t r = 0; r < R; ++r)
+    {
+        result[r] = dot(v, get_row(r));
+    }
+    
     return result;
 }
 
