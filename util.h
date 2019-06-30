@@ -186,7 +186,6 @@ inline void minmax(T a1, T a2, T a3, T a4, T& amin, T& amax)
 template <class T>
 inline void minmax(T a1, T a2, T a3, T a4, T a5, T& amin, T& amax)
 {
-    //@@@ the logic could be shortcircuited a lot!
     amin = min(a1, a2, a3, a4, a5);
     amax = max(a1, a2, a3, a4, a5);
 }
@@ -194,7 +193,6 @@ inline void minmax(T a1, T a2, T a3, T a4, T a5, T& amin, T& amax)
 template <class T>
 inline void minmax(T a1, T a2, T a3, T a4, T a5, T a6, T& amin, T& amax)
 {
-    //@@@ the logic could be shortcircuited a lot!
     amin = min(a1, a2, a3, a4, a5, a6);
     amax = max(a1, a2, a3, a4, a5, a6);
 }
@@ -332,51 +330,6 @@ inline unsigned int round_down_to_power_of_two(unsigned int n)
     return 1 << exponent;
 }
 
-// Transforms even the sequence 0,1,2,3,... into reasonably good random numbers
-// Challenge: improve on this in speed and "randomness"!
-// This seems to pass several statistical tests, and is a bijective map (of 32-bit unsigned ints)
-inline unsigned int randhash(unsigned int seed)
-{
-    unsigned int i = (seed ^ 0xA3C59AC3u) * 2654435769u;
-    i ^= (i >> 16);
-    i *= 2654435769u;
-    i ^= (i >> 16);
-    i *= 2654435769u;
-    return i;
-}
-
-// the inverse of randhash
-inline unsigned int unhash(unsigned int h)
-{
-    h *= 340573321u;
-    h ^= (h >> 16);
-    h *= 340573321u;
-    h ^= (h >> 16);
-    h *= 340573321u;
-    h ^= 0xA3C59AC3u;
-    return h;
-}
-
-// returns repeatable stateless pseudo-random number in [0,1]
-inline double randhashd(unsigned int seed)
-{
-    return randhash(seed) / (double)UINT_MAX;
-}
-inline float randhashf(unsigned int seed)
-{
-    return randhash(seed) / (float)UINT_MAX;
-}
-
-// returns repeatable stateless pseudo-random number in [a,b]
-inline double randhashd(unsigned int seed, double a, double b)
-{
-    return (b - a) * randhash(seed) / (double)UINT_MAX + a;
-}
-inline float randhashf(unsigned int seed, float a, float b)
-{
-    return ((b - a) * randhash(seed) / (float)UINT_MAX + a);
-}
-
 inline int intlog2(int x)
 {
     int exp = -1;
@@ -461,120 +414,4 @@ inline S cubic_interp(const S& value_neg1, const S& value0, const S& value1, con
     T wneg1, w0, w1, w2;
     cubic_interp_weights(f, wneg1, w0, w1, w2);
     return wneg1 * value_neg1 + w0 * value0 + w1 * value1 + w2 * value2;
-}
-
-template <class T>
-void zero(std::vector<T>& v)
-{
-    for (int i = (int)v.size() - 1; i >= 0; --i)
-        v[i] = 0;
-}
-
-template <class T>
-T abs_max(const std::vector<T>& v)
-{
-    T m = 0;
-    for (int i = (int)v.size() - 1; i >= 0; --i)
-    {
-        if (std::fabs(v[i]) > m)
-            m = std::fabs(v[i]);
-    }
-    return m;
-}
-
-template <class T>
-bool contains(const std::vector<T>& a, T e)
-{
-    for (unsigned int i = 0; i < a.size(); ++i)
-        if (a[i] == e)
-            return true;
-    return false;
-}
-
-template <class T>
-void add_unique(std::vector<T>& a, T e)
-{
-    for (unsigned int i = 0; i < a.size(); ++i)
-        if (a[i] == e)
-            return;
-    a.push_back(e);
-}
-
-template <class T>
-void insert(std::vector<T>& a, unsigned int index, T e)
-{
-    a.push_back(a.back());
-    for (unsigned int i = (unsigned int)a.size() - 1; i > index; --i)
-        a[i] = a[i - 1];
-    a[index] = e;
-}
-
-template <class T>
-void erase(std::vector<T>& a, unsigned int index)
-{
-    for (unsigned int i = index; i < a.size() - 1; ++i)
-        a[i] = a[i + 1];
-    a.pop_back();
-}
-
-template <class T>
-void erase_swap(std::vector<T>& a, unsigned int index)
-{
-    for (unsigned int i = index; i < a.size() - 1; ++i)
-        swap(a[i], a[i + 1]);
-    a.pop_back();
-}
-
-template <class T>
-void erase_unordered(std::vector<T>& a, unsigned int index)
-{
-    a[index] = a.back();
-    a.pop_back();
-}
-
-template <class T>
-void erase_unordered_swap(std::vector<T>& a, unsigned int index)
-{
-    swap(a[index], a.back());
-    a.pop_back();
-}
-
-template <class T>
-void find_and_erase_unordered(std::vector<T>& a, const T& doomed_element)
-{
-    for (unsigned int i = 0; i < a.size(); ++i)
-        if (a[i] == doomed_element)
-        {
-            erase_unordered(a, i);
-            return;
-        }
-}
-
-template <class T>
-void replace_once(std::vector<T>& a, const T& old_element, const T& new_element)
-{
-    for (unsigned int i = 0; i < a.size(); ++i)
-        if (a[i] == old_element)
-        {
-            a[i] = new_element;
-            return;
-        }
-}
-
-template <class T>
-void write_matlab(std::ostream& output, const std::vector<T>& a, const char* variable_name, bool column_vector = true,
-                  int significant_digits = 18)
-{
-    output << variable_name << "=[";
-    std::streamsize old_precision = output.precision();
-    output.precision(significant_digits);
-    for (unsigned int i = 0; i < a.size(); ++i)
-    {
-        output << a[i] << " ";
-    }
-    output << "]";
-    if (column_vector)
-        output << "'";
-    output << ";" << std::endl;
-    output.precision(old_precision);
 }
