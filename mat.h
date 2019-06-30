@@ -108,6 +108,7 @@ struct Mat
     Mat<R, C, T> multiply(T scalar) const;
     Mat<R, C, T> multiply(const Mat<R, C, T>& rhs) const;
     Vec<C, T>    multiply(const Vec<C, T>& rhs) const;
+    
     Vec<4, T> transform_vector(const Vec<4, T>& v) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v, T& w) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v) const;
