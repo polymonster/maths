@@ -17,6 +17,8 @@ using namespace maths;
 template struct Vec<2, f32>;
 template struct Vec<3, f32>;
 template struct Vec<4, f32>;
+template struct Mat<4, 4, f32>;
+template struct Quat<f32>;
 
 namespace
 {
