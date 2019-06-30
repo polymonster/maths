@@ -517,7 +517,7 @@ struct Vec<4, T>
 
     inline static Vec<4, T> black()
     {
-        return Vec<3, T>(0, 0, 0, 1);
+        return Vec<4, T>(0, 0, 0, 1);
     }
 
     inline static Vec<4, T> red()
