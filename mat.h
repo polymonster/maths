@@ -28,6 +28,14 @@ struct Mat
             }
         }
     }
+    
+    Mat<R, C, T>(T v00, T v01, T v02, T v03,
+                 T v10, T v11, T v12, T v13,
+                 T v20, T v21, T v22, T v23,
+                 T v30, T v31, T v32, T v33)
+    {
+        static_assert(R*C == 16, "error: trying to construct matric of incorrect dimension");
+    }
 
     static Mat<R, C, T> create_identity();
 
@@ -280,6 +288,24 @@ inline Mat<R, C, T> Mat<R, C, T>::create_identity()
                 identity.at(r, c) = 1;
 
     return identity;
+}
+
+template <size_t R, size_t C, typename T>
+std::ostream& operator<<(std::ostream& out, const Mat<R, C, T>& m)
+{
+    out << m.m[0];
+    for (size_t i = 1; i < R * C; ++i)
+        out << ", " << m.m[i];
+    return out;
+}
+
+template <size_t R, size_t C>
+std::ostream& operator<<(std::ostream& out, const Mat<R, C, float>& m)
+{
+    out << "(f32)" << m.m[0];
+    for (size_t i = 1; i < R * C; ++i)
+        out << ", " << "(f32)" << m.m[i];
+    return out;
 }
 
 namespace mat
@@ -724,3 +750,8 @@ typedef Mat<4, 4, f32> Mat4f;
 typedef Mat<3, 4, f32> Mat34f;
 typedef Mat<3, 3, f32> mat3;
 typedef Mat<4, 4, f32> mat4;
+typedef Mat<4, 4, f32> float4x4;
+typedef Mat<3, 4, f32> float3x4;
+typedef Mat<4, 3, f32> float4x3;
+typedef Mat<3, 3, f32> float3x3;
+typedef Mat<2, 2, f32> float2x2;

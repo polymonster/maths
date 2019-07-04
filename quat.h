@@ -5,7 +5,6 @@
 #include <float.h>
 #include <math.h>
 
-// only really makes sense with float or double.
 template<typename T>
 struct Quat
 {
@@ -31,13 +30,13 @@ struct Quat
     Quat  operator*(const Quat<T>& rhs) const;
     Quat& operator*=(const Quat<T>& rhs);
 
-    void  euler_angles(T z_theta, T y_theta, T x_theta);
-    void  axis_angle(Vec<3, T> axis, T w);
-    void  axis_angle(T lx, T ly, T lz, T lw);
-    void  axis_angle(Vec<4, T> v);
-    void  get_matrix(Mat<4, 4, T>& lmatrix);
-    void  from_matrix(Mat<4, 4, T> m);
-    vec3f to_euler() const;
+    void        euler_angles(T z_theta, T y_theta, T x_theta);
+    void        axis_angle(Vec<3, T> axis, T w);
+    void        axis_angle(T lx, T ly, T lz, T lw);
+    void        axis_angle(Vec<4, T> v);
+    void        get_matrix(Mat<4, 4, T>& lmatrix);
+    void        from_matrix(Mat<4, 4, T> m);
+    Vec<3, T>   to_euler() const;
 };
 
 // free funcs
@@ -331,7 +330,7 @@ inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
 }
 
 template<typename T>
-inline vec3f Quat<T>::to_euler() const
+inline Vec<3, T> Quat<T>::to_euler() const
 {
     Vec<3, T> euler;
 
@@ -353,6 +352,15 @@ inline vec3f Quat<T>::to_euler() const
     euler.z     = atan2(siny, cosy);
 
     return euler;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Quat<T>& q)
+{
+    out << q.v[0];
+    for (size_t i = 1; i < 4; ++i)
+        out << ", " << q.v[i];
+    return out;
 }
 
 typedef Quat<float> quat;

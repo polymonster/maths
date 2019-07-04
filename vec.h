@@ -40,7 +40,7 @@ struct Vec
     {
     }
 
-    explicit Vec<N, T>(T value_for_all)
+    Vec<N, T>(T value_for_all)
     {
         for (size_t i = 0; i < N; ++i)
             v[i] = value_for_all;
@@ -925,7 +925,16 @@ std::ostream& operator<<(std::ostream& out, const Vec<N, T>& v)
 {
     out << v.v[0];
     for (size_t i = 1; i < N; ++i)
-        out << ' ' << v.v[i];
+        out << ", " << v.v[i];
+    return out;
+}
+
+template <size_t N>
+std::ostream& operator<<(std::ostream& out, const Vec<N, float>& v)
+{
+    out << "(f32)" << v.v[0];
+    for (size_t i = 1; i < N; ++i)
+        out << ", " << "(f32)" << v.v[i];
     return out;
 }
 
