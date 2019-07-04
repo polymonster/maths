@@ -186,7 +186,6 @@ inline void minmax(T a1, T a2, T a3, T a4, T& amin, T& amax)
 template <class T>
 inline void minmax(T a1, T a2, T a3, T a4, T a5, T& amin, T& amax)
 {
-    //@@@ the logic could be shortcircuited a lot!
     amin = min(a1, a2, a3, a4, a5);
     amax = max(a1, a2, a3, a4, a5);
 }
@@ -194,7 +193,6 @@ inline void minmax(T a1, T a2, T a3, T a4, T a5, T& amin, T& amax)
 template <class T>
 inline void minmax(T a1, T a2, T a3, T a4, T a5, T a6, T& amin, T& amax)
 {
-    //@@@ the logic could be shortcircuited a lot!
     amin = min(a1, a2, a3, a4, a5, a6);
     amax = max(a1, a2, a3, a4, a5, a6);
 }

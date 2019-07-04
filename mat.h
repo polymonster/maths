@@ -11,7 +11,7 @@ struct Mat
     // Constructors
     Mat(){};
 
-    Mat(f32* data)
+    Mat(T* data)
     {
         for (size_t i = 0; i < R * C; ++i)
             m[i] = data[i];
@@ -29,6 +29,56 @@ struct Mat
         }
     }
     
+    // common ctrs for initializer lists
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 2 && C2 == 2 >::type >
+    Mat<R, C, T>(T v00, T v01,
+                 T v10, T v11)
+    {
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v10;
+        m[3] = v11;
+    }
+    
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 3 && C2 == 3 >::type >
+    Mat<R, C, T>(T v00, T v01, T v02,
+                 T v10, T v11, T v12,
+                 T v20, T v21, T v22)
+    {
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v02;
+        m[3] = v10;
+        m[4] = v11;
+        m[5] = v12;
+        m[6] = v20;
+        m[7] = v21;
+        m[8] = v22;
+    }
+    
+    template < size_t R2 = R, size_t C2 = C, typename = typename std::enable_if< R2 == 4 && C2 == 4 >::type >
+    Mat<R, C, T>(T v00, T v01, T v02, T v03,
+                 T v10, T v11, T v12, T v13,
+                 T v20, T v21, T v22, T v23,
+                 T v30, T v31, T v32, T v33)
+    {
+        m[0] = v00;
+        m[1] = v01;
+        m[2] = v02;
+        m[3] = v03;
+        m[4] = v10;
+        m[5] = v11;
+        m[6] = v12;
+        m[7] = v13;
+        m[8] = v20;
+        m[9] = v21;
+        m[10] = v22;
+        m[11] = v23;
+        m[12] = v30;
+        m[13] = v31;
+        m[14] = v32;
+        m[15] = v33;
+    }
     Mat<R, C, T>(T v00, T v01, T v02, T v03,
                  T v10, T v11, T v12, T v13,
                  T v20, T v21, T v22, T v23,
@@ -64,11 +114,12 @@ struct Mat
     // Computation
     Mat<R, C, T> multiply(T scalar) const;
     Mat<R, C, T> multiply(const Mat<R, C, T>& rhs) const;
-
+    Vec<C, T>    multiply(const Vec<C, T>& rhs) const;
+    
     Vec<4, T> transform_vector(const Vec<4, T>& v) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v, T& w) const;
     Vec<3, T> transform_vector(const Vec<3, T>& v) const;
-
+    
     Mat<R, C, T> transposed();
     void         transpose();
 };
@@ -215,6 +266,18 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
         result.m[i] = m[i] * scalar;
     }
 
+    return result;
+}
+
+template <size_t R, size_t C, typename T>
+inline Vec<C, T> Mat<R, C, T>::multiply(const Vec<C, T>& v) const
+{
+    Vec<C, T> result;
+    for (size_t r = 0; r < R; ++r)
+    {
+        result[r] = dot(v, get_row(r));
+    }
+    
     return result;
 }
 

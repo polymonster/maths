@@ -1,14 +1,34 @@
 
 # maths  
-[![Build Status](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
+[![gcc_clang](https://travis-ci.org/polymonster/maths.svg?branch=master)](https://travis-ci.org/polymonster/maths)
+[![vc2017](https://ci.appveyor.com/api/projects/status/uny5ae4bf3kp2p0m?svg=true)](https://ci.appveyor.com/project/polymonster/maths)
+[![codecov](https://codecov.io/gh/polymonster/maths/branch/master/graph/badge.svg)](https://codecov.io/gh/polymonster/maths)
 
-Another C++ maths library, this has been built up over the years and is now pretty comprehensive. C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
+Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions.   
+
+## Requirements
+
+Supported Compilers: msvc2017+, Gcc 7.0+, Clang 6.0+
+
+C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
+
+## Usage
+
+The entire library is header only, add the maths directory to your include search path and simply include:
+
+```c++
+#include "maths.h" // instersection, geometric tests and conversion functions
+#include "util.h"  // min, max, swap, smoothstep, scalar functions.. etc
+#include "vec.h"   // vector of any dimension and type
+#include "mat.h"   // matrix of any dimension and type
+#include "quat.h"  // quaternion of any type
+``` 
 
 ## Features
 
 ### Scalar
 
-All arithmetic is done using scalar types, I love SIMD but find that best results come from writing bespoke code for a dedicated task or platform and favour the simplicity here of the scalar implementation for general purpose games / graphics code.
+All arithmetic is done using scalar types, I find that best results with SIMD come from writing bespoke code for a dedicated task or platform and favour the simplicity here of the scalar implementation for general purpose games / graphics code.
 
 ### Templated
 
@@ -39,6 +59,12 @@ vec2f v2 = swizz.yz;
 
 // assign truncated
 swizz.wx = v.xy;
+
+// arithmetic on swizzles
+swizz.xyz *= swizz2.www;
+
+// swizzle / scalar arithmentic
+vec2 v2 = swizz.xy * 2.0f;
 ```
 
 ### Intersection Tests and Utility Functions
@@ -47,7 +73,7 @@ The intersection and geometric test functions are based on matrix, vectors and q
 
 A 3D interactive demo of the intersection functions used for debugging and testing purposes can be found in my other repository [pmtech](https://github.com/polymonster/pmtech).
 
-[![Maths](images/maths-functions.gif)](https://youtu.be/uR9lfvPL7eE)
+[<img src="https://github.com/polymonster/polymonster.github.io/blob/master/assets/demos/maths_functions.gif" width="1280" />](https://youtu.be/uR9lfvPL7eE)
 
 #### List of functions
 

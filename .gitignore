@@ -1,3 +1,7 @@
+.test/test
+*.gcno
+*.gcda
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

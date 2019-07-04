@@ -10,27 +10,6 @@
 #undef max
 #endif
 
-// Defines a thin wrapper around fixed size C-style arrays, using template parameters,
-// which is useful for dealing with vectors of different dimensions.
-// For example, float[3] is equivalent to Vec<3,float>.
-// Entries in the vector are accessed with the overloaded [] operator, so
-// for example if x is a Vec<3,float>, then the middle entry is x[1].
-// For convenience, there are a number of typedefs for abbreviation:
-//   Vec<3,float> -> Vec3f
-//   Vec<2,int>   -> Vec2i
-// and so on.
-// Arithmetic operators are appropriately overloaded, and functions are defined
-// for additional operations (such as dot-products, norms, cross-products, etc.)
-
-// Vec3, Vec3 and Vec4 have template specialisations,
-// this provides x, y, z and w members union (with r, g, b and a)
-// additional xy, xyz members are provided to truncate to a smaller vec
-// swizzles can be also performed in shader style xx, yy, yx... etc.
-
-// functions for quickly intialising common values provided:
-// one(), zero(), unit_x(), unit_y(), unit_z()
-// red(), green(), blue(), magenta(), yellow(), cyan() for colours
-
 template <size_t N, typename T>
 struct Vec
 {
@@ -134,7 +113,7 @@ struct Vec<2, T>
     {
     }
 
-    explicit Vec<2, T>(T value_for_all)
+    Vec<2, T>(T value_for_all)
     {
         for (size_t i = 0; i < 2; ++i)
             v[i] = value_for_all;
@@ -247,7 +226,7 @@ struct Vec<3, T>
     {
     }
 
-    explicit Vec<3, T>(T value_for_all)
+    Vec<3, T>(T value_for_all)
     {
         for (size_t i = 0; i < 3; ++i)
             v[i] = value_for_all;
@@ -439,7 +418,7 @@ struct Vec<4, T>
         return *this;
     }
     
-    explicit Vec<4, T>(T value_for_all)
+    Vec<4, T>(T value_for_all)
     {
         for (size_t i = 0; i < 4; ++i)
             v[i] = value_for_all;
@@ -517,7 +496,7 @@ struct Vec<4, T>
 
     inline static Vec<4, T> black()
     {
-        return Vec<3, T>(0, 0, 0, 1);
+        return Vec<4, T>(0, 0, 0, 1);
     }
 
     inline static Vec<4, T> red()
