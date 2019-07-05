@@ -79,13 +79,6 @@ struct Mat
         m[14] = v32;
         m[15] = v33;
     }
-    Mat<R, C, T>(T v00, T v01, T v02, T v03,
-                 T v10, T v11, T v12, T v13,
-                 T v20, T v21, T v22, T v23,
-                 T v30, T v31, T v32, T v33)
-    {
-        static_assert(R*C == 16, "error: trying to construct matric of incorrect dimension");
-    }
 
     static Mat<R, C, T> create_identity();
 
