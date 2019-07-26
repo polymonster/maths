@@ -62,12 +62,14 @@ namespace maths
     // todo: obb vs obb
 
     // Closest Point / Point Test
+    template<size_t N, typename T>
+    bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0);
     bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-    bool point_inside_aabb(const vec3f& min, const vec3f& max, const vec3f& p0);
     bool point_inside_obb(const mat4& mat, const vec3f& p);
     bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
     bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
-
+    bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
+    
     vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
     vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
     vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
@@ -85,6 +87,9 @@ namespace maths
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
+    
+    // Convex Hull
+    void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     
     // Implementation -------------------------------------------------------------------------------------------------------
     inline f32 deg_to_rad(f32 degree_angle)
@@ -277,17 +282,13 @@ namespace maths
     }
     
     // Returns true is point p0 is inside aabb define by min and max
-    inline bool point_inside_aabb(const vec3f& min, const vec3f& max, const vec3f& p0)
+    template<size_t N, typename T>
+    inline bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0)
     {
-        if (p0.x < min.x || p0.x > max.x)
-            return false;
-        
-        if (p0.y < min.y || p0.y > max.y)
-            return false;
-        
-        if (p0.z < min.z || p0.z > max.z)
-            return false;
-        
+        for(size_t i = 0; i < N; ++i)
+            if(p0.v[i] < min.v[i] || p0.v[i] > max.v[i])
+                return false;
+
         return true;
     }
     
@@ -350,6 +351,30 @@ namespace maths
             return true;
         
         return false;
+    }
+    
+    // Return true if point p is inside convex hull defined by point list hull, with clockwise winding
+    // ... use convex_hull_from_points to generate a compatible convex hull from point cloud.
+    bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull)
+    {
+        vec3f p0 = vec3f(p.xy, 0.0f);
+        
+        size_t ncp = hull.size();
+        for(size_t i = 0; i < ncp; ++i)
+        {
+            size_t i2 = (i+1)%ncp;
+            
+            vec3f p1 = vec3f(hull[i].xy, 0.0f);
+            vec3f p2 = vec3f(hull[i2].xy, 0.0f);
+            
+            vec3f v1 = p2 - p1;
+            vec3f v2 = p0 - p1;
+            
+            if(cross(v2,v1).z > 0.0f)
+                return false;
+        }
+        
+        return true;
     }
     
     // Returns the closest point from p0 on sphere s0 with radius r0
@@ -450,7 +475,7 @@ namespace maths
     // find distance x0 is from segment x1-x2
     inline float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2)
     {
-        Vec3f  dx(x2 - x1);
+        vec3f  dx(x2 - x1);
         double m2 = mag2(dx);
         // find parameter value of closest point on segment
         float s12 = (float)(dot(x2 - x0, dx) / m2);
@@ -542,7 +567,7 @@ namespace maths
         f32 ld = dist(p, cl[0]);
         cp     = cl[0];
         
-        for (int l = 1; l < 3; ++l)
+        for (size_t l = 1; l < 3; ++l)
         {
             f32 ldd = dist(p, cl[l]);
             
@@ -634,4 +659,56 @@ namespace maths
         
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
+    
+    // Returns a convex hull wound clockwise from point cloud "points"
+    void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& points)
+    {
+        std::vector<vec3f> to_sort;
+        
+        for (auto& p : points)
+            to_sort.push_back({p, 0.0f});
+        
+        //find right most
+        vec3f cur = to_sort[0];
+        size_t curi = 0;
+        for (size_t i = 1; i < to_sort.size(); ++i)
+        {
+            if(to_sort[i].x > cur.x)
+                if(to_sort[i].y > cur.y)
+                {
+                    cur = to_sort[i];
+                    curi = i;
+                }
+        }
+        
+        // wind
+        hull.push_back(cur.xy);
+        for(;;)
+        {
+            size_t rm = 0;
+            vec3f x1 = to_sort[(curi+1)%to_sort.size()];
+            for (size_t i = 0; i < to_sort.size(); ++i)
+            {
+                if(i == curi)
+                    continue;
+                
+                vec3f x2 = to_sort[i];
+                vec3f v1 = x1 - cur;
+                vec3f v2 = x2 - cur;
+                vec3f cp = cross(v2, v1);
+                if (cp.z > 0.0f)
+                {
+                    x1 = to_sort[i];
+                    rm = i;
+                }
+            }
+            if(almost_equal(x1.xy, hull[0], 0.0001f))
+                break;
+            
+            cur = x1;
+            curi = rm;
+            hull.push_back(x1.xy);
+        }
+    }
+    
 } // namespace maths
