@@ -24,6 +24,8 @@ struct Swizzle
         std::vector<size_t> i1 = {SW...};
         for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[x];
+        
+        return *this;
     }
     
     operator Vec<W, T> () const

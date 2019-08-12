@@ -355,7 +355,7 @@ namespace maths
     
     // Return true if point p is inside convex hull defined by point list hull, with clockwise winding
     // ... use convex_hull_from_points to generate a compatible convex hull from point cloud.
-    bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull)
+    inline bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull)
     {
         vec3f p0 = vec3f(p.xy, 0.0f);
         
@@ -661,7 +661,7 @@ namespace maths
     }
     
     // Returns a convex hull wound clockwise from point cloud "points"
-    void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& points)
+    inline void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& points)
     {
         std::vector<vec3f> to_sort;
         
