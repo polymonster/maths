@@ -22,7 +22,7 @@ struct Swizzle
     {
         static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
         std::vector<size_t> i1 = {SW...};
-        for(size_t x = 0; x < 2; ++x)
+        for(size_t x = 0; x < W; ++x)
             v[i1[x]] = lhs.v[x];
         
         return *this;
