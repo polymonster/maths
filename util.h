@@ -285,6 +285,19 @@ inline T smooth_step(T r, T r_lower, T r_upper, T value_lower, T value_upper)
     return value_lower + smooth_step((r - r_lower) / (r_upper - r_lower)) * (value_upper - value_lower);
 }
 
+// its like smooth step but with linear interpolation
+template <class T>
+inline T linear_step(T l, T r, T v)
+{
+    if (v <= l)
+        return 0.0;
+    
+    if (v >= r)
+        return 1.0;
+
+    return (v - l) / (r - l);
+}
+
 // only makes sense with T=float or double
 template <class T>
 inline T ramp(T r)
@@ -414,4 +427,20 @@ inline S cubic_interp(const S& value_neg1, const S& value0, const S& value1, con
     T wneg1, w0, w1, w2;
     cubic_interp_weights(f, wneg1, w0, w1, w2);
     return wneg1 * value_neg1 + w0 * value0 + w1 * value1 + w2 * value2;
+}
+
+template<class T>
+inline T map_to_range(T in_range_start, T in_range_end, T out_range_start, T out_range_end, T v)
+{
+    T slope = 1.0 * (out_range_end - out_range_start) / (in_range_end - in_range_start);
+    return out_range_start + slope * (v - in_range_start);
+}
+
+template<class T>
+inline T catmul_rom_spline(T t, T p0, T p1, T p2, T p3)
+{
+    return 0.5 *  ((2.0 * p1) +
+        (p2 - p0) * t +
+        (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * (t * t) +
+        (-1.0 * p0 + 3.0 * p1 - 3.0 * p2 + p3) * (t * t * t));
 }
