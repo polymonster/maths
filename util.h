@@ -437,10 +437,10 @@ inline T map_to_range(T in_range_start, T in_range_end, T out_range_start, T out
 }
 
 template<class T>
-inline T catmul_rom_spline(T t, T p0, T p1, T p2, T p3)
+inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3)
 {
-    return 0.5 *  ((2.0 * p1) +
+    return 0.5f *  ((2.0f * p1) +
         (p2 - p0) * t +
-        (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * (t * t) +
-        (-1.0 * p0 + 3.0 * p1 - 3.0 * p2 + p3) * (t * t * t));
+        (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * (t * t) +
+        (-1.0f * p0 + 3.0f * p1 - 3.0f * p2 + p3) * (t * t * t));
 }
