@@ -94,12 +94,12 @@ namespace maths
     // Implementation -------------------------------------------------------------------------------------------------------
     inline f32 deg_to_rad(f32 degree_angle)
     {
-        return (degree_angle * M_PI_OVER_180);
+        return (degree_angle * (f32)M_PI_OVER_180);
     }
     
     inline f32 rad_to_deg(f32 radian_angle)
     {
-        return (radian_angle * M_180_OVER_PI);
+        return (radian_angle * (f32)M_180_OVER_PI);
     }
     
     // Convert rgb [0-1] to hsv [0-1]
@@ -181,7 +181,7 @@ namespace maths
     {
         vec3f ndc = project_to_ndc(p, view_projection);
         vec3f sc  = ndc * 0.5f + 0.5f;
-        sc.xy *= vec2f(viewport.x, viewport.y);
+        sc.xy *= vec2f((f32)viewport.x, (f32)viewport.y);
         return sc;
     }
     

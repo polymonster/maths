@@ -432,7 +432,7 @@ inline S cubic_interp(const S& value_neg1, const S& value0, const S& value1, con
 template<class T>
 inline T map_to_range(T in_range_start, T in_range_end, T out_range_start, T out_range_end, T v)
 {
-    T slope = 1.0 * (out_range_end - out_range_start) / (in_range_end - in_range_start);
+    T slope = 1.0f * (out_range_end - out_range_start) / (in_range_end - in_range_start);
     return out_range_start + slope * (v - in_range_start);
 }
 
