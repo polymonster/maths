@@ -685,8 +685,8 @@ namespace maths
         hull.push_back(cur.xy);
         for(;;)
         {
-            size_t rm = 0;
-            vec3f x1 = to_sort[(curi+1)%to_sort.size()];
+            size_t rm = (curi+1)%to_sort.size();
+            vec3f x1 = to_sort[rm];
             for (size_t i = 0; i < to_sort.size(); ++i)
             {
                 if(i == curi)
