@@ -61,7 +61,7 @@ namespace maths
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
     // todo: obb vs obb
 
-    // Closest Point / Point Test
+    // Point Test
     template<size_t N, typename T>
     bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0);
     bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
@@ -70,13 +70,18 @@ namespace maths
     bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
     
-    vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
-    vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
-    vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
-    vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-    vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
-    vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
+    // Closest Point
+    template<size_t N, typename T>
+    Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
+    vec3f     closest_point_on_obb(const mat4& mat, const vec3f& p);
+    vec3f     closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+    vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
+    vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
+    vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
 
+    // Point Distance
+    template<size_t N, typename T>
+    T     point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
     float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
 
@@ -91,7 +96,10 @@ namespace maths
     // Convex Hull
     void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     
+    //
     // Implementation -------------------------------------------------------------------------------------------------------
+    //
+    
     inline f32 deg_to_rad(f32 degree_angle)
     {
         return (degree_angle * M_PI_OVER_180);
@@ -386,12 +394,12 @@ namespace maths
         return cp;
     }
     
-    // Returns closest point on aabb defined by aabb_min -> aabb_max to the point s0
-    inline vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max)
+    // Returns closest point on aabb defined by aabb_min -> aabb_max to the point p0
+    template<size_t N, typename T>
+    inline Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max)
     {
-        vec3f t1 = max_union(s0, aabb_min);
-        vec3f t2 = min_union(t1, aabb_max);
-        return t2;
+        Vec<N, T> t1 = max_union(p0, aabb_min);
+        return min_union(t1, aabb_max);
     }
     
     // Returns the closest point to p on the line segment l1 to l2
@@ -470,6 +478,14 @@ namespace maths
         f32   t  = dot(v1, rV);
         
         return r0 + rV * t;
+    }
+    
+    // find distance p0 is from aabb define by aabb_min -> aabb_max
+    template<size_t N, typename T>
+    inline T point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max)
+    {
+        Vec<N, T> cp = closest_point_on_aabb(p0, aabb_min, aabb_max);
+        return dist(cp, p0);
     }
     
     // find distance x0 is from segment x1-x2
@@ -685,8 +701,8 @@ namespace maths
         hull.push_back(cur.xy);
         for(;;)
         {
-            size_t rm = 0;
-            vec3f x1 = to_sort[(curi+1)%to_sort.size()];
+            size_t rm = (curi+1)%to_sort.size();
+            vec3f x1 = to_sort[rm];
             for (size_t i = 0; i < to_sort.size(); ++i)
             {
                 if(i == curi)

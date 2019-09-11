@@ -2613,3 +2613,38 @@ TEST_CASE( "Point Inside Cone", "[maths]")
         REQUIRE(require_func(result,bool(0)));
     }
 }
+TEST_CASE( "Point AABB Distance", "[maths]")
+{
+    {
+        //point_aabb_distance--------------------------
+        const vec2f p0 = {(f32)233.960938, (f32)277.550781};
+        const vec2f aabb_min = {(f32)172.299042, (f32)266.398956};
+        const vec2f aabb_max = {(f32)304.234772, (f32)287.898956};
+        f32 result = point_aabb_distance(p0, aabb_min, aabb_max);
+        REQUIRE(require_func(result,float(0.0)));
+    }
+    {
+        //point_aabb_distance--------------------------
+        const vec2f p0 = {(f32)233.960938, (f32)277.550781};
+        const vec2f aabb_min = {(f32)193.332703, (f32)505.797485};
+        const vec2f aabb_max = {(f32)291.221558, (f32)532.797485};
+        f32 result = point_aabb_distance(p0, aabb_min, aabb_max);
+        REQUIRE(require_func(result,float(228.246704)));
+    }
+    {
+        //point_aabb_distance--------------------------
+        const vec2f p0 = {(f32)274.113281, (f32)513.644531};
+        const vec2f aabb_min = {(f32)172.299042, (f32)266.398956};
+        const vec2f aabb_max = {(f32)304.234772, (f32)287.898956};
+        f32 result = point_aabb_distance(p0, aabb_min, aabb_max);
+        REQUIRE(require_func(result,float(255.745575)));
+    }
+    {
+        //point_aabb_distance--------------------------
+        const vec2f p0 = {(f32)274.113281, (f32)513.644531};
+        const vec2f aabb_min = {(f32)193.332703, (f32)505.797485};
+        const vec2f aabb_max = {(f32)291.221558, (f32)532.797485};
+        f32 result = point_aabb_distance(p0, aabb_min, aabb_max);
+        REQUIRE(require_func(result,float(0.0)));
+    }
+}
