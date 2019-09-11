@@ -22,7 +22,7 @@ template struct Quat<f32>;
 
 namespace
 {
-    static const f32 k_e = 0.01f;
+    static const f32 k_e = 0.1f;
     
     template <size_t N, class T>
     bool require_func(const Vec<N, T>& x, const Vec<N, T> r)
