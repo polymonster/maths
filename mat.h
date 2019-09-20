@@ -776,6 +776,23 @@ namespace mat
     }
 
     template <typename T>
+    inline Mat<4, 4, T> create_perspective_projection(T fov, T aspect, T znear, T zfar)
+    {
+        T tfov = tan(fov * 0.5);
+        T right = tfov * aspect * znear;
+        T left = -right;
+        
+        T bottom = tfov * znear;
+        T top = -bottom;
+        
+        // swap to these for Y-up
+        //T top = tfov * znear;
+        //T bottom = -top;
+        
+        return create_perspective_projection(left, right, bottom, top, znear, zfar);
+    }
+
+    template <typename T>
     inline Mat<4, 4, T> create_orthographic_projection(T left, T right, T bottom, T top, T znear, T zfar)
     {
         T& l = left;

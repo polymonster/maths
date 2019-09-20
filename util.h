@@ -444,3 +444,95 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3)
         (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * (t * t) +
         (-1.0f * p0 + 3.0f * p1 - 3.0f * p2 + p3) * (t * t * t));
 }
+
+template<class T>
+inline T impulse(T k, T x)
+{
+    const T h = k * x;
+    return h * exp(1.0 - h);
+}
+
+template<class T>
+inline T cubic_pulse(T c, T w, T x)
+{
+    x = fabs(x - c);
+    if (x > w) return 0.0;
+    x /= w;
+    return 1.0 - x * x*(3.0 - 2.0*x);
+}
+
+template<class T>
+inline T exp_step(T x, T k, T n)
+{
+    return exp(-k * pow(x, n));
+}
+
+template<class T>
+inline T parabola(T x, T k)
+{
+    return pow(4.0 * x * (1.0 - x), k);
+
+}
+
+template<class T>
+inline T pcurve(T x, T a, T b)
+{
+    T k = pow(a + b, a + b) / (pow(a, a)*pow(b, b));
+    return k * pow(x, a) * pow(1.0 - x, b);
+}
+
+template<class T>
+inline T smooth_start2(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t /= d;
+    return c * t*t + b;
+}
+
+template<class T>
+inline T smooth_start3(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t /= d;
+    return c * t*t*t + b;
+}
+
+template<class T>
+inline T smooth_start4(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t /= d;
+    return c * t*t*t*t + b;
+}
+
+template<class T>
+inline T smooth_start5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t /= d;
+    return c * t*t*t*t*t + b;
+}
+
+template<class T>
+inline T smooth_stop2(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t /= d;
+    return -c * t*t(t - 2) + b;
+}
+
+template<class T>
+inline T smooth_stop3(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t = t / d - 1;
+    return c * (t*t*t + 1) + b;
+}
+
+template<class T>
+inline T smooth_stop4(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t = t / d - 1;
+    return -c * (t*t*t*t - 1) + b;
+}
+
+template<class T>
+inline T smooth_stop5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
+{
+    t = t / d - 1;
+    return -c * (t*t*t*t*t + 1) + b;
+}
