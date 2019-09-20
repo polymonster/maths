@@ -88,13 +88,15 @@ namespace maths
     // Ray / Line
     f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
+    bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
     
     // Convex Hull
-    void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
+    void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
+    vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
     
     //
     // Implementation -------------------------------------------------------------------------------------------------------
@@ -251,6 +253,18 @@ namespace maths
         f32 t = -(dot(r0, xN) + d) / dot(rV, xN);
         
         return r0 + (rV * t);
+    }
+    
+    // Returns true if the ray (origin r0, direction rv) intersects with the triangle (t0,t1,t2)
+    // If it does intersect, ip is set to the intersectin point
+    inline bool ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
+    {
+        vec3f n = get_normal(t0, t1, t2);
+        vec3f p = ray_plane_intersect(r0, rv, t0, n);
+        bool hit = point_inside_triangle(p, t0, t1, t2);
+        if(hit)
+            ip = p;
+        return hit;
     }
     
     // Returns the classification of an aabb vs a plane aabb defined by min and max
@@ -725,6 +739,14 @@ namespace maths
             curi = rm;
             hull.push_back(x1.xy);
         }
+    }
+    
+    inline vec2f get_convex_hull_centre(const std::vector<vec2f>& hull)
+    {
+        vec2f cp = vec2f::zero();
+        for(auto& p : hull)
+            cp += p;
+        return cp / (f32)hull.size();
     }
     
 } // namespace maths
