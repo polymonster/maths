@@ -107,28 +107,40 @@ bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f&
 bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
 // todo: obb vs obb
 
-// Closest Point / Point Test
+// Point Test
+template<size_t N, typename T>
+bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0);
 bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-bool point_inside_aabb(const vec3f& min, const vec3f& max, const vec3f& p0);
 bool point_inside_obb(const mat4& mat, const vec3f& p);
 bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
 bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
+bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
 
-vec3f closest_point_on_obb(const mat4& mat, const vec3f& p);
-vec3f closest_point_on_aabb(const vec3f& s0, const vec3f& aabb_min, const vec3f& aabb_max);
-vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
-vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
-vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
+// Closest Point
+template<size_t N, typename T>
+Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
+vec3f     closest_point_on_obb(const mat4& mat, const vec3f& p);
+vec3f     closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
+vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
+vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
 
+// Point Distance
+template<size_t N, typename T>
+T     point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
 float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
 float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
 
 // Ray / Line
 f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
 vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
+bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
 bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
 bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
 bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
 bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
+
+// Convex Hull
+void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
+vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
 ```
