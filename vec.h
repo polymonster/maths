@@ -446,6 +446,15 @@ struct Vec<4, T>
         v[3] = v3;
     }
 
+    Vec<4, T>(const Vec<2, T>& v2, T _z, T _w)
+    {
+        for (size_t i = 0; i < 2; ++i)
+            v[i] = (T)v2[i];
+
+        v[2] = _z;
+        v[3] = _w;
+    }
+    
     Vec<4, T>(const Vec<3, T>& v3, T _w)
     {
         for (size_t i = 0; i < 3; ++i)
