@@ -537,6 +537,11 @@ struct Vec<4, T>
     {
         return Vec<4, T>(1, 0, 1, 1);
     }
+    
+    inline static Vec<4, T> orange()
+    {
+        return Vec<4, T>(1, 0.5, 0, 1);
+    }
 };
 
 // Operators
