@@ -73,8 +73,9 @@ namespace maths
     // Closest Point
     template<size_t N, typename T>
     Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
+    template<size_t N, typename T>
+    Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p);
     vec3f     closest_point_on_obb(const mat4& mat, const vec3f& p);
-    vec3f     closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
     vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
     vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
@@ -417,13 +418,14 @@ namespace maths
     }
     
     // Returns the closest point to p on the line segment l1 to l2
-    inline vec3f closest_point_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p)
+    template<size_t N, typename T>
+    inline Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p)
     {
-        vec3f v1 = p - l1;
-        vec3f v2 = normalised(l2 - l1);
+        Vec<N, T>  v1 = p - l1;
+        Vec<N, T>  v2 = normalised(l2 - l1);
         
-        f32 d = dist(l1, l2);
-        f32 t = dot(v2, v1);
+        T d = dist(l1, l2);
+        T t = dot(v2, v1);
         
         if (t <= 0)
             return l1;
