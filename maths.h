@@ -83,7 +83,8 @@ namespace maths
     // Point Distance
     template<size_t N, typename T>
     T     point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
-    float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2);
+    template<size_t N, typename T>
+    T     point_segment_distance(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2);
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
 
     // Ray / Line
@@ -505,12 +506,13 @@ namespace maths
     }
     
     // find distance x0 is from segment x1-x2
-    inline float point_segment_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2)
+    template<size_t N, typename T>
+    inline T point_segment_distance(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2)
     {
-        vec3f  dx(x2 - x1);
-        double m2 = mag2(dx);
+        Vec<N, T> dx(x2 - x1);
+        T m2 = mag2(dx);
         // find parameter value of closest point on segment
-        float s12 = (float)(dot(x2 - x0, dx) / m2);
+        T s12 = (T)(dot(x2 - x0, dx) / m2);
         if (s12 < 0)
         {
             s12 = 0;
