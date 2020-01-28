@@ -471,7 +471,6 @@ template<class T>
 inline T parabola(T x, T k)
 {
     return pow(4.0 * x * (1.0 - x), k);
-
 }
 
 template<class T>
@@ -535,4 +534,25 @@ inline T smooth_stop5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
     t = t / d - 1;
     return -c * (t*t*t*t*t + 1) + b;
+}
+
+template<class T>
+inline T soften_towards_edge(T c, T p, T e, T r)
+{
+    T pd = abs(e - r);
+    T cd = abs(e - c);
+    if (cd < pd)
+    {
+        T s = smooth_step<T>(cd, 0.0, r, 0.0, 1.0);
+        return lerp(p, c, s);
+    }
+    return c;
+}
+
+template<class T>
+inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
+{
+    c = soften_towards_edge(c, p, e0, r);
+    c = soften_towards_edge(c, p, e1, r);
+    return c;
 }

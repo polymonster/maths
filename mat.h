@@ -823,6 +823,7 @@ typedef Mat<4, 4, f32> Mat4f;
 typedef Mat<3, 4, f32> Mat34f;
 typedef Mat<3, 3, f32> mat3;
 typedef Mat<4, 4, f32> mat4;
+typedef Mat<2, 2, f32> mat2;
 typedef Mat<4, 4, f32> float4x4;
 typedef Mat<3, 4, f32> float3x4;
 typedef Mat<4, 3, f32> float4x3;
