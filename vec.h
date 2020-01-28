@@ -455,6 +455,15 @@ struct Vec<4, T>
         v[3] = _w;
     }
     
+    Vec<4, T>(const Vec<2, T>& v2, const Vec<2, T>& v3)
+    {
+        for (size_t i = 0; i < 2; ++i)
+            v[i] = (T)v2[i];
+            
+        for (size_t i = 0; i < 2; ++i)
+            v[i+2] = (T)v3[i];
+    }
+    
     Vec<4, T>(const Vec<3, T>& v3, T _w)
     {
         for (size_t i = 0; i < 3; ++i)
@@ -1030,6 +1039,15 @@ inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
 }
 
 template <typename T>
+inline Vec<2, T> rotate(const Vec<2, T>& a, float angle, const Vec<2, T>& pivot)
+{
+    return Vec<2, T>(
+        ((a[0] - pivot[0]) * cos(angle) - (a[1] - pivot[1]) * sin(angle)) + pivot[0],
+        ((a[0]-pivot[0]) * sin(angle) + (a[1]-pivot[1]) * cos(angle)) + pivot[1]
+        );
+}
+
+template <typename T>
 inline Vec<2, T> perp(const Vec<2, T>& a)
 {
     return Vec<2, T>(-a.v[1], a.v[0]);
@@ -1116,16 +1134,16 @@ inline Vec<N, T> floor(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
-        rounded.v[i] = (int)floor(a.v[i]);
+        rounded.v[i] = (T)floor(a.v[i]);
     return rounded;
 }
 
 template <size_t N, typename T>
-inline Vec<N, int> ceil(const Vec<N, T>& a)
+inline Vec<N, T> ceil(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
-        rounded.v[i] = (int)ceil(a.v[i]);
+        rounded.v[i] = (T)ceil(a.v[i]);
     return rounded;
 }
 
@@ -1136,6 +1154,24 @@ inline Vec<N, T> fabs(const Vec<N, T>& a)
     for (size_t i = 0; i < N; ++i)
         result.v[i] = fabs(a.v[i]);
     return result;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> fmod(const Vec<N, T>& a, T mod)
+{
+    Vec<N, T> modded;
+    for (size_t i = 0; i < N; ++i)
+        modded.v[i] = (T)fmod(a.v[i], mod);
+    return modded;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> fmod(const Vec<N, T>& a, Vec<N, T> mod)
+{
+    Vec<N, T> modded;
+    for (size_t i = 0; i < N; ++i)
+        modded.v[i] = (T)fmod(a.v[i], mod[i]);
+    return modded;
 }
 
 template <size_t N, typename T>
