@@ -1,3 +1,8 @@
+// vec.h
+// Copyright 2014 - 2020 Alex Dixon.
+// License: https://github.com/polymonster/maths/blob/master/license.md
+// The initial implementation and some functions started from https://github.com/christopherbatty/SDFGen
+
 #pragma once
 
 #include "util.h"
