@@ -1,5 +1,3 @@
-# maths
-
 MIT License
 
 Copyright (c) 2020 Alex Dixon
