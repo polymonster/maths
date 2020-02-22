@@ -1,3 +1,5 @@
+# maths
+
 MIT License
 
 Copyright (c) 2020 Alex Dixon
@@ -20,9 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-vec.h and util.h are heavily modified versions of the math api in sdf-gen
 
 # SDFGen
+
+### vec.h and util.h are heavily modified versions of the math api in sdf-gen
+
 The MIT License (MIT)
 
 Copyright (c) 2015, Christopher Batty
