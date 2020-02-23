@@ -769,7 +769,7 @@ inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N,
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> saturate(Vec<N, T>& a)
+inline Vec<N, T> saturated(const Vec<N, T>& a)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -780,8 +780,19 @@ inline Vec<N, T> saturate(Vec<N, T>& a)
             res[i] = 1;
     }
 
-    a = res;
     return res;
+}
+
+template <size_t N, typename T>
+inline void saturate(const Vec<N, T>& a)
+{
+    for (size_t i = 0; i < N; ++i)
+    {
+        if (a[i] < 0)
+            a[i] = 0;
+        else if (a[i] > 1)
+            a[i] = 1;
+    }
 }
 
 template <size_t N, typename T>
