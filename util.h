@@ -450,6 +450,41 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3)
         (-1.0f * p0 + 3.0f * p1 - 3.0f * p2 + p3) * (t * t * t));
 }
 
+template <class T>
+inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
+{
+    auto getT = [](f32 t, T p0, T p1) -> f32
+    {
+        const float alpha = 0.5f; // 0.0 = standard (uniform), 0.5 = centripital (eleminates cusps and loops), 1.0 = chordial
+        T square = sqr(p1-p0);
+        
+        f32 sum = 0.0f;
+        size_t numComponents = sizeof(p1.v) / sizeof(p1.v[0]);
+        for(size_t i = 0; i < numComponents; ++i)
+            sum += square.v[i];
+        
+        f32 b = sqrt(sum);
+        f32 c = pow(b, alpha);
+        return c + t;
+    };
+    
+    f32 t0 = 0.0f;
+    f32 t1 = getT(t0, p0, p1);
+    f32 t2 = getT(t1, p1, p2);
+    f32 t3 = getT(t2, p2, p3);
+    
+    t = lerp(t1, t2, t);
+    
+    T a1 = (t1-t)/(t1-t0)*p0 + (t-t0)/(t1-t0)*p1;
+    T a2 = (t2-t)/(t2-t1)*p1 + (t-t1)/(t2-t1)*p2;
+    T a3 = (t3-t)/(t3-t2)*p2 + (t-t2)/(t3-t2)*p3;
+    
+    T b1 = (t2-t)/(t2-t0)*a1 + (t-t0)/(t2-t0)*a2;
+    T b2 = (t3-t)/(t3-t1)*a2 + (t-t1)/(t3-t1)*a3;
+    
+    return (t2-t)/(t2-t1)*b1 + (t-t1)/(t2-t1)*b2;
+}
+
 template<class T>
 inline T impulse(T k, T x)
 {
