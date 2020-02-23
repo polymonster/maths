@@ -1,3 +1,7 @@
+// swizzle.h
+// Copyright 2014 - 2020 Alex Dixon.
+// License: https://github.com/polymonster/maths/blob/master/license.md
+
 #pragma once
 
 template <typename T, size_t W, size_t... SW>

@@ -1,3 +1,7 @@
+// maths.h
+// Copyright 2014 - 2020 Alex Dixon.
+// License: https://github.com/polymonster/maths/blob/master/license.md
+
 #pragma once
 
 #include "mat.h"
