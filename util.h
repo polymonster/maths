@@ -310,6 +310,13 @@ inline T ramp(T r)
     return smooth_step((r + 1) / 2) * 2 - 1;
 }
 
+template <class T>
+inline T saturate(T v)
+{
+    v = max(v, (T)0);
+    v = min(v, (T)1);
+}
+
 #ifdef WIN32__
 inline int lround(double x)
 {
@@ -451,11 +458,10 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3)
 }
 
 template <class T>
-inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
+inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3, float alpha)
 {
-    auto getT = [](f32 t, T p0, T p1) -> f32
+    auto getT = [](f32 t, T p0, T p1, float alpha) -> f32
     {
-        const float alpha = 0.5f; // 0.0 = standard (uniform), 0.5 = centripital (eleminates cusps and loops), 1.0 = chordial
         T square = sqr(p1-p0);
         
         f32 sum = 0.0f;
@@ -469,9 +475,9 @@ inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
     };
     
     f32 t0 = 0.0f;
-    f32 t1 = getT(t0, p0, p1);
-    f32 t2 = getT(t1, p1, p2);
-    f32 t3 = getT(t2, p2, p3);
+    f32 t1 = getT(t0, p0, p1, alpha);
+    f32 t2 = getT(t1, p1, p2, alpha);
+    f32 t3 = getT(t2, p2, p3, alpha);
     
     t = lerp(t1, t2, t);
     
@@ -483,6 +489,12 @@ inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
     T b2 = (t3-t)/(t3-t1)*a2 + (t-t1)/(t3-t1)*a3;
     
     return (t2-t)/(t2-t1)*b1 + (t-t1)/(t2-t1)*b2;
+}
+
+template <class T>
+inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
+{
+    return catmul_rom_spline(t, p0, p1, p2, p3, 0.5f);
 }
 
 template<class T>

@@ -73,6 +73,7 @@ namespace maths
     bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
     bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
+    bool point_inside_poly(const vec2f& p, const std::vector<vec2f>& poly);
     
     // Closest Point
     template<size_t N, typename T>
@@ -97,12 +98,16 @@ namespace maths
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
+    bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
+    
+    // Concave polygon
+    bool poly_union_shell(const std::vector<vec2f>& poly0, const std::vector<vec2f>& poly1, std::vector<vec2f>& shell);
     
     //
     // Implementation -------------------------------------------------------------------------------------------------------
@@ -405,6 +410,24 @@ namespace maths
         return true;
     }
     
+    // Returns true if the point p is inside the polygon, which may be concave
+    // It even supports self intersections!
+    inline bool point_inside_poly(const vec2f& p, const std::vector<vec2f>& poly)
+    {
+        // Copyright (c) 1970-2003, Wm. Randolph Franklin
+        // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+        int npol = poly.size();
+        int i, j;
+        bool c = false;
+        for (i = 0, j = npol-1; i < npol; j = i++) {
+            if ((((poly[i].y <= p.y) && (p.y < poly[j].y)) ||
+                 ((poly[j].y <= p.y) && (p.y < poly[i].y))) &&
+                (p.x < (poly[j].x - poly[i].x) * (p.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
+                c = !c;
+        }
+        return c;
+    }
+    
     // Returns the closest point from p0 on sphere s0 with radius r0
     inline vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
@@ -490,6 +513,21 @@ namespace maths
         }
         
         return false;
+    }
+    
+    // Returns true if the line l1-l2 intersects with the polygon, and stores an the intersection points in ips in an unspecified order
+    // (if you need them to be sorted some way you have to do it yourself)
+    inline bool line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips)
+    {
+        ips.clear();
+        for(size_t i = 0, n = poly.size(); i < n; ++i)
+        {
+            size_t next = (i + 1) % n;
+            vec3f ip;
+            if(line_vs_line(vec3f(l1, 0), vec3f(l2, 0), vec3f(poly[i], 0), vec3f(poly[next], 0), ip))
+                ips.push_back(ip.xy);
+        }
+        return ips.empty() ? false : true;
     }
     
     // Returns the closest point to p on the line the ray r0 with diection rV
@@ -756,5 +794,141 @@ namespace maths
             cp += p;
         return cp / (f32)hull.size();
     }
+    
+    // returns true if the two polygons overlap, and sets shell to the union of the two polygons (ignoring any holes)
+    inline bool poly_union_shell(const std::vector<vec2f>& poly0, const std::vector<vec2f>& poly1, std::vector<vec2f>& shell)
+    {
+        // Ensure we are dealing with actual polygons
+        if(poly0.size() < 3) return false;
+        if(poly1.size() < 3) return false;
+        
+        struct Edge { vec2f a, b; };
+        
+        // add all the candidate edges
+        std::vector<Edge> edges;
+        auto addEdges = [](const std::vector<vec2f>& poly0, const std::vector<vec2f>& poly1, std::vector<Edge>& edges) -> bool
+        {
+            bool anyIntersections = false;
+            for(size_t i = 0, n = poly0.size(); i < n; ++i)
+            {
+                size_t next = (i + 1) % n;
+                std::vector<vec2f> ips;
+                if(line_vs_poly(poly0[i], poly0[next], poly1, ips))
+                {
+                    anyIntersections = true;
+                    
+                    // sort the intersection points based on their distance to the start of the intersecting line
+                    std::sort(ips.begin(), ips.end(), [=](const vec2f& a, const vec2f& b)
+                    {
+                        float aDist = mag2(poly0[i] - a);
+                        float bDist = mag2(poly0[i] - b);
+                        return aDist < bDist;
+                    });
+                    
+                    // add the start and end point edges
+                    if(!point_inside_poly(poly0[i], poly1))
+                        edges.push_back({poly0[i], ips[0]});
+                    if(!point_inside_poly(poly0[next], poly1))
+                        edges.push_back({poly0[next], ips.back()});
+                    
+                    for(size_t j = 0, nj = ips.size(); j < nj - 1; ++j)
+                    {
+                        size_t nextj = j + 1;
+                        vec2f mid = ips[j] * 0.5f + ips[nextj] * 0.5f;
+                        if(!point_inside_poly(mid, poly1))
+                            edges.push_back({ips[j], ips[nextj]});
+                    }
+                }
+                else
+                {
+                    // the edge doesn't intersect, so it's either entirely outside or entirely inside
+                    if(!point_inside_poly(poly0[i], poly1))
+                        edges.push_back({poly0[i], poly0[next]});
+                }
+            }
+            return anyIntersections;
+        };
+        
+        bool anyIntersections = false;
+        anyIntersections |= addEdges(poly0, poly1, edges);
+        anyIntersections |= addEdges(poly1, poly0, edges);
+        
+        if(!anyIntersections)
+        {
+            // the polygons are either entirely seperate, or one contains the other
+            if(point_inside_poly(poly0[0], poly1))
+            {
+                shell = poly1;
+                return true;
+            }
+            if(point_inside_poly(poly1[0], poly0))
+            {
+                shell = poly0;
+                return true;
+            }
+            return false;
+        }
+        
+        auto findLoop = [](std::vector<Edge>& edges, std::vector<vec2f>& loop) -> bool
+        {
+            // Accepts a list of edges and joins them into a loop of points
+            // Erases the used edges
+            // Returns true if the loop is closed
+            
+            if(edges.empty()) return false;
+            
+            loop = { edges[0].a, edges[0].b };
+            edges.erase(edges.begin());
+            
+            while(true)
+            {
+                bool aMatched = false;
+                auto it = std::find_if(edges.begin(), edges.end(), [&](const Edge& e)
+                {
+                    if(mag2(e.a - loop.back()) < 1)
+                    {
+                        aMatched = true;
+                        return true;
+                    }
+                    if(mag2(e.b - loop.back()) < 1)
+                        return true;
+                    return false;
+                });
+                
+                if(it != edges.end())
+                {
+                    loop.push_back(aMatched ? it->b : it->a);
+                    edges.erase(it);
+                    
+                    if(mag2(loop.back() - loop[0]) < 1)
+                    {
+                        // back at the start, make sure we don't duplicate the last point
+                        loop.erase(loop.begin());
+                        return true; // the loop is complete, return true!
+                    }
+                }
+                else
+                    return false; // didn't find a matching edge point, the loop is not closed
+            }
+        };
+        
+        // Find all the loops
+        std::vector<std::vector<vec2f>> loops;
+        while(!edges.empty())
+        {
+            loops.push_back({});
+            if(!findLoop(edges, loops.back()))
+                loops.pop_back();
+        }
+        
+        // get the outermost loop, this is the shell
+        size_t shellIndex = 0;
+        for(size_t i = 1, n = loops.size(); i < n; ++i)
+            if(point_inside_poly(loops[shellIndex][0], loops[i]))
+                shellIndex = i;
+        shell = loops[shellIndex];
+        return true;
+    }
+    
     
 } // namespace maths
