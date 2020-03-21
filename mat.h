@@ -92,7 +92,7 @@ struct Mat
     Mat<R, C, T>  operator*(const Mat<R, C, T>& rhs) const;
     Mat<R, C, T>& operator*=(const Mat<R, C, T>& rhs);
     Vec<C, T>     operator*(const Vec<C, T>& rhs) const;
-
+    
     T&       operator()(size_t r, size_t c);
     const T& operator()(size_t r, size_t c) const;
 
@@ -819,6 +819,20 @@ namespace mat
         m.m[11] = n / (n - f);
 
         return m;
+    }
+    
+    template<typename T>
+    Mat<3, 3, T> to3x3(const Mat<4, 4, T>& rhs)
+    {
+        Mat<3, 3, T> mm;
+        for(size_t r = 0; r < 3; ++r)
+        {
+            for(size_t c = 0; c < 3; ++c)
+            {
+                mm.at(r, c) = rhs.at(r, c);
+            }
+        }
+        return mm;
     }
 } // namespace mat
 
