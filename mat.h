@@ -123,25 +123,25 @@ struct Mat
 
 // Accessor Functions
 template <size_t R, size_t C, typename T>
-inline T& Mat<R, C, T>::at(size_t r, size_t c)
+maths_inline T& Mat<R, C, T>::at(size_t r, size_t c)
 {
     return m[r * C + c];
 }
 
 template <size_t R, size_t C, typename T>
-inline const T& Mat<R, C, T>::at(size_t r, size_t c) const
+maths_inline const T& Mat<R, C, T>::at(size_t r, size_t c) const
 {
     return m[r * C + c];
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<R, T> Mat<R, C, T>::get_row(size_t index) const
+maths_inline Vec<R, T> Mat<R, C, T>::get_row(size_t index) const
 {
     return Vec<R, T>(&m[index * C]);
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<C, T> Mat<R, C, T>::get_column(size_t index) const
+maths_inline Vec<C, T> Mat<R, C, T>::get_column(size_t index) const
 {
     Vec<C, T> col;
     for (size_t i = 0; i < R; ++i)
@@ -151,27 +151,27 @@ inline Vec<C, T> Mat<R, C, T>::get_column(size_t index) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<3, T> Mat<R, C, T>::get_translation() const
+maths_inline Vec<3, T> Mat<R, C, T>::get_translation() const
 {
     return Vec<3, T>(m[3], m[7], m[11]);
 }
 
 template <size_t R, size_t C, typename T>
-inline void Mat<R, C, T>::set_row(size_t index, const Vec<R, T>& row)
+maths_inline void Mat<R, C, T>::set_row(size_t index, const Vec<R, T>& row)
 {
     int i = index * C;
     memcpy(&m[i], &row.v, sizeof(T) * C);
 }
 
 template <size_t R, size_t C, typename T>
-inline void Mat<R, C, T>::set_column(size_t index, const Vec<C, T>& col)
+maths_inline void Mat<R, C, T>::set_column(size_t index, const Vec<C, T>& col)
 {
     for (int r = 0; r < R; ++r)
         at(r, index) = col[r];
 }
 
 template <size_t R, size_t C, typename T>
-inline void Mat<R, C, T>::set_translation(const Vec<3, T>& t)
+maths_inline void Mat<R, C, T>::set_translation(const Vec<3, T>& t)
 {
     m[3]  = t.x;
     m[7]  = t.y;
@@ -189,45 +189,45 @@ void Mat<R, C, T>::set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, cons
 
 // Operators
 template <size_t R, size_t C, typename T>
-inline Vec<C, T> Mat<R, C, T>::operator*(const Vec<C, T>& rhs) const
+maths_inline Vec<C, T> Mat<R, C, T>::operator*(const Vec<C, T>& rhs) const
 {
     return multiply(rhs);
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T> Mat<R, C, T>::operator*(const Mat<R, C, T>& rhs) const
+maths_inline Mat<R, C, T> Mat<R, C, T>::operator*(const Mat<R, C, T>& rhs) const
 {
     return multiply(rhs);
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T>& Mat<R, C, T>::operator*=(const Mat<R, C, T>& rhs)
+maths_inline Mat<R, C, T>& Mat<R, C, T>::operator*=(const Mat<R, C, T>& rhs)
 {
     *this = multiply(rhs);
     return *this;
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T> Mat<R, C, T>::operator*(T rhs) const
+maths_inline Mat<R, C, T> Mat<R, C, T>::operator*(T rhs) const
 {
     return multiply(rhs);
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T>& Mat<R, C, T>::operator*=(T rhs)
+maths_inline Mat<R, C, T>& Mat<R, C, T>::operator*=(T rhs)
 {
     *this = multiply(rhs);
     return *this;
 }
 
 template <size_t R, size_t C, typename T>
-inline T& Mat<R, C, T>::operator()(size_t r, size_t c)
+maths_inline T& Mat<R, C, T>::operator()(size_t r, size_t c)
 {
     return at(r, c);
 }
 
 template <size_t R, size_t C, typename T>
-inline const T& Mat<R, C, T>::operator()(size_t r, size_t c) const
+maths_inline const T& Mat<R, C, T>::operator()(size_t r, size_t c) const
 {
     return at(r, c);
 }
@@ -255,7 +255,7 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(const Mat<R, C, T>& rhs) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
+maths_inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
 {
     Mat<R, C, T> result;
     for (size_t i = 0; i < R * C; ++i)
@@ -267,7 +267,7 @@ inline Mat<R, C, T> Mat<R, C, T>::multiply(T scalar) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<C, T> Mat<R, C, T>::multiply(const Vec<C, T>& v) const
+maths_inline Vec<C, T> Mat<R, C, T>::multiply(const Vec<C, T>& v) const
 {
     Vec<C, T> result;
     for (size_t r = 0; r < R; ++r)
@@ -279,7 +279,7 @@ inline Vec<C, T> Mat<R, C, T>::multiply(const Vec<C, T>& v) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<4, T> Mat<R, C, T>::transform_vector(const Vec<4, T>& v) const
+maths_inline Vec<4, T> Mat<R, C, T>::transform_vector(const Vec<4, T>& v) const
 {
     Vec<4, T> result;
     for (size_t r = 0; r < R; ++r)
@@ -291,7 +291,7 @@ inline Vec<4, T> Mat<R, C, T>::transform_vector(const Vec<4, T>& v) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v, T& w) const
+maths_inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v, T& w) const
 {
     Vec<4, T> result = Vec<4, T>(v, w);
     Vec<4, T> v4     = Vec<4, T>(v, w);
@@ -305,7 +305,7 @@ inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v, T& w) const
 }
 
 template <size_t R, size_t C, typename T>
-inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v) const
+maths_inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v) const
 {
     Vec<4, T> result = Vec<4, T>(v, 1.0);
     Vec<4, T> v4     = Vec<4, T>(v, 1.0);
@@ -318,14 +318,14 @@ inline Vec<3, T> Mat<R, C, T>::transform_vector(const Vec<3, T>& v) const
 }
 
 template <size_t R, size_t C, typename T>
-inline void Mat<R, C, T>::transpose()
+maths_inline void Mat<R, C, T>::transpose()
 {
     Mat<R, C, T> t = this->transposed();
     *this          = t;
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T> Mat<R, C, T>::transposed()
+maths_inline Mat<R, C, T> Mat<R, C, T>::transposed()
 {
     Mat<R, C, T> t;
 
@@ -337,7 +337,7 @@ inline Mat<R, C, T> Mat<R, C, T>::transposed()
 }
 
 template <size_t R, size_t C, typename T>
-inline Mat<R, C, T> Mat<R, C, T>::create_identity()
+maths_inline Mat<R, C, T> Mat<R, C, T>::create_identity()
 {
     Mat<R, C, T> identity;
     memset(&identity, 0x0, sizeof(Mat<R, C, T>));
