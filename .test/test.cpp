@@ -136,6 +136,33 @@ TEST_CASE("assign truncated vec from swizzle", "[swizzle]")
     s2 = v[1].xy;
     REQUIRE(require_func(s2, {101.0f, 202.0f}));
 }
+
+TEST_CASE("swizzle splat", "[swizzle]")
+{
+    vec2f v2 = vec2f(6.0f, 4.0f);
+    vec2f v3 = vec2f(8.0f, 10.0f);
+    
+    // v2 splat up to v3
+    vec3f vv1 = v2.xxx;
+    printf("%f, %f, %f, \n", vv1.x, vv1.y, vv1.z);
+    REQUIRE(require_func(vv1, {6.0f, 6.0f, 6.0f}));
+    
+    // v2 splat up to v4
+    vec4f vv2 = v2.yyxx;
+    REQUIRE(require_func(vv2, {4.0f, 4.0f, 2.0f, 2.0f}));
+}
+
+TEST_CASE("vec swizzle scalar", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 0.0f, 1.0f);
+    
+    // add
+    vec3f t1 = v3.xzy + 1.0f;
+    REQUIRE(require_func(t1, {2.0f, 2.0f, 1.0f}));
+    
+    
+}
+
 TEST_CASE( "Point Plane Distance", "[maths]")
 {
     {
