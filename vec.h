@@ -127,7 +127,7 @@ struct Vec<2, T>
     }
 
     template <class S>
-    explicit Vec<2, T>(const Vec<2, S>& source)
+    Vec<2, T>(const Vec<2, S>& source)
     {
         for (size_t i = 0; i < 2; ++i)
             v[i] = (T)source[i];
@@ -218,7 +218,7 @@ struct Vec<3, T>
         {
             T r, g, b;
         };
-        Vec<2, T> xy;
+        Swizzle<T, 2, 0, 1> xy;
         swizzle_v3;
     };
 
@@ -383,8 +383,8 @@ struct Vec<4, T>
         struct {
             T r, g, b, a;
         };
-        Vec<2, T> xy;
-        Vec<3, T> xyz;
+        Swizzle<T, 2, 0, 1> xy;
+        Swizzle<T, 3, 0, 1, 2> xyz;
         swizzle_v4;
     };
 
