@@ -181,7 +181,7 @@ maths_inline Vec<N, T> operator-(const Swizzle<T, N, SW...>& lhs, const Vec<N, T
 }
 
 template <size_t N, typename T, size_t ...SW>
-maths_inline Vec<N, T> operator-(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+maths_inline Vec<N, T> operator-(const Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
 {
     return Vec<N, T>(lhs) - Vec<N, T>(rhs);
 }
@@ -222,7 +222,7 @@ maths_inline Vec<N, T> operator/(const Swizzle<T, N, SW...>& lhs, const Vec<N, T
 }
 
 template <size_t N, typename T, size_t ...SW>
-maths_inline Vec<N, T> operator/(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+maths_inline Vec<N, T> operator/(const Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
 {
     return Vec<N, T>(lhs) / Vec<N, T>(rhs);
 }
@@ -263,7 +263,7 @@ maths_inline Vec<N, T> operator*(const Swizzle<T, N, SW...>& lhs, const Vec<N, T
 }
 
 template <size_t N, typename T, size_t ...SW>
-maths_inline Vec<N, T> operator*(const Vec<N, T>& rhs, const Swizzle<T, N, SW...>& lhs)
+maths_inline Vec<N, T> operator*(const Vec<N, T>& lhs, const Swizzle<T, N, SW...>& rhs)
 {
     return Vec<N, T>(lhs) * Vec<N, T>(rhs);
 }
