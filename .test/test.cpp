@@ -377,7 +377,6 @@ TEST_CASE("swizzle compound vec", "[swizzle]")
 
 TEST_CASE("swizzle vec vec", "[swizzle]")
 {
-    /*
     vec2f v2 = vec2f(1.0f, 2.0f);
     
     // add
@@ -397,10 +396,65 @@ TEST_CASE("swizzle vec vec", "[swizzle]")
     
     // divide
     vec3f t4 = vec3f::one();
+    t4.yz = v2 / vec2f(2.0f, 4.0f);
     REQUIRE(require_func(t4, {1.0f, 0.5f, 0.5f}));
-    */
 }
 
+TEST_CASE("swizzle swizzle vec", "[swizzle]")
+{
+    vec2f v2 = vec2f(1.0f, 2.0f);
+    vec3f v3 = vec3f(1.0f, 2.0f, 3.0f);
+    vec2f cv1 = vec2f(1.0f, 2.0f);
+    vec2f cv2 = vec2f(2.0f, 4.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1.xy = v2.yx + cv1;
+    REQUIRE(require_func(t1, {3.0f, 3.0f, 3.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2.xz = v2.xx - cv1;
+    REQUIRE(require_func(t2, {0.0f, 2.0f, -1.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3.xy = v2.yy * cv2;
+    REQUIRE(require_func(t3, {4.0f, 8.0f, 3.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4.yz = v2.yx / cv2;
+    REQUIRE(require_func(t4, {1.0f, 1.0f, 0.25f}));
+}
+
+TEST_CASE("swizzle vec swizzle", "[swizzle]")
+{
+    vec2f v2 = vec2f(1.0f, 2.0f);
+    vec3f v3 = vec3f(1.0f, 2.0f, 3.0f);
+    vec2f cv1 = vec2f(3.0f, 1.0f);
+    vec2f cv2 = vec2f(4.0f, 2.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1.xy = cv1 + v2.yy;
+    REQUIRE(require_func(t1, {5.0f, 3.0f, 3.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2.xz = cv1 - v2.xx;
+    REQUIRE(require_func(t2, {2.0f, 2.0f, 0.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3.xy = cv2 * v2.xy;
+    REQUIRE(require_func(t3, {4.0f, 4.0f, 3.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4.yz = cv2 / v2.yx;
+    REQUIRE(require_func(t4, {1.0f, 2.0f, 2.0f}));
+}
 
 TEST_CASE( "Point Plane Distance", "[maths]")
 {
