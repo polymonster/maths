@@ -778,7 +778,7 @@ namespace maths
                     rm = i;
                 }
             }
-            if(almost_equal(x1.xy, hull[0], 0.0001f))
+            if(almost_equal((vec2f)x1.xy, hull[0], 0.0001f))
                 break;
             
             cur = x1;

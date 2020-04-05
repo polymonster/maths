@@ -223,7 +223,6 @@ struct Vec<3, T>
         {
             T r, g, b;
         };
-        Vec<2, T> xy;
         swizzle_v3;
     };
 
@@ -388,8 +387,6 @@ struct Vec<4, T>
         struct {
             T r, g, b, a;
         };
-        Vec<2, T> xy;
-        Vec<3, T> xyz;
         swizzle_v4;
     };
 

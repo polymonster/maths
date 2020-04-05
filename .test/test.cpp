@@ -376,32 +376,26 @@ TEST_CASE("swizzle compound vec", "[swizzle]")
 
 TEST_CASE("swizzle vec vec", "[swizzle]")
 {
-    /*
     vec2f v2 = vec2f(1.0f, 2.0f);
     
     // add
     vec3f t1 = vec3f::one();
     t1.xy = v2 + vec2f(1.0f, 1.5f);
-    printf("%f, %f, %f\n", t1.x, t1.y, t1.z);
     REQUIRE(require_func(t1, {2.0f, 3.5f, 1.0f}));
     
     // subtract
     vec3f t2 = vec3f::one();
     t2.xz = v2 - vec2f(1.0f, 1.5f);
-    printf("%f, %f, %f\n", t2.x, t2.y, t2.z);
     REQUIRE(require_func(t2, {0.0f, 1.0f, 0.5f}));
     
     // multiply
     vec3f t3 = vec3f::one();
     t3.xy = v2 * vec2f(2.0f, 3.0f);
-    printf("%f, %f, %f\n", t3.x, t3.y, t3.z);
     REQUIRE(require_func(t3, {2.0f, 6.0f, 1.0f}));
     
     // divide
     vec3f t4 = vec3f::one();
-    t4.yz = v2 / vec2f(2.0f, 4.0f);
     REQUIRE(require_func(t4, {1.0f, 0.5f, 0.5f}));
-    */
 }
 
 

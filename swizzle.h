@@ -332,6 +332,7 @@ Swizzle<T, 4, 1, 1, 1, 1> yyyy;
 // v3 swizzles
 #define swizzle_v3                  \
 Swizzle<T, 2, 0, 0, (size_t)-1> xx; \
+Swizzle<T, 2, 0, 1, (size_t)-1> xy; \
 Swizzle<T, 2, 0, 2, (size_t)-1> xz; \
 Swizzle<T, 2, 0, 3, (size_t)-1> xw; \
 Swizzle<T, 2, 1, 0, (size_t)-1> yx; \
@@ -458,6 +459,7 @@ Swizzle<T, 4, 2, 2, 2, 2> zzzz;
 // v4 swizzles
 #define swizzle_v4                              \
 Swizzle<T, 2, 0, 0, size_t(-1), size_t(-1)> xx; \
+Swizzle<T, 2, 0, 1, size_t(-1), size_t(-1)> xy; \
 Swizzle<T, 2, 0, 2, size_t(-1), size_t(-1)> xz; \
 Swizzle<T, 2, 0, 3, size_t(-1), size_t(-1)> xw; \
 Swizzle<T, 2, 1, 0, size_t(-1), size_t(-1)> yx; \
@@ -478,6 +480,7 @@ Swizzle<T, 3, 0, 0, 2, size_t(-1)> xxz; \
 Swizzle<T, 3, 0, 0, 3, size_t(-1)> xxw; \
 Swizzle<T, 3, 0, 1, 0, size_t(-1)> xyx; \
 Swizzle<T, 3, 0, 1, 1, size_t(-1)> xyy; \
+Swizzle<T, 3, 0, 1, 2, size_t(-1)> xyz; \
 Swizzle<T, 3, 0, 1, 3, size_t(-1)> xyw; \
 Swizzle<T, 3, 0, 2, 0, size_t(-1)> xzx; \
 Swizzle<T, 3, 0, 2, 1, size_t(-1)> xzy; \
