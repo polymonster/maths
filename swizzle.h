@@ -274,13 +274,6 @@ maths_inline Vec<N, T> operator*(const Swizzle<T, N, SW...>& lhs, const T& rhs)
     return Vec<N, T>(lhs) * rhs;
 }
 
-template <size_t N, typename T, size_t N2, size_t ...SW>
-maths_inline Swizzle<T, N, SW...> operator*(const Vec<N2, T>& lhs, const Vec<N2, T>& rhs)
-{
-    Vec<N2, T> r = lhs * rhs;
-    return r;
-}
-
 // compound multiply
 template <size_t N, typename T, size_t ...SW>
 maths_inline Swizzle<T, N, SW...>& operator*=(Swizzle<T, N, SW...>& lhs, const Vec<N, T>& rhs)
