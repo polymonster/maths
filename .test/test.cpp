@@ -140,27 +140,109 @@ TEST_CASE("assign truncated vec from swizzle", "[swizzle]")
 TEST_CASE("swizzle splat", "[swizzle]")
 {
     vec2f v2 = vec2f(6.0f, 4.0f);
-    vec2f v3 = vec2f(8.0f, 10.0f);
+    vec3f v3 = vec3f(8.0f, 16.0f, 32.0f);
     
     // v2 splat up to v3
     vec3f vv1 = v2.xxx;
-    printf("%f, %f, %f, \n", vv1.x, vv1.y, vv1.z);
     REQUIRE(require_func(vv1, {6.0f, 6.0f, 6.0f}));
     
     // v2 splat up to v4
     vec4f vv2 = v2.yyxx;
-    REQUIRE(require_func(vv2, {4.0f, 4.0f, 2.0f, 2.0f}));
+    REQUIRE(require_func(vv2, {4.0f, 4.0f, 6.0f, 6.0f}));
+    
+    // v3 splat up to v4
+    vec4f vv3 = v3.zyzx;
+    REQUIRE(require_func(vv3, {32.0f, 16.0f, 32.0f, 8.0f}));
 }
 
 TEST_CASE("vec swizzle scalar", "[swizzle]")
 {
-    vec3f v3 = vec3f(1.0f, 0.0f, 1.0f);
+    vec3f v3 = vec3f(2.0f, 0.0f, 1.0f);
     
     // add
     vec3f t1 = v3.xzy + 1.0f;
-    REQUIRE(require_func(t1, {2.0f, 2.0f, 1.0f}));
+    REQUIRE(require_func(t1, {3.0f, 2.0f, 1.0f}));
     
+    // subtract
+    vec3f t2 = v3.zyx - 1.0f;
+    REQUIRE(require_func(t2, {0.0f, -1.0f, 1.0f}));
+
+    // multiply
+    vec3f t3 = v3.yzx * 10.0f;
+    REQUIRE(require_func(t3, {0.0f, 10.0f, 20.0f}));
     
+    // divide
+    vec3f t4 = v3.xzy / 2.0f;
+    REQUIRE(require_func(t4, {1.0f, 0.5f, 0.0f}));
+}
+
+TEST_CASE("vec swizzle vec", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 4.0f, 8.0f);
+    vec3f cv1 = vec3f::one();
+    vec3f cv2 = vec3f(2.0f);
+    
+    // add
+    vec3f t1 = v3.zxy + cv1;
+    REQUIRE(require_func(t1, {9.0f, 2.0f, 5.0f}));
+    
+    // subtract
+    vec3f t2 = v3.yyx - cv1;
+    REQUIRE(require_func(t2, {3.0f, 3.0f, 0.0f}));
+
+    // multiply
+    vec3f t3 = v3.zxx * cv2;
+    REQUIRE(require_func(t3, {16.0f, 2.0f, 2.0f}));
+    
+    // divide
+    vec3f t4 = v3.zzz / cv2;
+    REQUIRE(require_func(t4, {4.0f, 4.0f, 4.0f}));
+}
+
+TEST_CASE("vec swizzle swizzle", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 4.0f, 8.0f);
+    vec3f cv1 = vec3f(1.0f, 0.0f, 1.0f);
+    vec3f cv2 = vec3f(2.0f, 4.0f, 1.0f);
+    
+    // add
+    vec3f t1 = v3.zxy + cv2.yyy;
+    REQUIRE(require_func(t1, {12.0f, 5.0f, 8.0f}));
+    
+    // subtract
+    vec3f t2 = v3.zzz - cv1.xyx;
+    REQUIRE(require_func(t2, {7.0f, 8.0f, 7.0f}));
+    
+    // multiply
+    vec3f t3 = v3.zxx * cv2.zyx;
+    REQUIRE(require_func(t3, {8.0f, 4.0f, 2.0f}));
+    
+    // divide
+    vec3f t4 = v3.yxz / cv2.xzy;
+    REQUIRE(require_func(t4, {2.0f, 1.0f, 2.0f}));
+}
+
+TEST_CASE("vec vec swizzle", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 4.0f, 8.0f);
+    vec3f cv1 = vec3f(1.0f, 0.0f, 1.0f);
+    vec3f cv2 = vec3f(2.0f, 4.0f, 1.0f);
+    
+    // add
+    vec3f t1 = cv1 + v3.zxy;
+    REQUIRE(require_func(t1, {9.0f, 1.0f, 5.0f}));
+    
+    // subtract
+    vec3f t2 = cv2 - (v3.yyy);
+    REQUIRE(require_func(t2, {-2.0f, 0.0f, -3.0f}));
+    
+    // multiply
+    vec3f t3 = cv1 * v3.zxx;
+    REQUIRE(require_func(t3, {8.0f, 0.0f, 4.0f}));
+    
+    // divide
+    vec3f t4 = cv2 / v3.yxz;
+    REQUIRE(require_func(t4, {8.0f, 4.0f, 8.0f}));
 }
 
 TEST_CASE( "Point Plane Distance", "[maths]")
