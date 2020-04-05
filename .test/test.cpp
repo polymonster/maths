@@ -376,6 +376,7 @@ TEST_CASE("swizzle compound vec", "[swizzle]")
 
 TEST_CASE("swizzle vec vec", "[swizzle]")
 {
+    /*
     vec2f v2 = vec2f(1.0f, 2.0f);
     
     // add
@@ -396,6 +397,7 @@ TEST_CASE("swizzle vec vec", "[swizzle]")
     // divide
     vec3f t4 = vec3f::one();
     REQUIRE(require_func(t4, {1.0f, 0.5f, 0.5f}));
+    */
 }
 
 
