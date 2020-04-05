@@ -238,12 +238,172 @@ TEST_CASE("vec vec swizzle", "[swizzle]")
     
     // multiply
     vec3f t3 = cv1 * v3.zxx;
-    REQUIRE(require_func(t3, {8.0f, 0.0f, 4.0f}));
+    REQUIRE(require_func(t3, {8.0f, 0.0f, 1.0f}));
     
     // divide
     vec3f t4 = cv2 / v3.yxz;
-    REQUIRE(require_func(t4, {8.0f, 4.0f, 8.0f}));
+    REQUIRE(require_func(t4, {0.5f, 4.0f, 0.125f}));
 }
+
+TEST_CASE("vec compound scalar", "[vec]")
+{
+    vec3f v3 = vec3f(1.0f, 2.0f, 4.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1 += 1.0f;
+    REQUIRE(require_func(t1, {2.0f, 3.0f, 5.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2 -= 1.0f;
+    REQUIRE(require_func(t2, {0.0f, 1.0f, 3.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3 *= 2.0f;
+    REQUIRE(require_func(t3, {2.0f, 4.0f, 8.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4 /= 2.0f;
+    REQUIRE(require_func(t4, {0.5f, 1.0f, 2.0f}));
+}
+
+TEST_CASE("vec compound vec", "[vec]")
+{
+    vec3f v3 = vec3f(1.0f, 2.0f, 4.0f);
+    vec3f cv1 = vec3f(1.0f, 0.0f, 1.0f);
+    vec3f cv2 = vec3f(2.0f, 4.0f, 2.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1 += cv1;
+    REQUIRE(require_func(t1, {2.0f, 2.0f, 5.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2 -= cv1;
+    REQUIRE(require_func(t2, {0.0f, 2.0f, 3.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3 *= cv2;
+    REQUIRE(require_func(t3, {2.0f, 8.0f, 8.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4 /= cv2;
+    REQUIRE(require_func(t4, {0.5f, 0.5f, 2.0f}));
+}
+
+TEST_CASE("vec compound swizzle", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 2.0f, 4.0f);
+    vec3f cv1 = vec3f(1.0f, 0.0f, 1.0f);
+    vec3f cv2 = vec3f(2.0f, 4.0f, 2.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1 += cv1.xxx;
+    REQUIRE(require_func(t1, {2.0f, 3.0f, 5.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2 -= cv1.yyx;
+    REQUIRE(require_func(t2, {1.0f, 2.0f, 3.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3 *= cv2.zzy;
+    REQUIRE(require_func(t3, {2.0f, 4.0f, 16.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4 /= cv2.xyx;
+    REQUIRE(require_func(t4, {0.5f, 0.5f, 2.0f}));
+}
+
+TEST_CASE("swizzle compound scalar", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 2.0f, 4.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1.xy += 1.0f;
+    REQUIRE(require_func(t1, {2.0f, 3.0f, 4.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2.xz -= 1.0f;
+    REQUIRE(require_func(t2, {0.0f, 2.0f, 3.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3.xy *= 2.0f;
+    REQUIRE(require_func(t3, {2.0f, 4.0f, 4.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4.yz /= 2.0f;
+    REQUIRE(require_func(t4, {1.0f, 1.0f, 2.0f}));
+}
+
+TEST_CASE("swizzle compound vec", "[swizzle]")
+{
+    vec3f v3 = vec3f(1.0f, 2.0f, 4.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1.xy += vec2f(1.0f, 1.5f);
+    REQUIRE(require_func(t1, {2.0f, 3.5f, 4.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2.xz -= vec2f(1.0f, 1.5f);
+    REQUIRE(require_func(t2, {0.0f, 2.0f, 2.5f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3.xy *= vec2f(2.0f, 3.0f);
+    REQUIRE(require_func(t3, {2.0f, 6.0f, 4.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4.yz /= vec2f(2.0f, 4.0f);
+    REQUIRE(require_func(t4, {1.0f, 1.0f, 1.0f}));
+}
+
+TEST_CASE("swizzle vec vec", "[swizzle]")
+{
+    /*
+    vec2f v2 = vec2f(1.0f, 2.0f);
+    
+    // add
+    vec3f t1 = vec3f::one();
+    t1.xy = v2 + vec2f(1.0f, 1.5f);
+    printf("%f, %f, %f\n", t1.x, t1.y, t1.z);
+    REQUIRE(require_func(t1, {2.0f, 3.5f, 1.0f}));
+    
+    // subtract
+    vec3f t2 = vec3f::one();
+    t2.xz = v2 - vec2f(1.0f, 1.5f);
+    printf("%f, %f, %f\n", t2.x, t2.y, t2.z);
+    REQUIRE(require_func(t2, {0.0f, 1.0f, 0.5f}));
+    
+    // multiply
+    vec3f t3 = vec3f::one();
+    t3.xy = v2 * vec2f(2.0f, 3.0f);
+    printf("%f, %f, %f\n", t3.x, t3.y, t3.z);
+    REQUIRE(require_func(t3, {2.0f, 6.0f, 1.0f}));
+    
+    // divide
+    vec3f t4 = vec3f::one();
+    t4.yz = v2 / vec2f(2.0f, 4.0f);
+    REQUIRE(require_func(t4, {1.0f, 0.5f, 0.5f}));
+    */
+}
+
 
 TEST_CASE( "Point Plane Distance", "[maths]")
 {
