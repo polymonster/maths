@@ -134,20 +134,21 @@ struct Vec<2, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    explicit Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
+    Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
     }
     
     template<typename T2, size_t W, size_t... SW>
     Vec<2, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
-        
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
         return *this;
     }
 
@@ -262,19 +263,21 @@ struct Vec<3, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    explicit Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
+    Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
     }
     
     template<typename T2, size_t W, size_t... SW>
     Vec<3, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
         
         return *this;
     }
@@ -401,20 +404,21 @@ struct Vec<4, T>
     }
     
     template<typename T2, size_t W, size_t... SW>
-    explicit Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
+    Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
     }
     
     template<typename T2, size_t W, size_t... SW>
     Vec<4, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < W; ++i)
-            v[i] = lhs.v[ii[i]];
-        
+        for(size_t i = 0; i < ii.size(); ++i)
+            if(ii[i] != -1)
+                v[i] = lhs.v[ii[i]];
         return *this;
     }
     

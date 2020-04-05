@@ -144,6 +144,7 @@ TEST_CASE("swizzle splat", "[swizzle]")
     
     // v2 splat up to v3
     vec3f vv1 = v2.xxx;
+    printf("%f, %f, %f", vv1.x, vv1.y, vv1.z);
     REQUIRE(require_func(vv1, {6.0f, 6.0f, 6.0f}));
     
     // v2 splat up to v4
