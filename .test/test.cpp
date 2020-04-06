@@ -144,7 +144,6 @@ TEST_CASE("swizzle splat", "[swizzle]")
     
     // v2 splat up to v3
     vec3f vv1 = v2.xxx;
-    printf("%f, %f, %f", vv1.x, vv1.y, vv1.z);
     REQUIRE(require_func(vv1, {6.0f, 6.0f, 6.0f}));
     
     // v2 splat up to v4
@@ -454,6 +453,32 @@ TEST_CASE("swizzle vec swizzle", "[swizzle]")
     vec3f t4 = v3;
     t4.yz = cv2 / v2.yx;
     REQUIRE(require_func(t4, {1.0f, 2.0f, 2.0f}));
+}
+
+TEST_CASE("swizzle compound swizzle", "[swizzle]")
+{
+    vec2f v2 = vec2f(1.0f, 2.0f);
+    vec3f v3 = vec3f(1.0f, 2.0f, 3.0f);
+    
+    // add
+    vec3f t1 = v3;
+    t1.xy += v2.yx;
+    REQUIRE(require_func(t1, {3.0f, 3.0f, 3.0f}));
+    
+    // subtract
+    vec3f t2 = v3;
+    t2.zx -= v2.xx;
+    REQUIRE(require_func(t2, {0.0f, 2.0f, 2.0f}));
+    
+    // multiply
+    vec3f t3 = v3;
+    t3.yx *= v2.xy;
+    REQUIRE(require_func(t3, {2.0f, 2.0f, 3.0f}));
+    
+    // divide
+    vec3f t4 = v3;
+    t4.xz /= v2.yy;
+    REQUIRE(require_func(t4, {0.5f, 2.0f, 1.5f}));
 }
 
 TEST_CASE( "Point Plane Distance", "[maths]")

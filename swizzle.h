@@ -41,7 +41,7 @@ struct Swizzle
         return vec;
     }
     
-    // swizzle
+    // vec
     template <typename T2, size_t W2, size_t... SW2>
     Vec<W, T> operator+(const Swizzle<T2, W2, SW2...>& rhs) const
     {
@@ -72,35 +72,35 @@ struct Swizzle
     
     // compund swizzle
     template <typename T2, size_t W2, size_t... SW2>
-    Vec<W, T>& operator+=(const Swizzle<T2, W2, SW2...>& rhs)
+    Swizzle<T, W, SW...>& operator+=(const Swizzle<T2, W2, SW2...>& rhs)
     {
         static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
-        *this = Vec<W, T>(*this) += Vec<W, T>(rhs);
-        return Vec<W, T>(*this);
+        *this = Vec<W, T>(*this) + Vec<W, T>(rhs);
+        return *this;
     }
     
     template <typename T2, size_t W2, size_t... SW2>
-    Vec<W, T>& operator-=(const Swizzle<T2, W2, SW2...>& rhs)
+    Swizzle<T, W, SW...>& operator-=(const Swizzle<T2, W2, SW2...>& rhs)
     {
         static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
-        *this = Vec<W, T>(*this) -= Vec<W, T>(rhs);
-        return Vec<W, T>(*this);
+        *this = Vec<W, T>(*this) - Vec<W, T>(rhs);
+        return *this;
     }
     
     template <typename T2, size_t W2, size_t... SW2>
-    Vec<W, T>& operator/=(const Swizzle<T2, W2, SW2...>& rhs)
+    Swizzle<T, W, SW...>& operator/=(const Swizzle<T2, W2, SW2...>& rhs)
     {
         static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
-        *this = Vec<W, T>(*this) /= Vec<W, T>(rhs);
-        return Vec<W, T>(*this);
+        *this = Vec<W, T>(*this) / Vec<W, T>(rhs);
+        return *this;
     }
     
     template <typename T2, size_t W2, size_t... SW2>
-    Vec<W, T>& operator*=(const Swizzle<T2, W2, SW2...>& rhs)
+    Swizzle<T, W, SW...>& operator*=(const Swizzle<T2, W2, SW2...>& rhs)
     {
         static_assert(W == W2, "error: performing arithmetic on swizzles of different sizes");
-        *this = Vec<W, T>(*this) *= Vec<W, T>(rhs);
-        return Vec<W, T>(*this);
+        *this = Vec<W, T>(*this) * Vec<W, T>(rhs);
+        return *this;
     }
         
     // scalar
