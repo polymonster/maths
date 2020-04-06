@@ -1,3 +1,8 @@
+// vec.h
+// Copyright 2014 - 2020 Alex Dixon.
+// License: https://github.com/polymonster/maths/blob/master/license.md
+// The initial implementation and some functions started from https://github.com/christopherbatty/SDFGen
+
 #pragma once
 
 #include "util.h"
@@ -133,8 +138,8 @@ struct Vec<2, T>
             v[i] = (T)source[i];
     }
     
-    template<typename T2, size_t W, size_t... SW>
-    Vec<2, T>(const Swizzle<T2, W, SW...>& lhs)
+    template<size_t W, size_t... SW>
+    Vec<2, T>(const Swizzle<T, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < ii.size(); ++i)
@@ -142,8 +147,8 @@ struct Vec<2, T>
                 v[i] = lhs.v[ii[i]];
     }
     
-    template<typename T2, size_t W, size_t... SW>
-    Vec<2, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
+    template<size_t W, size_t... SW>
+    const Vec<2, T>& operator=(const Swizzle<T, W, SW...>& lhs)
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < ii.size(); ++i)
@@ -459,6 +464,15 @@ struct Vec<4, T>
         v[3] = _w;
     }
     
+    Vec<4, T>(const Vec<2, T>& v2, const Vec<2, T>& v3)
+    {
+        for (size_t i = 0; i < 2; ++i)
+            v[i] = (T)v2[i];
+            
+        for (size_t i = 0; i < 2; ++i)
+            v[i+2] = (T)v3[i];
+    }
+    
     Vec<4, T>(const Vec<3, T>& v3, T _w)
     {
         for (size_t i = 0; i < 3; ++i)
@@ -466,6 +480,7 @@ struct Vec<4, T>
 
         v[3] = _w;
     }
+    
 
     T& operator[](size_t index)
     {
@@ -764,7 +779,7 @@ inline Vec<N, T> vclamp(const Vec<N, T>& a, const Vec<N, T>& lower, const Vec<N,
 }
 
 template <size_t N, typename T>
-inline Vec<N, T> saturate(Vec<N, T>& a)
+inline Vec<N, T> saturated(const Vec<N, T>& a)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -775,8 +790,19 @@ inline Vec<N, T> saturate(Vec<N, T>& a)
             res[i] = 1;
     }
 
-    a = res;
     return res;
+}
+
+template <size_t N, typename T>
+inline void saturate(const Vec<N, T>& a)
+{
+    for (size_t i = 0; i < N; ++i)
+    {
+        if (a[i] < 0)
+            a[i] = 0;
+        else if (a[i] > 1)
+            a[i] = 1;
+    }
 }
 
 template <size_t N, typename T>
@@ -989,6 +1015,16 @@ inline T min(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
+inline T max(const Vec<N, T>& a)
+{
+    T m = a.v[0];
+    for (size_t i = 1; i < N; ++i)
+        if (a.v[i] > m)
+            m = a.v[i];
+    return m;
+}
+
+template <size_t N, typename T>
 inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
 {
     Vec<N, T> m;
@@ -1007,13 +1043,48 @@ inline Vec<N, T> max_union(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-inline T max(const Vec<N, T>& a)
+inline Vec<N, T> floor(const Vec<N, T>& a)
 {
-    T m = a.v[0];
-    for (size_t i = 1; i < N; ++i)
-        if (a.v[i] > m)
-            m = a.v[i];
-    return m;
+    Vec<N, T> rounded;
+    for (size_t i = 0; i < N; ++i)
+        rounded.v[i] = (T)floor(a.v[i]);
+    return rounded;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> ceil(const Vec<N, T>& a)
+{
+    Vec<N, T> rounded;
+    for (size_t i = 0; i < N; ++i)
+        rounded.v[i] = (T)ceil(a.v[i]);
+    return rounded;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> fabs(const Vec<N, T>& a)
+{
+    Vec<N, T> result;
+    for (size_t i = 0; i < N; ++i)
+        result.v[i] = fabs(a.v[i]);
+    return result;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> fmod(const Vec<N, T>& a, T mod)
+{
+    Vec<N, T> modded;
+    for (size_t i = 0; i < N; ++i)
+        modded.v[i] = (T)fmod(a.v[i], mod);
+    return modded;
+}
+
+template <size_t N, typename T>
+inline Vec<N, T> fmod(const Vec<N, T>& a, Vec<N, T> mod)
+{
+    Vec<N, T> modded;
+    for (size_t i = 0; i < N; ++i)
+        modded.v[i] = (T)fmod(a.v[i], mod[i]);
+    return modded;
 }
 
 template <size_t N, typename T>
@@ -1031,6 +1102,15 @@ inline Vec<2, T> rotate(const Vec<2, T>& a, float angle)
     T c = cos(angle);
     T s = sin(angle);
     return Vec<2, T>(c * a[0] - s * a[1], s * a[0] + c * a[1]); // anti-clockwise rotation
+}
+
+template <typename T>
+inline Vec<2, T> rotate(const Vec<2, T>& a, float angle, const Vec<2, T>& pivot)
+{
+    return Vec<2, T>(
+        ((a[0] - pivot[0]) * cos(angle) - (a[1] - pivot[1]) * sin(angle)) + pivot[0],
+        ((a[0]-pivot[0]) * sin(angle) + (a[1]-pivot[1]) * cos(angle)) + pivot[1]
+        );
 }
 
 template <typename T>
@@ -1113,33 +1193,6 @@ inline Vec<N, T> round(const Vec<N, T>& a)
     for (size_t i = 0; i < N; ++i)
         rounded.v[i] = lround(a.v[i]);
     return rounded;
-}
-
-template <size_t N, typename T>
-inline Vec<N, T> floor(const Vec<N, T>& a)
-{
-    Vec<N, T> rounded;
-    for (size_t i = 0; i < N; ++i)
-        rounded.v[i] = (int)floor(a.v[i]);
-    return rounded;
-}
-
-template <size_t N, typename T>
-inline Vec<N, int> ceil(const Vec<N, T>& a)
-{
-    Vec<N, T> rounded;
-    for (size_t i = 0; i < N; ++i)
-        rounded.v[i] = (int)ceil(a.v[i]);
-    return rounded;
-}
-
-template <size_t N, typename T>
-inline Vec<N, T> fabs(const Vec<N, T>& a)
-{
-    Vec<N, T> result;
-    for (size_t i = 0; i < N; ++i)
-        result.v[i] = fabs(a.v[i]);
-    return result;
 }
 
 template <size_t N, typename T>
