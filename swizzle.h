@@ -4,7 +4,7 @@
 
 #pragma once
 
-template <typename T, size_t W, size_t... SW>
+template <typename T, size_t W, size_t...SW>
 struct Swizzle
 {
     T v[W];
