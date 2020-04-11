@@ -307,8 +307,11 @@ T VEC_FUNC(const Swizzle<T, N, SW...> s)                    \
     return VEC_FUNC((Vec<N, T>)s);                          \
 }
 
+SWIZZLE_HORIZ_FUNC(mag);
+SWIZZLE_HORIZ_FUNC(mag2);
+
 //
-// swizzle functions of cmath, performing component wise op
+// swizzle functions performing component wise operations
 //
 
 #define SWIZZLE_SCALAR_FUNC(SCALAR_FUNC)                    \
@@ -318,34 +321,7 @@ Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...> s)         \
     return SCALAR_FUNC((Vec<N, T>)s);                       \
 }
 
-
-//
-// swizzle functions return vec, with different combination of swiz and vec
-//
-
-#define VEC_S_S(VEC_FUNC)                                                                   \
-template <size_t N, typename T, size_t ...SW>                                               \
-Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...> s1, const Swizzle<T, N, SW...> s2)         \
-{                                                                                           \
-    return VEC_FUNC((Vec<N, T>)s1, (Vec<N, T>)s2);                                          \
-}
-
-#define VEC_V_S(VEC_FUNC)                                                                   \
-template <size_t N, typename T, size_t ...SW>                                               \
-Vec<N, T> SCALAR_FUNC(Vec<N, T> v, Swizzle<T, N, SW...> s1)                                 \
-{                                                                                           \
-    return VEC_FUNC(v, (Vec<N, T>)s1);                                                      \
-}
-
-// returning T
-SWIZZLE_HORIZ_FUNC(mag);
-SWIZZLE_HORIZ_FUNC(mag2);
-
-// vec
-SWIZZLE_SCALAR_FUNC(normalised);
-SWIZZLE_SCALAR_FUNC(saturated);
-
-// cmath component wise
+// cmath
 SWIZZLE_SCALAR_FUNC(sin);
 SWIZZLE_SCALAR_FUNC(asin);
 SWIZZLE_SCALAR_FUNC(cos);
@@ -365,6 +341,58 @@ SWIZZLE_SCALAR_FUNC(sqrt);
 SWIZZLE_SCALAR_FUNC(log);
 SWIZZLE_SCALAR_FUNC(log10);
 SWIZZLE_SCALAR_FUNC(log2);
+
+// vec
+SWIZZLE_SCALAR_FUNC(round);
+SWIZZLE_SCALAR_FUNC(normalised);
+SWIZZLE_SCALAR_FUNC(saturated);
+
+//
+// return vec, with different combination of swiz and vec
+//
+
+#define VEC_X_X(VEC_FUNC)                                                                   \
+template <size_t N, typename T, size_t ...SW>                                               \
+Vec<N, T> VEC_FUNC(const Swizzle<T, N, SW...>& s1, const Swizzle<T, N, SW...>& s2)          \
+{                                                                                           \
+    return VEC_FUNC((Vec<N, T>)s1, (Vec<N, T>)s2);                                          \
+}                                                                                           \
+template <size_t N, typename T, size_t ...SW>                                               \
+Vec<N, T> VEC_FUNC(const Vec<N, T>& v, Swizzle<T, N, SW...>& s1)                            \
+{                                                                                           \
+    return VEC_FUNC(v, (Vec<N, T>)s1);                                                      \
+}                                                                                           \
+template <size_t N, typename T, size_t ...SW>                                               \
+Vec<N, T> VEC_FUNC(Swizzle<T, N, SW...>& s1, const Vec<N, T>& v)                            \
+{                                                                                           \
+    return VEC_FUNC((Vec<N, T>)s1, v);                                                      \
+}
+
+VEC_X_X(cross);
+VEC_X_X(perp);
+VEC_X_X(dist);
+VEC_X_X(dist2);
+VEC_X_X(min_union);
+VEC_X_X(max_union);
+
+#define T_X_X(VEC_FUNC)                                                                     \
+template <size_t N, typename T, size_t ...SW>                                               \
+T VEC_FUNC(const Swizzle<T, N, SW...>& s1, const Swizzle<T, N, SW...>& s2)                  \
+{                                                                                           \
+    return VEC_FUNC((Vec<N, T>)s1, (Vec<N, T>)s2);                                          \
+}                                                                                           \
+template <size_t N, typename T, size_t ...SW>                                               \
+T VEC_FUNC(const Vec<N, T>& v, Swizzle<T, N, SW...>& s1)                                    \
+{                                                                                           \
+    return VEC_FUNC(v, (Vec<N, T>)s1);                                                      \
+}                                                                                           \
+template <size_t N, typename T, size_t ...SW>                                               \
+T VEC_FUNC(Swizzle<T, N, SW...>& s1, const Vec<N, T>& v)                                    \
+{                                                                                           \
+    return VEC_FUNC((Vec<N, T>)s1, v);                                                      \
+}
+
+T_X_X(dot);
 
 // swizzle permutations
 
