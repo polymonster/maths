@@ -283,7 +283,6 @@ maths_inline T smooth_step(T r)
     return r * r * r * (10 + r * (-15 + r * 6));
 }
 
-// only makes sense with T=float or double
 template <class T>
 maths_inline T smooth_step(T r, T r_lower, T r_upper, T value_lower, T value_upper)
 {

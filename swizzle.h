@@ -296,6 +296,76 @@ maths_inline Swizzle<T, N, SW...>& operator*=(Swizzle<T, N, SW...>& lhs, const T
     return lhs;
 }
 
+//
+// swizzle functions for horizontal ops, swizzle -> T
+//
+
+#define SWIZZLE_HORIZ_FUNC(VEC_FUNC)                        \
+template <size_t N, typename T, size_t ...SW>               \
+T VEC_FUNC(const Swizzle<T, N, SW...> s)                    \
+{                                                           \
+    return VEC_FUNC((Vec<N, T>)s);                          \
+}
+
+//
+// swizzle functions of cmath, performing component wise op
+//
+
+#define SWIZZLE_SCALAR_FUNC(SCALAR_FUNC)                    \
+template <size_t N, typename T, size_t ...SW>               \
+Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...> s)         \
+{                                                           \
+    return SCALAR_FUNC((Vec<N, T>)s);                       \
+}
+
+
+//
+// swizzle functions return vec, with different combination of swiz and vec
+//
+
+#define VEC_S_S(VEC_FUNC)                                                                   \
+template <size_t N, typename T, size_t ...SW>                                               \
+Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...> s1, const Swizzle<T, N, SW...> s2)         \
+{                                                                                           \
+    return VEC_FUNC((Vec<N, T>)s1, (Vec<N, T>)s2);                                          \
+}
+
+#define VEC_V_S(VEC_FUNC)                                                                   \
+template <size_t N, typename T, size_t ...SW>                                               \
+Vec<N, T> SCALAR_FUNC(Vec<N, T> v, Swizzle<T, N, SW...> s1)                                 \
+{                                                                                           \
+    return VEC_FUNC(v, (Vec<N, T>)s1);                                                      \
+}
+
+// returning T
+SWIZZLE_HORIZ_FUNC(mag);
+SWIZZLE_HORIZ_FUNC(mag2);
+
+// vec
+SWIZZLE_SCALAR_FUNC(normalised);
+SWIZZLE_SCALAR_FUNC(saturated);
+
+// cmath component wise
+SWIZZLE_SCALAR_FUNC(sin);
+SWIZZLE_SCALAR_FUNC(asin);
+SWIZZLE_SCALAR_FUNC(cos);
+SWIZZLE_SCALAR_FUNC(acos);
+SWIZZLE_SCALAR_FUNC(tan);
+SWIZZLE_SCALAR_FUNC(tanh);
+SWIZZLE_SCALAR_FUNC(floor);
+SWIZZLE_SCALAR_FUNC(ceil);
+SWIZZLE_SCALAR_FUNC(abs);
+SWIZZLE_SCALAR_FUNC(fabs);
+SWIZZLE_SCALAR_FUNC(exp);
+SWIZZLE_SCALAR_FUNC(exp2);
+SWIZZLE_SCALAR_FUNC(frac);
+SWIZZLE_SCALAR_FUNC(pow);
+SWIZZLE_SCALAR_FUNC(trunc);
+SWIZZLE_SCALAR_FUNC(sqrt);
+SWIZZLE_SCALAR_FUNC(log);
+SWIZZLE_SCALAR_FUNC(log10);
+SWIZZLE_SCALAR_FUNC(log2);
+
 // swizzle permutations
 
 // v2 swizzles
@@ -330,22 +400,23 @@ Swizzle<T, 2, 1, 1, 1, 0> yyyx; \
 Swizzle<T, 2, 1, 1, 1, 1> yyyy;
 
 // v3 swizzles
-#define swizzle_v3                  \
-Swizzle<T, 2, 0, 0, (size_t)-1> xx; \
-Swizzle<T, 2, 0, 2, (size_t)-1> xz; \
-Swizzle<T, 2, 0, 3, (size_t)-1> xw; \
-Swizzle<T, 2, 1, 0, (size_t)-1> yx; \
-Swizzle<T, 2, 1, 1, (size_t)-1> yy; \
-Swizzle<T, 2, 1, 2, (size_t)-1> yz; \
-Swizzle<T, 2, 1, 3, (size_t)-1> yw; \
-Swizzle<T, 2, 2, 0, (size_t)-1> zx; \
-Swizzle<T, 2, 2, 1, (size_t)-1> zy; \
-Swizzle<T, 2, 2, 2, (size_t)-1> zz; \
-Swizzle<T, 2, 2, 3, (size_t)-1> zw; \
-Swizzle<T, 2, 3, 0, (size_t)-1> wx; \
-Swizzle<T, 2, 3, 1, (size_t)-1> wy; \
-Swizzle<T, 2, 3, 2, (size_t)-1> wz; \
-Swizzle<T, 2, 3, 3, (size_t)-1> ww; \
+#define swizzle_v3      \
+Swizzle<T, 2, 0, 0> xx; \
+Swizzle<T, 2, 0, 1> xy; \
+Swizzle<T, 2, 0, 2> xz; \
+Swizzle<T, 2, 0, 3> xw; \
+Swizzle<T, 2, 1, 0> yx; \
+Swizzle<T, 2, 1, 1> yy; \
+Swizzle<T, 2, 1, 2> yz; \
+Swizzle<T, 2, 1, 3> yw; \
+Swizzle<T, 2, 2, 0> zx; \
+Swizzle<T, 2, 2, 1> zy; \
+Swizzle<T, 2, 2, 2> zz; \
+Swizzle<T, 2, 2, 3> zw; \
+Swizzle<T, 2, 3, 0> wx; \
+Swizzle<T, 2, 3, 1> wy; \
+Swizzle<T, 2, 3, 2> wz; \
+Swizzle<T, 2, 3, 3> ww; \
 Swizzle<T, 3, 0, 0, 0> xxx; \
 Swizzle<T, 3, 0, 0, 1> xxy; \
 Swizzle<T, 3, 0, 0, 2> xxz; \
@@ -456,85 +527,87 @@ Swizzle<T, 3, 2, 2, 2, 1> zzzy; \
 Swizzle<T, 3, 2, 2, 2, 2> zzzz;
 
 // v4 swizzles
-#define swizzle_v4                              \
-Swizzle<T, 2, 0, 0, size_t(-1), size_t(-1)> xx; \
-Swizzle<T, 2, 0, 2, size_t(-1), size_t(-1)> xz; \
-Swizzle<T, 2, 0, 3, size_t(-1), size_t(-1)> xw; \
-Swizzle<T, 2, 1, 0, size_t(-1), size_t(-1)> yx; \
-Swizzle<T, 2, 1, 1, size_t(-1), size_t(-1)> yy; \
-Swizzle<T, 2, 1, 2, size_t(-1), size_t(-1)> yz; \
-Swizzle<T, 2, 1, 3, size_t(-1), size_t(-1)> yw; \
-Swizzle<T, 2, 2, 0, size_t(-1), size_t(-1)> zx; \
-Swizzle<T, 2, 2, 1, size_t(-1), size_t(-1)> zy; \
-Swizzle<T, 2, 2, 2, size_t(-1), size_t(-1)> zz; \
-Swizzle<T, 2, 2, 3, size_t(-1), size_t(-1)> zw; \
-Swizzle<T, 2, 3, 0, size_t(-1), size_t(-1)> wx; \
-Swizzle<T, 2, 3, 1, size_t(-1), size_t(-1)> wy; \
-Swizzle<T, 2, 3, 2, size_t(-1), size_t(-1)> wz; \
-Swizzle<T, 2, 3, 3, size_t(-1), size_t(-1)> ww; \
-Swizzle<T, 3, 0, 0, 0, size_t(-1)> xxx; \
-Swizzle<T, 3, 0, 0, 1, size_t(-1)> xxy; \
-Swizzle<T, 3, 0, 0, 2, size_t(-1)> xxz; \
-Swizzle<T, 3, 0, 0, 3, size_t(-1)> xxw; \
-Swizzle<T, 3, 0, 1, 0, size_t(-1)> xyx; \
-Swizzle<T, 3, 0, 1, 1, size_t(-1)> xyy; \
-Swizzle<T, 3, 0, 1, 3, size_t(-1)> xyw; \
-Swizzle<T, 3, 0, 2, 0, size_t(-1)> xzx; \
-Swizzle<T, 3, 0, 2, 1, size_t(-1)> xzy; \
-Swizzle<T, 3, 0, 2, 2, size_t(-1)> xzz; \
-Swizzle<T, 3, 0, 2, 3, size_t(-1)> xzw; \
-Swizzle<T, 3, 0, 3, 0, size_t(-1)> xwx; \
-Swizzle<T, 3, 0, 3, 1, size_t(-1)> xwy; \
-Swizzle<T, 3, 0, 3, 2, size_t(-1)> xwz; \
-Swizzle<T, 3, 0, 3, 3, size_t(-1)> xww; \
-Swizzle<T, 3, 1, 0, 0, size_t(-1)> yxx; \
-Swizzle<T, 3, 1, 0, 1, size_t(-1)> yxy; \
-Swizzle<T, 3, 1, 0, 2, size_t(-1)> yxz; \
-Swizzle<T, 3, 1, 0, 3, size_t(-1)> yxw; \
-Swizzle<T, 3, 1, 1, 0, size_t(-1)> yyx; \
-Swizzle<T, 3, 1, 1, 1, size_t(-1)> yyy; \
-Swizzle<T, 3, 1, 1, 2, size_t(-1)> yyz; \
-Swizzle<T, 3, 1, 1, 3, size_t(-1)> yyw; \
-Swizzle<T, 3, 1, 2, 0, size_t(-1)> yzx; \
-Swizzle<T, 3, 1, 2, 1, size_t(-1)> yzy; \
-Swizzle<T, 3, 1, 2, 2, size_t(-1)> yzz; \
-Swizzle<T, 3, 1, 2, 3, size_t(-1)> yzw; \
-Swizzle<T, 3, 1, 3, 0, size_t(-1)> ywx; \
-Swizzle<T, 3, 1, 3, 1, size_t(-1)> ywy; \
-Swizzle<T, 3, 1, 3, 2, size_t(-1)> ywz; \
-Swizzle<T, 3, 1, 3, 3, size_t(-1)> yww; \
-Swizzle<T, 3, 2, 0, 0, size_t(-1)> zxx; \
-Swizzle<T, 3, 2, 0, 1, size_t(-1)> zxy; \
-Swizzle<T, 3, 2, 0, 2, size_t(-1)> zxz; \
-Swizzle<T, 3, 2, 0, 3, size_t(-1)> zxw; \
-Swizzle<T, 3, 2, 1, 0, size_t(-1)> zyx; \
-Swizzle<T, 3, 2, 1, 1, size_t(-1)> zyy; \
-Swizzle<T, 3, 2, 1, 2, size_t(-1)> zyz; \
-Swizzle<T, 3, 2, 1, 3, size_t(-1)> zyw; \
-Swizzle<T, 3, 2, 2, 0, size_t(-1)> zzx; \
-Swizzle<T, 3, 2, 2, 1, size_t(-1)> zzy; \
-Swizzle<T, 3, 2, 2, 2, size_t(-1)> zzz; \
-Swizzle<T, 3, 2, 2, 3, size_t(-1)> zzw; \
-Swizzle<T, 3, 2, 3, 0, size_t(-1)> zwx; \
-Swizzle<T, 3, 2, 3, 1, size_t(-1)> zwy; \
-Swizzle<T, 3, 2, 3, 2, size_t(-1)> zwz; \
-Swizzle<T, 3, 2, 3, 3, size_t(-1)> zww; \
-Swizzle<T, 3, 3, 0, 0, size_t(-1)> wxx; \
-Swizzle<T, 3, 3, 0, 1, size_t(-1)> wxy; \
-Swizzle<T, 3, 3, 0, 2, size_t(-1)> wxz; \
-Swizzle<T, 3, 3, 0, 3, size_t(-1)> wxw; \
-Swizzle<T, 3, 3, 1, 0, size_t(-1)> wyx; \
-Swizzle<T, 3, 3, 1, 1, size_t(-1)> wyy; \
-Swizzle<T, 3, 3, 1, 2, size_t(-1)> wyz; \
-Swizzle<T, 3, 3, 1, 3, size_t(-1)> wyw; \
-Swizzle<T, 3, 3, 2, 0, size_t(-1)> wzx; \
-Swizzle<T, 3, 3, 2, 1, size_t(-1)> wzy; \
-Swizzle<T, 3, 3, 2, 2, size_t(-1)> wzz; \
-Swizzle<T, 3, 3, 2, 3, size_t(-1)> wzw; \
-Swizzle<T, 3, 3, 3, 0, size_t(-1)> wwx; \
-Swizzle<T, 3, 3, 3, 1, size_t(-1)> wwy; \
-Swizzle<T, 3, 3, 3, 2, size_t(-1)> wwz; \
-Swizzle<T, 3, 3, 3, 3, size_t(-1)> www; \
+#define swizzle_v4      \
+Swizzle<T, 2, 0, 0> xx; \
+Swizzle<T, 2, 0, 1> xy; \
+Swizzle<T, 2, 0, 2> xz; \
+Swizzle<T, 2, 0, 3> xw; \
+Swizzle<T, 2, 1, 0> yx; \
+Swizzle<T, 2, 1, 1> yy; \
+Swizzle<T, 2, 1, 2> yz; \
+Swizzle<T, 2, 1, 3> yw; \
+Swizzle<T, 2, 2, 0> zx; \
+Swizzle<T, 2, 2, 1> zy; \
+Swizzle<T, 2, 2, 2> zz; \
+Swizzle<T, 2, 2, 3> zw; \
+Swizzle<T, 2, 3, 0> wx; \
+Swizzle<T, 2, 3, 1> wy; \
+Swizzle<T, 2, 3, 2> wz; \
+Swizzle<T, 2, 3, 3> ww; \
+Swizzle<T, 3, 0, 0, 0> xxx; \
+Swizzle<T, 3, 0, 0, 1> xxy; \
+Swizzle<T, 3, 0, 0, 2> xxz; \
+Swizzle<T, 3, 0, 0, 3> xxw; \
+Swizzle<T, 3, 0, 1, 0> xyx; \
+Swizzle<T, 3, 0, 1, 1> xyy; \
+Swizzle<T, 3, 0, 1, 2> xyz; \
+Swizzle<T, 3, 0, 1, 3> xyw; \
+Swizzle<T, 3, 0, 2, 0> xzx; \
+Swizzle<T, 3, 0, 2, 1> xzy; \
+Swizzle<T, 3, 0, 2, 2> xzz; \
+Swizzle<T, 3, 0, 2, 3> xzw; \
+Swizzle<T, 3, 0, 3, 0> xwx; \
+Swizzle<T, 3, 0, 3, 1> xwy; \
+Swizzle<T, 3, 0, 3, 2> xwz; \
+Swizzle<T, 3, 0, 3, 3> xww; \
+Swizzle<T, 3, 1, 0, 0> yxx; \
+Swizzle<T, 3, 1, 0, 1> yxy; \
+Swizzle<T, 3, 1, 0, 2> yxz; \
+Swizzle<T, 3, 1, 0, 3> yxw; \
+Swizzle<T, 3, 1, 1, 0> yyx; \
+Swizzle<T, 3, 1, 1, 1> yyy; \
+Swizzle<T, 3, 1, 1, 2> yyz; \
+Swizzle<T, 3, 1, 1, 3> yyw; \
+Swizzle<T, 3, 1, 2, 0> yzx; \
+Swizzle<T, 3, 1, 2, 1> yzy; \
+Swizzle<T, 3, 1, 2, 2> yzz; \
+Swizzle<T, 3, 1, 2, 3> yzw; \
+Swizzle<T, 3, 1, 3, 0> ywx; \
+Swizzle<T, 3, 1, 3, 1> ywy; \
+Swizzle<T, 3, 1, 3, 2> ywz; \
+Swizzle<T, 3, 1, 3, 3> yww; \
+Swizzle<T, 3, 2, 0, 0> zxx; \
+Swizzle<T, 3, 2, 0, 1> zxy; \
+Swizzle<T, 3, 2, 0, 2> zxz; \
+Swizzle<T, 3, 2, 0, 3> zxw; \
+Swizzle<T, 3, 2, 1, 0> zyx; \
+Swizzle<T, 3, 2, 1, 1> zyy; \
+Swizzle<T, 3, 2, 1, 2> zyz; \
+Swizzle<T, 3, 2, 1, 3> zyw; \
+Swizzle<T, 3, 2, 2, 0> zzx; \
+Swizzle<T, 3, 2, 2, 1> zzy; \
+Swizzle<T, 3, 2, 2, 2> zzz; \
+Swizzle<T, 3, 2, 2, 3> zzw; \
+Swizzle<T, 3, 2, 3, 0> zwx; \
+Swizzle<T, 3, 2, 3, 1> zwy; \
+Swizzle<T, 3, 2, 3, 2> zwz; \
+Swizzle<T, 3, 2, 3, 3> zww; \
+Swizzle<T, 3, 3, 0, 0> wxx; \
+Swizzle<T, 3, 3, 0, 1> wxy; \
+Swizzle<T, 3, 3, 0, 2> wxz; \
+Swizzle<T, 3, 3, 0, 3> wxw; \
+Swizzle<T, 3, 3, 1, 0> wyx; \
+Swizzle<T, 3, 3, 1, 1> wyy; \
+Swizzle<T, 3, 3, 1, 2> wyz; \
+Swizzle<T, 3, 3, 1, 3> wyw; \
+Swizzle<T, 3, 3, 2, 0> wzx; \
+Swizzle<T, 3, 3, 2, 1> wzy; \
+Swizzle<T, 3, 3, 2, 2> wzz; \
+Swizzle<T, 3, 3, 2, 3> wzw; \
+Swizzle<T, 3, 3, 3, 0> wwx; \
+Swizzle<T, 3, 3, 3, 1> wwy; \
+Swizzle<T, 3, 3, 3, 2> wwz; \
+Swizzle<T, 3, 3, 3, 3> www; \
 Swizzle<T, 4, 0, 0, 0, 0> xxxx; \
 Swizzle<T, 4, 0, 0, 0, 1> xxxy; \
 Swizzle<T, 4, 0, 0, 0, 2> xxxz; \
