@@ -478,7 +478,62 @@ TEST_CASE("swizzle compound swizzle", "[swizzle]")
     // divide
     vec3f t4 = v3;
     t4.xz /= v2.yy;
-    REQUIRE(require_func(t4, {0.5f, 2.0f, 1.5f}));
+    
+}
+
+//
+// cmath functions
+//
+
+#define TEST_VEC_CMATH(FUNC)                                                  \
+bool test_vec_##FUNC(vec4f v)                                                 \
+{                                                                             \
+    vec4f r = FUNC(v);                                                        \
+    bool b = require_func(r, {FUNC(v.x), FUNC(v.y), FUNC(v.z), FUNC(v.w)});   \
+    vec4f sw = FUNC(v.wzyx);                                                  \
+    b &= require_func(sw, {FUNC(v.w), FUNC(v.z), FUNC(v.y), FUNC(v.x)});      \
+    return b;                                                                 \
+}
+
+TEST_VEC_CMATH(sin);
+TEST_VEC_CMATH(asin);
+TEST_VEC_CMATH(cos);
+TEST_VEC_CMATH(acos);
+TEST_VEC_CMATH(tan);
+TEST_VEC_CMATH(tanh);
+TEST_VEC_CMATH(floor);
+TEST_VEC_CMATH(ceil);
+TEST_VEC_CMATH(abs);
+TEST_VEC_CMATH(fabs);
+TEST_VEC_CMATH(exp);
+TEST_VEC_CMATH(exp2);
+TEST_VEC_CMATH(trunc);
+TEST_VEC_CMATH(sqrt);
+TEST_VEC_CMATH(log);
+TEST_VEC_CMATH(log10);
+TEST_VEC_CMATH(log2);
+
+TEST_CASE("cmath funcs", "[vec/swizzle]")
+{
+    vec4f v1 = vec4f(0.5f, 25.4f, 99.0f, 122345.99f);
+    vec4f v2 = vec4f(0.5f, 0.22f, 0.75f, -0.11f);
+    REQUIRE(test_vec_sin(v1));
+    REQUIRE(test_vec_asin(v2));
+    REQUIRE(test_vec_cos(v1));
+    REQUIRE(test_vec_acos(v2));
+    REQUIRE(test_vec_tan(v1));
+    REQUIRE(test_vec_tanh(v1));
+    REQUIRE(test_vec_floor(v1));
+    REQUIRE(test_vec_ceil(v1));
+    REQUIRE(test_vec_abs(v1));
+    REQUIRE(test_vec_fabs(v1));
+    REQUIRE(test_vec_exp(v2));
+    REQUIRE(test_vec_exp2(v2));
+    REQUIRE(test_vec_trunc(v1));
+    REQUIRE(test_vec_sqrt(v1));
+    REQUIRE(test_vec_log(v1));
+    REQUIRE(test_vec_log10(v1));
+    REQUIRE(test_vec_log2(v1));
 }
 
 TEST_CASE( "Point Plane Distance", "[maths]")
