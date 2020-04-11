@@ -302,7 +302,7 @@ maths_inline Swizzle<T, N, SW...>& operator*=(Swizzle<T, N, SW...>& lhs, const T
 
 #define SWIZZLE_HORIZ_FUNC(VEC_FUNC)                        \
 template <size_t N, typename T, size_t ...SW>               \
-T VEC_FUNC(const Swizzle<T, N, SW...> s)                    \
+T VEC_FUNC(const Swizzle<T, N, SW...>& s)                   \
 {                                                           \
     return VEC_FUNC((Vec<N, T>)s);                          \
 }
@@ -316,7 +316,7 @@ SWIZZLE_HORIZ_FUNC(mag2);
 
 #define SWIZZLE_SCALAR_FUNC(SCALAR_FUNC)                    \
 template <size_t N, typename T, size_t ...SW>               \
-Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...> s)         \
+Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...>& s)        \
 {                                                           \
     return SCALAR_FUNC((Vec<N, T>)s);                       \
 }

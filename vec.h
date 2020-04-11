@@ -259,8 +259,7 @@ struct Vec<3, T>
     {
         std::vector<size_t> ii = {SW...};
         for(size_t i = 0; i < ii.size(); ++i)
-            if(ii[i] != -1)
-                v[i] = lhs.v[ii[i]];
+            v[i] = lhs.v[ii[i]];
     }
     
     template<typename T2, size_t W, size_t... SW>
@@ -296,7 +295,7 @@ struct Vec<3, T>
 
     inline static Vec<3, T> flt_max()
     {
-        return Vec<3, T>(FLT_MAX);
+        return Vec<3, T>(FLT_MAX, FLT_MAX, FLT_MAX);
     }
 
     inline static Vec<3, T> unit_x()
@@ -1235,7 +1234,6 @@ VEC_FUNC(sqrt);
 VEC_FUNC(log);
 VEC_FUNC(log10);
 VEC_FUNC(log2);
-
 
 //
 // abbreviations
