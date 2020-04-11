@@ -536,6 +536,74 @@ TEST_CASE("cmath funcs", "[vec/swizzle]")
     REQUIRE(test_vec_log2(v1));
 }
 
+TEST_CASE("geometric funcs", "[vec/swizzle]")
+{
+    vec3f d1 = vec3f(0.5f, 0.75f, 2.0f);
+    vec3f d2 = vec3f(2.0f);
+    vec3f d3 = vec3f(10.0f);
+    
+    vec3f c1 = vec3f::unit_x();
+    vec3f c2 = vec3f::unit_y();
+    
+    vec2f p1 = vec2f::unit_x();
+    
+    // dot
+    // v.v
+    f32 dp1 = dot(d1, d2);
+    REQUIRE(require_func(dp1, 6.5f));
+        
+    // s.v
+    f32 dp3 = dot(d1.xxx, d2);
+    REQUIRE(require_func(dp3, 3.0f));
+    
+    // v.s
+    f32 dp4 = dot(d1, d2.yyy);
+    REQUIRE(require_func(dp4, 6.5f));
+    
+    // mag
+    // v
+    f32 m1 = mag(d1);
+    REQUIRE(require_func(m1, 2.193741f));
+    
+    // s
+    f32 m2 = mag(d1.zyx);
+    REQUIRE(require_func(m2, m1));
+    
+    // dist
+    f32 dd1 = dist(d2, d3);
+    REQUIRE(require_func(dd1, mag(vec3f(8.0f))));
+        
+    // s.v
+    f32 dd3 = dist(d2.xyx, d3);
+    REQUIRE(require_func(dd3, mag(vec3f(8.0f))));
+    
+    // v.s
+    f32 dd4 = dist(d2, d3.yyz);
+    REQUIRE(require_func(dd4, mag(vec3f(8.0f))));
+    
+    // cross
+    // v x v
+    vec3f cp1 = cross(c1, c2);
+    REQUIRE(require_func(cp1, vec3f::unit_z()));
+    
+    // v x s
+    vec3f cp2 = cross(c1, c2.xyz);
+    REQUIRE(require_func(cp2, vec3f::unit_z()));
+    
+    // s x v
+    vec3f cp3 = cross(c1.zyx, c2);
+    REQUIRE(require_func(cp3, -vec3f::unit_x()));
+    
+    // perp
+    // v
+    vec2f pp1 = perp(p1);
+    REQUIRE(require_func(pp1, vec2f(0.0f, 1.0f)));
+    
+    // s
+    vec2f pp2 = perp(p1.yx);
+    REQUIRE(require_func(pp2, vec2f(-1.0f, 0.0f)));
+}
+
 TEST_CASE( "Point Plane Distance", "[maths]")
 {
     {
