@@ -315,6 +315,7 @@ maths_inline T saturate(T v)
 {
     v = max(v, (T)0);
     v = min(v, (T)1);
+    return v;
 }
 
 #ifdef WIN32__
