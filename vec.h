@@ -1152,7 +1152,7 @@ maths_inline Vec<N, T> round(const Vec<N, T>& a)
 {
     Vec<N, T> rounded;
     for (size_t i = 0; i < N; ++i)
-        rounded.v[i] = lround(a.v[i]);
+        rounded.v[i] = (T)lround(a.v[i]);
     return rounded;
 }
 

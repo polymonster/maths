@@ -416,8 +416,8 @@ namespace maths
     {
         // Copyright (c) 1970-2003, Wm. Randolph Franklin
         // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-        int npol = poly.size();
-        int i, j;
+        intptr_t npol = (intptr_t)poly.size();
+        intptr_t i, j;
         bool c = false;
         for (i = 0, j = npol-1; i < npol; j = i++) {
             if ((((poly[i].y <= p.y) && (p.y < poly[j].y)) ||

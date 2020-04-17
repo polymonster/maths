@@ -782,7 +782,7 @@ namespace mat
     template <typename T>
     inline Mat<4, 4, T> create_perspective_projection(T fov, T aspect, T znear, T zfar)
     {
-        T tfov = tan(fov * 0.5);
+        T tfov = (T)tan(fov * 0.5);
         T right = tfov * aspect * znear;
         T left = -right;
         
