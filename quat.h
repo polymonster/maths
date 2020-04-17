@@ -53,7 +53,7 @@ inline T dot(const Quat<T>& l, const Quat<T>& r)
 template<typename T>
 inline void normalise(Quat<T>& q)
 {
-    T rmag = 1.0 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+    T rmag = (T)1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
     for(size_t i = 0; i < 4; ++i)
         q.v[i] *= rmag;
 }
@@ -338,22 +338,25 @@ inline Vec<3, T> Quat<T>::to_euler() const
 {
     Vec<3, T> euler;
 
+    T two = (T)2;
+    T one = (T)1;
+
     // roll (x-axis rotation)
-    T sinr = +2.0 * (w * x + y * z);
-    T cosr = +1.0 - 2.0 * (x * x + y * y);
+    T sinr = two * (T)(w * x + y * z);
+    T cosr = one - two * (T)(x * x + y * y);
     euler.x = atan2(sinr, cosr);
 
     // pitch (y-axis rotation)
-    T sinp = +2.0 * (w * y - z * x);
-    if (fabs(sinp) >= 1)
-        euler.y = copysign(3.1415926535897932f / 2.0f, sinp); // use 90 degrees if out of range
+    T sinp = two * (w * y - z * x);
+    if (abs(sinp) >= 1)
+        euler.y = (T)copysign(M_PI / two, sinp); // use 90 degrees if out of range
     else
         euler.y = asin(sinp);
 
     // yaw (z-axis rotation)
-    T siny = +2.0 * (w * z + x * y);
-    T cosy = +1.0 - 2.0 * (y * y + z * z);
-    euler.z     = atan2(siny, cosy);
+    T siny = two * (w * z + x * y);
+    T cosy = one - two * (y * y + z * z);
+    euler.z = atan2(siny, cosy);
 
     return euler;
 }
