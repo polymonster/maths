@@ -159,14 +159,14 @@ maths_inline Vec<3, T> Mat<R, C, T>::get_translation() const
 template <size_t R, size_t C, typename T>
 maths_inline void Mat<R, C, T>::set_row(size_t index, const Vec<R, T>& row)
 {
-    int i = index * C;
+    size_t i = index * C;
     memcpy(&m[i], &row.v, sizeof(T) * C);
 }
 
 template <size_t R, size_t C, typename T>
 maths_inline void Mat<R, C, T>::set_column(size_t index, const Vec<C, T>& col)
 {
-    for (int r = 0; r < R; ++r)
+    for (size_t r = 0; r < R; ++r)
         at(r, index) = col[r];
 }
 

@@ -74,7 +74,7 @@ inline Quat<T> normalised(Quat<T>& q)
 template<typename T>
 inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
-    Quat<T> lerped = (l * (1.0f - t) + r * t);
+    Quat<T> lerped = (l * ((T)1 - t) + r * t);
     return normalise(lerped);
 }
 
@@ -87,12 +87,12 @@ inline Quat<T> slerp(const Quat<T>& l, const Quat<T>& r, T t)
     T product = dot(l, r) / magnitude;
     T absproduct = abs(product);
     
-    if(absproduct < T(1.0 - eps))
+    if(absproduct < T((T)1 - eps))
     {
         const T theta = acos(absproduct);
         const T d = sin(theta);
         const T sign = (product < 0) ? T(-1) : T(1);
-        const T s0 = sin((T(1.0) - t) * theta) / d;
+        const T s0 = sin((T(1) - t) * theta) / d;
         const T s1 = sin(sign * t * theta) / d;
         
         Quat<T> q;
@@ -113,23 +113,23 @@ inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
     T dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
     T theta, st, sut, sout, coeff1, coeff2;
     
-    if(t <= 0.0)
+    if(t <= (T)0)
         return l;
     
-    if(t >= 1.0)
+    if(t >= (T)1)
         return r;
     
     // quats are equal
-    if(dotproduct >= 1.0)
+    if(dotproduct >= (T)1)
         return l;
     
     theta = (T)acos(dotproduct);
-    if (theta < 0.0)
+    if (theta < (T)0)
         theta = -theta;
     
     st     = (T)sin(theta);
     sut    = (T)sin(t * theta);
-    sout   = (T)sin((1.0f - t) * theta);
+    sout   = (T)sin(((T)1 - t) * theta);
     coeff1 = sout / st;
     coeff2 = sut / st;
     
@@ -147,10 +147,10 @@ inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
 template<typename T>
 inline Quat<T>::Quat()
 {
-    x = (T)0.0;
-    y = (T)0.0;
-    z = (T)0.0;
-    w = (T)1.0;
+    x = (T)0;
+    y = (T)0;
+    z = (T)0;
+    w = (T)1;
 };
 
 template<typename T>
@@ -291,9 +291,9 @@ inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 {
     normalise(*this);
     
-    static const T _0 = (T)0.0;
-    static const T _1 = (T)1.0;
-    static const T _2 = (T)2.0;
+    static const T _0 = (T)0;
+    static const T _1 = (T)1;
+    static const T _2 = (T)2;
     
     lmatrix.m[0] = _1 - _2 * y * y - _2 * z * z;
     lmatrix.m[1] = _2 * x * y - _2 * z * w;
@@ -319,15 +319,15 @@ inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 template<typename T>
 inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
 {
-    T ms = 1.0 + (T)m.m[0] + (T)m.m[5] + (T)m.m[10];
+    T ms = (T)1 + (T)m.m[0] + (T)m.m[5] + (T)m.m[10];
     
-    w = sqrt(ms) / 2.0;
+    w = sqrt(ms) / (T)2;
     
     // guards agaisnt nans but the results arent accuracte.
-    if(ms < 0.0)
-        w = 1.0;
+    if(ms < (T)0)
+        w = (T)1;
 
-    T w4 = (4.0 * w);
+    T w4 = ((T)4 * w);
     x    = (m.m[9] - m.m[6]) / w4;
     y    = (m.m[2] - m.m[8]) / w4;
     z    = (m.m[4] - m.m[1]) / w4;
