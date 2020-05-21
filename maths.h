@@ -465,10 +465,11 @@ namespace maths
     }
     
     // Returns the distance (t) of p along the line l1-l2
-    inline f32 distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p)
+    template<size_t N, typename T>
+    inline T distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p)
     {
-        vec3f v1 = p - l1;
-        vec3f v2 = normalised(l2 - l1);
+        Vec<N, T>  v1 = p - l1;
+        Vec<N, T>  v2 = normalised(l2 - l1);
         
         return dot(v2, v1);
     }
