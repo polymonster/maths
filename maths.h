@@ -91,9 +91,11 @@ namespace maths
     template<size_t N, typename T>
     T     point_segment_distance(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2);
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
-
+    template<size_t N, typename T>
+    T     distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p);
+    
     // Ray / Line
-    f32   distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p);
+    
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
@@ -465,10 +467,11 @@ namespace maths
     }
     
     // Returns the distance (t) of p along the line l1-l2
-    inline f32 distance_on_line(const vec3f& l1, const vec3f& l2, const vec3f& p)
+    template<size_t N, typename T>
+    inline T distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p)
     {
-        vec3f v1 = p - l1;
-        vec3f v2 = normalised(l2 - l1);
+        Vec<N, T>  v1 = p - l1;
+        Vec<N, T>  v2 = normalised(l2 - l1);
         
         return dot(v2, v1);
     }
