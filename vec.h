@@ -141,8 +141,8 @@ struct Vec<2, T>
     template<size_t W, size_t... SW>
     Vec<2, T>(const Swizzle<T, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             if(ii[i] != -1)
                 v[i] = lhs.v[ii[i]];
     }
@@ -150,8 +150,8 @@ struct Vec<2, T>
     template<size_t W, size_t... SW>
     const Vec<2, T>& operator=(const Swizzle<T, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             if(ii[i] != -1)
                 v[i] = lhs.v[ii[i]];
         return *this;
@@ -257,16 +257,16 @@ struct Vec<3, T>
     template<typename T2, size_t W, size_t... SW>
     Vec<3, T>(const Swizzle<T2, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             v[i] = lhs.v[ii[i]];
     }
     
     template<typename T2, size_t W, size_t... SW>
     Vec<3, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             if(ii[i] != -1)
                 v[i] = lhs.v[ii[i]];
         
@@ -383,8 +383,8 @@ struct Vec<4, T>
     template<typename T2, size_t W, size_t... SW>
     Vec<4, T>(const Swizzle<T2, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             if(ii[i] != -1)
                 v[i] = lhs.v[ii[i]];
     }
@@ -392,8 +392,8 @@ struct Vec<4, T>
     template<typename T2, size_t W, size_t... SW>
     Vec<4, T>& operator=(const Swizzle<T2, W, SW...>& lhs)
     {
-        std::vector<size_t> ii = {SW...};
-        for(size_t i = 0; i < ii.size(); ++i)
+        size_t ii[] = {SW...};
+        for(size_t i = 0; i < sizeof...(SW); ++i)
             if(ii[i] != -1)
                 v[i] = lhs.v[ii[i]];
         return *this;
