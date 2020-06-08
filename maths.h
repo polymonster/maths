@@ -35,6 +35,9 @@ namespace maths
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
+    
+    // Generic
+    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -51,11 +54,6 @@ namespace maths
     vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
     vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
-
-    // Plane / Triangle
-    f32   plane_distance(const vec3f& x0, const vec3f& xN);
-    f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
-    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
 
     // Overlaps
     u32  aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
@@ -93,9 +91,10 @@ namespace maths
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
     template<size_t N, typename T>
     T     distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p);
+    f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
+    f32   plane_distance(const vec3f& x0, const vec3f& xN);
     
     // Ray / Line
-    
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
@@ -114,7 +113,7 @@ namespace maths
     //
     // Implementation -------------------------------------------------------------------------------------------------------
     //
-    
+        
     inline f32 deg_to_rad(f32 degree_angle)
     {
         return (degree_angle * (f32)M_PI_OVER_180);

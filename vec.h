@@ -1215,6 +1215,7 @@ Vec<N, T> SCALAR_FUNC(const Vec<N, T> v)    \
     return r;                               \
 }
 
+VEC_FUNC(sgn);
 VEC_FUNC(sin);
 VEC_FUNC(asin);
 VEC_FUNC(cos);
