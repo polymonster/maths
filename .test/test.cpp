@@ -489,9 +489,10 @@ TEST_CASE("util functions", "[vec/sizzle]")
 	REQUIRE(sgn(pos) == 1.0f);
 	
 	vec3f vv = vec3f(20.0f, -100.0f, -2000.0f);
-	REQUIRE(require_func(vv, {1.0f, -1.0f, -1.0f}));
+	vec3f vsign = sgn(vv);
+	REQUIRE(require_func(vsign, {1.0f, -1.0f, -1.0f}));
 	
-	vec3f res = vv.yxy;
+	vec3f res = sgn(vv.yxy);
 	REQUIRE(require_func(res, {-1.0f, 1.0f, -1.0f}));
 }
 
