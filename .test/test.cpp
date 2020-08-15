@@ -500,14 +500,14 @@ TEST_CASE("util functions", "[vec/sizzle]")
 // cmath functions
 //
 
-#define TEST_VEC_CMATH(FUNC)                                                  \
-bool test_vec_##FUNC(vec4f v)                                                 \
-{                                                                             \
-    vec4f r = FUNC(v);                                                        \
-    bool b = require_func(r, {FUNC(v.x), FUNC(v.y), FUNC(v.z), FUNC(v.w)});   \
-    vec4f sw = FUNC(v.wzyx);                                                  \
-    b &= require_func(sw, {FUNC(v.w), FUNC(v.z), FUNC(v.y), FUNC(v.x)});      \
-    return b;                                                                 \
+#define TEST_VEC_CMATH(FUNC)                                                  						\
+bool test_vec_##FUNC(vec4f v)                                                 						\
+{                                                                             						\
+    vec4f r = FUNC(v);                                                        						\
+    bool b = require_func(r, {(f32)FUNC(v.x), (f32)FUNC(v.y), (f32)FUNC(v.z), (f32)FUNC(v.w)});   	\
+    vec4f sw = FUNC(v.wzyx);                                                  						\
+    b &= require_func(sw, {(f32)FUNC(v.w), (f32)FUNC(v.z), (f32)FUNC(v.y), (f32)FUNC(v.x)});      	\
+    return b;                                                                 						\
 }
 
 TEST_VEC_CMATH(sin);
@@ -703,14 +703,14 @@ TEST_CASE( "Sphere vs Frustum", "[maths]")
 		vec3f pos = {4.85, 7.45, 2.28};
 		f32 radius = {3.28};
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
-    	REQUIRE(i);
+    	REQUIRE(!i);
 	}
 	
 	{
 		vec3f pos = {0.0100002, 1.53, -2.92};
 		f32 radius = {9.09};
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
-    	REQUIRE(i);
+    	REQUIRE(!i);
 	}
 	
 	// intersect inside
