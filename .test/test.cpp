@@ -645,30 +645,30 @@ TEST_CASE( "AABB vs Frustum", "[maths]")
 	
 	// fail / outside
 	{
-		vec3f epos = {-9.09, -8.06, -6.43};
-		vec3f eext = {4.85, 7.45, 2.28};
+		vec3f epos = {-9.09f, -8.06f, -6.43f};
+		vec3f eext = {4.85f, 7.45f, 2.28f};
     	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
     	REQUIRE(!i);
 	}
 	
 	{
-		vec3f epos = {-6.03, -7.06, 9.04};
-		vec3f eext = {1.37, 3.58, 1.77};
+		vec3f epos = {-6.03f, -7.06f, 9.04f};
+		vec3f eext = {1.37f, 3.58f, 1.77f};
     	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
     	REQUIRE(!i);
 	}
 	
 	// intersect inside
 	{
-		vec3f epos = {-1.03, 8.71, 8.28};
-		vec3f eext = {5.62, 1.44, 5.01};
+		vec3f epos = {-1.03f, 8.71f, 8.28f};
+		vec3f eext = {5.62f, 1.44f, 5.01f};
     	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
     	REQUIRE(i);
 	}
 	
 	{
-		vec3f epos = {-8.25, 6.35, -7.02};
-		vec3f eext = {6.09, 7.69, 7.45};
+		vec3f epos = {-8.25f, 6.35f, -7.02f};
+		vec3f eext = {6.09f, 7.69f, 7.45f};
     	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
     	REQUIRE(i);
 	}
@@ -700,30 +700,30 @@ TEST_CASE( "Sphere vs Frustum", "[maths]")
 	
 	// fail / outside
 	{
-		vec3f pos = {4.85, 7.45, 2.28};
-		f32 radius = {3.28};
+		vec3f pos = {4.85f, 7.45f, 2.28f};
+		f32 radius = 3.28f;
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
     	REQUIRE(!i);
 	}
 	
 	{
-		vec3f pos = {0.0100002, 1.53, -2.92};
-		f32 radius = {9.09};
+		vec3f pos = {0.0100002f, 1.53f, -2.92f};
+		f32 radius = {9.09f};
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
     	REQUIRE(!i);
 	}
 	
 	// intersect inside
 	{
-		vec3f pos = {-4.21, -1.79, 9.67};
-		f32 radius = {6.33};
+		vec3f pos = {-4.21f, -1.79f, 9.67f};
+		f32 radius = {6.33f};
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
     	REQUIRE(i);
 	}
 	
 	{
-		vec3f pos = {-8.76, -8.04, 5.3};
-		f32 radius = {9.44};
+		vec3f pos = {-8.76f, -8.04f, 5.3f};
+		f32 radius = {9.44f};
     	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
     	REQUIRE(i);
 	}	
