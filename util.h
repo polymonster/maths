@@ -47,7 +47,7 @@ using std::swap;
 template <typename T>
 maths_inline T sgn(T val)
 {
-    return (T(0) < val) - (val < T(0));
+    return (T)(T(0) < val) - (val < T(0));
 }
 
 template <class T>
