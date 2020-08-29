@@ -6,7 +6,7 @@
 
 Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.   
 
-There is a [live demo](http://polymonster.co.uk/assets/examples/maths/maths_functions.html) via wasm/webgl.
+There is a [live demo](https://www.polymonster.co.uk/assets/examples/maths/maths_functions.html) via wasm/webgl.
 
 ## Requirements
 
