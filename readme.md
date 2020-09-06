@@ -6,7 +6,7 @@
 
 Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.   
 
-There is a [live demo](https://www.polymonster.co.uk/assets/examples/maths/maths_functions.html) via wasm/webgl.
+There is a [live demo](https://www.polymonster.co.uk/pmtech/examples/maths_functions.html) via wasm/webgl.
 
 ## Requirements
 
@@ -30,33 +30,23 @@ The entire library is header only, add the maths directory to your include searc
 
 ### Scalar
 
-All arithmetic is done using scalar types, there is no SIMD here for simplicity and portability.
+The types are thin wrappers around plain c-style arrays, all arithmetic is done using scalar floating point ops, there is no SIMD here for simplicity and portability.
 
 ### Swizzles
 
 For that shader like feeling.
 
 ```c++
-// construct from swizzle
-vec4f swizz = v.wzyx;
+vec4f swizz = v.wzyx;       // construct from swizzle
+swizz = v.xxxx;             // assign from swizzle
+swizz.wyxz = v.xxyy;        // assign swizzle to swizzle
+vec2f v2 = swizz.yz;        // contstruct truncated
+swizz.wx = v.xy;            // assign truncated
+swizz.xyz *= swizz2.www;    // arithmetic on swizzles
+vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmentic
 
-// assign from swizzle
-swizz = v.xxxx;
-
-// assign swizzle to swizzle
-swizz.wyxz = v.xxyy;
-
-// contstruct truncated
-vec2f v2 = swizz.yz;
-
-// assign truncated
-swizz.wx = v.xy;
-
-// arithmetic on swizzles
-swizz.xyz *= swizz2.www;
-
-// swizzle / scalar arithmentic
-vec2 v2 = swizz.xy * 2.0f;
+// sometimes you may need to cast from swizzle to vec if c++ cant apply implict casts
+f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 ```
 
 ### Intersection Tests and Utility Functions
