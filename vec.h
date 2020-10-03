@@ -1270,6 +1270,7 @@ typedef Vec<4, unsigned char>  Vec4uc;
 typedef Vec2i   vec2i;
 typedef Vec2f   vec2f;
 typedef Vec3f   vec3f;
+typedef Vec3d   vec3d;
 typedef Vec3ui  vec3ui;
 typedef Vec3i   vec3i;
 typedef Vec4f   vec4f;
