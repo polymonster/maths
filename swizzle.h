@@ -314,7 +314,7 @@ SWIZZLE_HORIZ_FUNC(mag2);
 // swizzle functions performing component wise operations
 //
 
-#define SWIZZLE_SCALAR_FUNC(SCALAR_FUNC)                    \
+#define SWIZZLE_FUNC(SCALAR_FUNC)                    \
 template <size_t N, typename T, size_t ...SW>               \
 Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...>& s)        \
 {                                                           \
@@ -322,31 +322,32 @@ Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...>& s)        \
 }
 
 // cmath
-SWIZZLE_SCALAR_FUNC(perp);
-SWIZZLE_SCALAR_FUNC(sin);
-SWIZZLE_SCALAR_FUNC(asin);
-SWIZZLE_SCALAR_FUNC(cos);
-SWIZZLE_SCALAR_FUNC(acos);
-SWIZZLE_SCALAR_FUNC(tan);
-SWIZZLE_SCALAR_FUNC(tanh);
-SWIZZLE_SCALAR_FUNC(floor);
-SWIZZLE_SCALAR_FUNC(ceil);
-SWIZZLE_SCALAR_FUNC(abs);
-SWIZZLE_SCALAR_FUNC(fabs);
-SWIZZLE_SCALAR_FUNC(exp);
-SWIZZLE_SCALAR_FUNC(exp2);
-SWIZZLE_SCALAR_FUNC(frac);
-SWIZZLE_SCALAR_FUNC(pow);
-SWIZZLE_SCALAR_FUNC(trunc);
-SWIZZLE_SCALAR_FUNC(sqrt);
-SWIZZLE_SCALAR_FUNC(log);
-SWIZZLE_SCALAR_FUNC(log10);
-SWIZZLE_SCALAR_FUNC(log2);
+SWIZZLE_FUNC(perp);
+SWIZZLE_FUNC(sin);
+SWIZZLE_FUNC(asin);
+SWIZZLE_FUNC(cos);
+SWIZZLE_FUNC(acos);
+SWIZZLE_FUNC(tan);
+SWIZZLE_FUNC(tanh);
+SWIZZLE_FUNC(floor);
+SWIZZLE_FUNC(ceil);
+SWIZZLE_FUNC(abs);
+SWIZZLE_FUNC(fabs);
+SWIZZLE_FUNC(exp);
+SWIZZLE_FUNC(exp2);
+SWIZZLE_FUNC(frac);
+SWIZZLE_FUNC(pow);
+SWIZZLE_FUNC(trunc);
+SWIZZLE_FUNC(sqrt);
+SWIZZLE_FUNC(log);
+SWIZZLE_FUNC(log10);
+SWIZZLE_FUNC(log2);
 
 // vec
-SWIZZLE_SCALAR_FUNC(round);
-SWIZZLE_SCALAR_FUNC(normalised);
-SWIZZLE_SCALAR_FUNC(saturated);
+SWIZZLE_FUNC(sgn);
+SWIZZLE_FUNC(round);
+SWIZZLE_FUNC(normalised);
+SWIZZLE_FUNC(saturated);
 
 //
 // return vec, with different combination of swiz and vec

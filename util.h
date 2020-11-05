@@ -44,6 +44,12 @@ using std::max;
 using std::min;
 using std::swap;
 
+template <typename T>
+maths_inline T sgn(T val)
+{
+    return (T)(T(0) < val) - (val < T(0));
+}
+
 template <class T>
 maths_inline T sqr(const T& x)
 {

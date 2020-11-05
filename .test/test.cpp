@@ -478,21 +478,36 @@ TEST_CASE("swizzle compound swizzle", "[swizzle]")
     // divide
     vec3f t4 = v3;
     t4.xz /= v2.yy;
-    
+}
+
+TEST_CASE("util functions", "[vec/sizzle]")
+{
+	f32 neg = -10.0f;
+	f32 pos = 22.0f;
+	
+	REQUIRE(sgn(neg) == -1.0f);
+	REQUIRE(sgn(pos) == 1.0f);
+	
+	vec3f vv = vec3f(20.0f, -100.0f, -2000.0f);
+	vec3f vsign = sgn(vv);
+	REQUIRE(require_func(vsign, {1.0f, -1.0f, -1.0f}));
+	
+	vec3f res = sgn(vv.yxy);
+	REQUIRE(require_func(res, {-1.0f, 1.0f, -1.0f}));
 }
 
 //
 // cmath functions
 //
 
-#define TEST_VEC_CMATH(FUNC)                                                  \
-bool test_vec_##FUNC(vec4f v)                                                 \
-{                                                                             \
-    vec4f r = FUNC(v);                                                        \
-    bool b = require_func(r, {FUNC(v.x), FUNC(v.y), FUNC(v.z), FUNC(v.w)});   \
-    vec4f sw = FUNC(v.wzyx);                                                  \
-    b &= require_func(sw, {FUNC(v.w), FUNC(v.z), FUNC(v.y), FUNC(v.x)});      \
-    return b;                                                                 \
+#define TEST_VEC_CMATH(FUNC)                                                  						\
+bool test_vec_##FUNC(vec4f v)                                                 						\
+{                                                                             						\
+    vec4f r = FUNC(v);                                                        						\
+    bool b = require_func(r, {(f32)FUNC(v.x), (f32)FUNC(v.y), (f32)FUNC(v.z), (f32)FUNC(v.w)});   	\
+    vec4f sw = FUNC(v.wzyx);                                                  						\
+    b &= require_func(sw, {(f32)FUNC(v.w), (f32)FUNC(v.z), (f32)FUNC(v.y), (f32)FUNC(v.x)});      	\
+    return b;                                                                 						\
 }
 
 TEST_VEC_CMATH(sin);
@@ -602,6 +617,116 @@ TEST_CASE("geometric funcs", "[vec/swizzle]")
     // s
     vec2f pp2 = perp(p1.yx);
     REQUIRE(require_func(pp2, vec2f(-1.0f, 0.0f)));
+}
+
+TEST_CASE( "AABB vs Frustum", "[maths]")
+{
+	mat4 view_proj = {
+		(f32)0.85501, 
+		(f32)1.45179e-08, 
+		(f32)0.467094, 
+		(f32)0, 
+		(f32)0.39811, 
+		(f32)1.52002, 
+		(f32)-0.728735, 
+		(f32)0, 
+		(f32)0.420904, 
+		(f32)-0.479617, 
+		(f32)-0.770459, 
+		(f32)60.004, 
+		(f32)0.420736, 
+		(f32)-0.479426, 
+		(f32)-0.770151, 
+		(f32)60
+	};
+	
+	vec4f planes[6];
+	maths::get_frustum_planes_from_matrix(view_proj, &planes[0]);
+	
+	// fail / outside
+	{
+		vec3f epos = {-9.09f, -8.06f, -6.43f};
+		vec3f eext = {4.85f, 7.45f, 2.28f};
+    	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
+    	REQUIRE(!i);
+	}
+	
+	{
+		vec3f epos = {-6.03f, -7.06f, 9.04f};
+		vec3f eext = {1.37f, 3.58f, 1.77f};
+    	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
+    	REQUIRE(!i);
+	}
+	
+	// intersect inside
+	{
+		vec3f epos = {-1.03f, 8.71f, 8.28f};
+		vec3f eext = {5.62f, 1.44f, 5.01f};
+    	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
+    	REQUIRE(i);
+	}
+	
+	{
+		vec3f epos = {-8.25f, 6.35f, -7.02f};
+		vec3f eext = {6.09f, 7.69f, 7.45f};
+    	bool i = maths::aabb_vs_frustum(epos, eext, &planes[0]);
+    	REQUIRE(i);
+	}
+}
+
+TEST_CASE( "Sphere vs Frustum", "[maths]")
+{
+	mat4 view_proj = {
+		(f32)0.85501, 
+		(f32)1.45179e-08, 
+		(f32)0.467094, 
+		(f32)0, 
+		(f32)0.39811, 
+		(f32)1.52002, 
+		(f32)-0.728735, 
+		(f32)0, 
+		(f32)0.420904, 
+		(f32)-0.479617, 
+		(f32)-0.770459, 
+		(f32)60.004, 
+		(f32)0.420736, 
+		(f32)-0.479426, 
+		(f32)-0.770151, 
+		(f32)60
+	};
+	
+	vec4f planes[6];
+	maths::get_frustum_planes_from_matrix(view_proj, &planes[0]);
+	
+	// fail / outside
+	{
+		vec3f pos = {4.85f, 7.45f, 2.28f};
+		f32 radius = 3.28f;
+    	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
+    	REQUIRE(!i);
+	}
+	
+	{
+		vec3f pos = {0.0100002f, 1.53f, -2.92f};
+		f32 radius = {9.09f};
+    	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
+    	REQUIRE(!i);
+	}
+	
+	// intersect inside
+	{
+		vec3f pos = {-4.21f, -1.79f, 9.67f};
+		f32 radius = {6.33f};
+    	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
+    	REQUIRE(i);
+	}
+	
+	{
+		vec3f pos = {-8.76f, -8.04f, 5.3f};
+		f32 radius = {9.44f};
+    	bool i = maths::sphere_vs_frustum(pos, radius, &planes[0]);
+    	REQUIRE(i);
+	}	
 }
 
 TEST_CASE( "Point Plane Distance", "[maths]")

@@ -35,6 +35,10 @@ namespace maths
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
+    
+    // Generic
+    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
+    void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -52,17 +56,14 @@ namespace maths
     vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
 
-    // Plane / Triangle
-    f32   plane_distance(const vec3f& x0, const vec3f& xN);
-    f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
-    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
-
     // Overlaps
     u32  aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
     u32  sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
+    bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f& aabb_extent, vec4f* planes);
+    bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes);
     // todo: obb vs obb
 
     // Point Test
@@ -93,9 +94,10 @@ namespace maths
     float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
     template<size_t N, typename T>
     T     distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p);
+    f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
+    f32   plane_distance(const vec3f& x0, const vec3f& xN);
     
     // Ray / Line
-    
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
@@ -108,13 +110,10 @@ namespace maths
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
     
-    // Concave polygon
-    bool poly_union_shell(const std::vector<vec2f>& poly0, const std::vector<vec2f>& poly1, std::vector<vec2f>& shell);
-    
     //
-    // Implementation -------------------------------------------------------------------------------------------------------
+    // Implementation
     //
-    
+        
     inline f32 deg_to_rad(f32 degree_angle)
     {
         return (degree_angle * (f32)M_PI_OVER_180);
@@ -366,6 +365,43 @@ namespace maths
         return true;
     }
     
+    // returns true if an aabb defined by aabb_pos (centre) and aabb_extent (half extent) is inside or intersecting the frustum
+    // defined by 6 planes (xyz = plane normal, w = plane constant / distance from origin)
+    // implemented via info detailed in this insightful blog post: https://fgiesen.wordpress.com/2010/10/17/view-frustum-culling
+    // sse/avx simd optimised variations can be found here: https://github.com/polymonster/pmtech/blob/master/core/put/source/ecs/ecs_cull.cpp
+    inline bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f&  aabb_extent, vec4f* planes)
+    {
+        bool inside = true;
+        for (size_t p = 0; p < 6; ++p)
+        {
+            vec3f sign_flip = sgn(planes[p].xyz) * -1.0f;
+            f32 pd = planes[p].w;
+            f32 d2 = dot(aabb_pos + aabb_extent * sign_flip, planes[p].xyz);
+
+            if (d2 > -pd)
+            {
+                inside = false;
+            }
+        }
+        return inside;
+    }
+    
+    // returns true if the sphere defined by pos and radius is inside or intersecting frustum
+    // definined by 6 planes (xyz = plane normal, w = plane constant / distance)
+    // sse/avx simd optimised variations can be found here: https://github.com/polymonster/pmtech/blob/master/core/put/source/ecs/ecs_cull.cpp
+    inline bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes)
+    {
+        for (size_t p = 0; p < 6; ++p)
+        {
+            f32 d = dot(pos, planes[p].xyz) + planes[p].w;
+            if (d > radius)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Returns true if sphere with centre s0 and radius r0 contains point p0
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
@@ -667,6 +703,47 @@ namespace maths
         vec3f vB = v2 - v1;
         
         return normalised(cross(vB, vA));
+    }
+    
+    // extracts frustum planes in the form of (xyz = planes normal, w = plane constant / distance from origin)
+    // planes must be a pointer to an array of 6 vec4f's
+    inline void get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out)
+    {
+        // unproject matrix to get frustum corners grouped as 4 near, 4 far.
+        vec2f ndc_coords[] = {
+            vec2f(0.0f, 1.0f),
+            vec2f(1.0f, 1.0f),
+            vec2f(0.0f, 0.0f),
+            vec2f(1.0f, 0.0f),
+        };
+        vec2i vpi = vec2i(1, 1);
+        vec3f corners[2][4];
+        for (size_t i = 0; i < 4; ++i)
+        {
+            corners[0][i] = maths::unproject_sc(vec3f(ndc_coords[i], 0.0f), view_projection, vpi);
+            corners[1][i] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
+        }
+
+        // construct vectors to obtain normals
+        vec3f plane_vectors[] = {
+            corners[0][0], corners[1][0], corners[0][2], // left
+            corners[0][0], corners[0][1], corners[1][0], // top
+            corners[0][1], corners[0][3], corners[1][1], // right
+            corners[0][2], corners[1][2], corners[0][3], // bottom
+            corners[0][0], corners[0][2], corners[0][1], // near
+            corners[1][0], corners[1][1], corners[1][2]  // far
+        };
+
+        // extract normals and distance
+        for (size_t i = 0; i < 6; ++i)
+        {
+            size_t offset = i * 3;
+            vec3f v1 = normalised(plane_vectors[offset + 1] - plane_vectors[offset + 0]);
+            vec3f v2 = normalised(plane_vectors[offset + 2] - plane_vectors[offset + 0]);
+
+            planes_out[i].xyz = cross(v1, v2);
+            planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);
+        }
     }
     
     // Returns true is ray with origin r1 and direction rv intersects the aabb defined by emin and emax
