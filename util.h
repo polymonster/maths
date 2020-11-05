@@ -642,7 +642,7 @@ maths_inline T smooth_stop5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 template<class T>
 inline T soften_towards_edge(T c, T p, T e, T r)
 {
-    T pd = abs(e - r);
+    T pd = abs(e - p);
     T cd = abs(e - c);
     if (cd < pd)
     {
