@@ -614,29 +614,29 @@ maths_inline T smooth_start5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 template<class T>
 maths_inline T smooth_stop2(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
-    t /= d;
-    return -c * t*t(t - 2) + b;
+    t = t / d - 1;
+    return -c * (t*t + (T)1) + b;
 }
 
 template<class T>
 maths_inline T smooth_stop3(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
     t = t / d - 1;
-    return c * (t*t*t + 1) + b;
+    return c * (t*t*t + (T)1) + b;
 }
 
 template<class T>
 maths_inline T smooth_stop4(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
     t = t / d - 1;
-    return -c * (t*t*t*t - 1) + b;
+    return -c * (t*t*t*t - (T)1) + b;
 }
 
 template<class T>
 maths_inline T smooth_stop5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
     t = t / d - 1;
-    return -c * (t*t*t*t*t + 1) + b;
+    return c * (t*t*t*t*t + (T)1) + b;
 }
 
 template<class T>
@@ -661,7 +661,7 @@ inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
 }
 
 template<class T>
-inline T exp_sustained_impulse( T x, T f, T k )
+inline T exp_sustained_impulse(T x, T f, T k)
 {
     T s = max(x-f, 0.0f);
     return min( x*x/(f*f), 1.0f + (2.0f/f)*s*exp(-k*s));

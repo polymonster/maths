@@ -51,6 +51,8 @@ namespace maths
     // Colours
     vec3f rgb_to_hsv(vec3f rgb);
     vec3f hsv_to_rgb(vec3f hsv);
+    vec4f rgba8_to_vec4f(u32 rgba);
+    u32   vec4f_to_rgba8(vec4f);
     
     // Projection
     vec3f project_to_ndc(const vec3f& p, const mat4& view_projection);
@@ -190,6 +192,26 @@ namespace maths
         
         return out_rgb;
     }
+
+    inline vec4f rgba8_to_vec4f(u32 rgba)
+    {
+        return vec4f(
+            ((rgba >>  0) & 0xff) / 255.0f,
+            ((rgba >>  8) & 0xff) / 255.0f,
+            ((rgba >> 16) & 0xff) / 255.0f,
+            ((rgba >> 24) & 0xff) / 255.0f
+        );
+    }
+
+    inline u32 vec4f_to_rgba8(vec4f v)
+    {
+        u32 rgba = 0;
+        rgba |= ((u32)(v[0] * 255.0f));
+        rgba |= ((u32)(v[1] * 255.0f)) << 8;
+        rgba |= ((u32)(v[2] * 255.0f)) << 16;
+        rgba |= ((u32)(v[3] * 255.0f)) << 24;
+        return rgba;
+    }
     
     // Project point p by view_projection to normalised device coordinates, perfroming homogenous divide
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
@@ -317,7 +339,7 @@ namespace maths
         return INTERSECTS;
     }
     
-    // Returns true is point p0 is inside aabb define by min and max
+    // Returns true if point p0 is inside aabb define by min and max
     template<size_t N, typename T>
     inline bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0)
     {
@@ -351,7 +373,7 @@ namespace maths
         return d < r0;
     }
     
-    // Returns true if the aabb's define by minx and maxx overlap
+    // Returns true if the aabb's defined by min0,max0 and min1,max1 overlap
     inline bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1)
     {
         // discard non overlaps quickly
@@ -410,7 +432,7 @@ namespace maths
         return dist2(p0, s0) < r0 * r0;
     }
     
-    // Return true if point p is inside cone define by position cp facing direction cv with height h and radius r
+    // Return true if point p is inside cone defined by position cp facing direction cv with height h and radius r
     inline bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
         vec3f l2 = cp + cv * h;
@@ -580,7 +602,7 @@ namespace maths
         return r0 + rV * t;
     }
     
-    // find distance p0 is from aabb define by aabb_min -> aabb_max
+    // find distance p0 is from aabb defined by aabb_min -> aabb_max
     template<size_t N, typename T>
     inline T point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max)
     {
@@ -637,7 +659,7 @@ namespace maths
         }
     }
     
-    // Returns true is p is inside the triangle v1-v2-v3
+    // Returns true if p is inside the triangle v1-v2-v3
     inline bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3)
     {
         vec3f cp1, cp2;
@@ -663,7 +685,7 @@ namespace maths
         return true;
     }
     
-    // Returns the cloest point on trianglt v1-v2-v3 to point p
+    // Returns the cloest point on triangle v1-v2-v3 to point p
     // side is 1 or -1 depending on whether the point is infront or behind the triangle
     inline vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side)
     {
@@ -748,7 +770,7 @@ namespace maths
         }
     }
     
-    // Returns true is ray with origin r1 and direction rv intersects the aabb defined by emin and emax
+    // Returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
     // Intersection point is stored in ip
     inline bool ray_vs_aabb(const vec3f& emin, const vec3f& emax, const vec3f& r1, const vec3f& rv, vec3f& ip)
     {
@@ -795,7 +817,7 @@ namespace maths
         return ii;
     }
     
-    // Returns the closest point to point p on the obb efined by mat
+    // Returns the closest point to point p on the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
     inline vec3f closest_point_on_obb(const mat4& mat, const vec3f& p)
     {
@@ -869,6 +891,7 @@ namespace maths
         }
     }
     
+    // return the centre point of a 2d convex hull
     inline vec2f get_convex_hull_centre(const std::vector<vec2f>& hull)
     {
         vec2f cp = vec2f::zero();
