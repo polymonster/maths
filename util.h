@@ -663,6 +663,7 @@ inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
 template<class T>
 inline T exp_sustained_impulse(T x, T f, T k)
 {
-    T s = max(x-f, 0.0f);
-    return min( x*x/(f*f), 1.0f + (2.0f/f)*s*exp(-k*s));
+    T s = max<T>(x-f, 0);
+    return min<T>(x*x/(f*f), (T)1 + ((T)2/f)*s*(T)exp(-k*s));
 }
+
