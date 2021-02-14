@@ -49,6 +49,11 @@ vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmentic
 f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 ```
 
+### Debugger Tools
+
+There is a provided [maths.natvis](https://github.com/polymonster/maths/blob/master/maths.natvis) file which can be used with visual studio or vscode, this will display swizzles correctly when hovering in the debugger.
+
+
 ### Intersection Tests and Utility Functions
 
 ```c++
