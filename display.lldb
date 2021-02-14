@@ -1,0 +1,12 @@
+type summary add --summary-string "${var.x}, ${var.y}" vec2f
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}" vec3f
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}, ${var.w}" vec4f
+type summary add --summary-string "${var.x}, ${var.y}" vec2d
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}" vec3d
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}, ${var.w}" vec4d
+type summary add --summary-string "${var.x}, ${var.y}" vec2i
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}" vec3i
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}, ${var.w}" vec4i
+type summary add --summary-string "${var.x}, ${var.y}" vec2u
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}" vec3u
+type summary add --summary-string "${var.x}, ${var.y}, ${var.z}, ${var.w}" vec4u
