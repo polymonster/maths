@@ -12,6 +12,30 @@
         <DisplayString>{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}</DisplayString>
         <Expand></Expand>
     </Type>
+    <Type Name="vec4f">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="vec3f">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="vec2f">
+        <DisplayString>{{{v[0]}, {v[1]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="vec4d">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="vec3d">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="vec2d">
+        <DisplayString>{{{v[0]}, {v[1]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
     <Type Name="Swizzle&lt;*,*,*,*,*,*&gt;">
         <DisplayString Condition="$T2 == 1">{{ {v[$T3]} }}</DisplayString>
         <DisplayString Condition="$T2 == 2">{{ {v[$T3]}, {v[$T4]} }}</DisplayString>
