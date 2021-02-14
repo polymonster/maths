@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="Vec&lt;2,*&gt;">
+        <DisplayString>{{{v[0]}, {v[1]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="Vec&lt;3,*&gt;">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="Vec&lt;4,*&gt;">
+        <DisplayString>{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}</DisplayString>
+        <Expand></Expand>
+    </Type>
+    <Type Name="Swizzle&lt;*,*,*,*,*,*&gt;">
+        <DisplayString Condition="$T2 == 1">{{ {v[$T3]} }}</DisplayString>
+        <DisplayString Condition="$T2 == 2">{{ {v[$T3]}, {v[$T4]} }}</DisplayString>
+        <DisplayString Condition="$T2 == 3">{{ {v[$T3]}, {v[$T4]}, {v[$T5]} }}</DisplayString>
+        <DisplayString Condition="$T2 == 4">{{ {v[$T3]}, {v[$T4]}, {v[$T5]}, {v[$T6]} }}</DisplayString>
+    </Type>
+</AutoVisualizer>
