@@ -51,7 +51,9 @@ f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 
 ### Debugger Tools
 
-There is a provided [maths.natvis](https://github.com/polymonster/maths/blob/master/maths.natvis) file which can be used with visual studio or vscode, this will display swizzles correctly when hovering in the debugger.
+There is a provided [display.natvis](https://github.com/polymonster/maths/blob/master/display.natvis) file which can be used with visual studio or vscode, this will display swizzles correctly when hovering in the debugger and prevent the huge union expansion from the swizzles.
+
+Append the contents of [display.lldb](https://github.com/polymonster/maths/blob/master/display.lldb) to your `~/.lldbinit` for improved readability in xcode or commandline lldb debugging.
 
 
 ### Intersection Tests and Utility Functions
