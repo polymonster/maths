@@ -769,6 +769,24 @@ namespace maths
             planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);
         }
     }
+
+    // gets frustum corners sorted as 4 near, 4 far into an array of vec3f corners[8];
+    inline void get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners)
+    {
+        // unproject matrix to get frustum corners grouped as 4 near, 4 far.
+        vec2f ndc_coords[] = {
+            vec2f(0.0f, 1.0f),
+            vec2f(1.0f, 1.0f),
+            vec2f(0.0f, 0.0f),
+            vec2f(1.0f, 0.0f),
+        };
+        vec2i vpi = vec2i(1, 1);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            corners[i] = maths::unproject_sc(vec3f(ndc_coords[i], 0.0f), view_projection, vpi);
+            corners[i+4] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
+        }
+    }
     
     // Returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
     // Intersection point is stored in ip
