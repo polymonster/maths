@@ -780,6 +780,20 @@ namespace mat
     }
 
     template <typename T>
+    inline Mat<4, 4, T> create_perspective_projection_yup(T fov, T aspect, T znear, T zfar)
+    {
+        T tfov = (T)tan(fov * 0.5);
+        T right = tfov * aspect * znear;
+        T left = -right;
+
+        T top = tfov * znear;
+        T bottom = -top;
+
+        return create_perspective_projection(left, right, bottom, top, znear, zfar);
+    }
+
+    // y-is down, this is used in pmtech and the y-axis in the engine to support opengl in a clean way
+    template <typename T>
     inline Mat<4, 4, T> create_perspective_projection(T fov, T aspect, T znear, T zfar)
     {
         T tfov = (T)tan(fov * 0.5);
@@ -788,11 +802,7 @@ namespace mat
         
         T bottom = tfov * znear;
         T top = -bottom;
-        
-        // swap to these for Y-up
-        //T top = tfov * znear;
-        //T bottom = -top;
-        
+                
         return create_perspective_projection(left, right, bottom, top, znear, zfar);
     }
 
