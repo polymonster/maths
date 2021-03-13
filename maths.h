@@ -41,6 +41,7 @@ namespace maths
     // Generic
     vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
     void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
+    void  get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -734,13 +735,13 @@ namespace maths
     inline void get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out)
     {
         // unproject matrix to get frustum corners grouped as 4 near, 4 far.
-        vec2f ndc_coords[] = {
+        static vec2f ndc_coords[] = {
             vec2f(0.0f, 1.0f),
             vec2f(1.0f, 1.0f),
             vec2f(0.0f, 0.0f),
             vec2f(1.0f, 0.0f),
         };
-        vec2i vpi = vec2i(1, 1);
+        static vec2i vpi = vec2i(1, 1);
         vec3f corners[2][4];
         for (size_t i = 0; i < 4; ++i)
         {
@@ -767,6 +768,24 @@ namespace maths
 
             planes_out[i].xyz = cross(v1, v2);
             planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);
+        }
+    }
+
+    // gets frustum corners sorted as 4 near, 4 far into an array of vec3f corners[8];
+    inline void get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners)
+    {
+        // unproject matrix to get frustum corners grouped as 4 near, 4 far.
+        static vec2f ndc_coords[] = {
+            vec2f(0.0f, 1.0f),
+            vec2f(1.0f, 1.0f),
+            vec2f(0.0f, 0.0f),
+            vec2f(1.0f, 0.0f),
+        };
+        static vec2i vpi = vec2i(1, 1);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            corners[i] = maths::unproject_sc(vec3f(ndc_coords[i], 0.0f), view_projection, vpi);
+            corners[i+4] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
         }
     }
     
