@@ -41,6 +41,7 @@ namespace maths
     // Generic
     vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
     void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
+    void  get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
