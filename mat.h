@@ -792,7 +792,8 @@ namespace mat
         return create_perspective_projection(left, right, bottom, top, znear, zfar);
     }
 
-    // y-is down, this is used in pmtech and the y-axis in the engine to support opengl in a clean way
+    // y-is down, someone modified this and it shipped in a game
+    // recommended to use create_perspective_projection_yup instead
     template <typename T>
     inline Mat<4, 4, T> create_perspective_projection(T fov, T aspect, T znear, T zfar)
     {
