@@ -92,9 +92,8 @@ struct Mat
     Mat<R, C, T>  operator*(const Mat<R, C, T>& rhs) const;
     Mat<R, C, T>& operator*=(const Mat<R, C, T>& rhs);
     Vec<C, T>     operator*(const Vec<C, T>& rhs) const;
-    
-    T&       operator()(size_t r, size_t c);
-    const T& operator()(size_t r, size_t c) const;
+    T&            operator()(size_t r, size_t c);
+    const T&      operator()(size_t r, size_t c) const;
 
     // Accessors
     T&        at(size_t r, size_t c);
@@ -102,21 +101,18 @@ struct Mat
     Vec<R, T> get_row(size_t index) const;
     Vec<C, T> get_column(size_t index) const;
     Vec<3, T> get_translation() const;
-
-    void set_row(size_t index, const Vec<R, T>& row);
-    void set_column(size_t index, const Vec<C, T>& col);
-    void set_translation(const Vec<3, T>& t);
-    void set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, const Vec<3, T>& at, const Vec<3, T>& pos);
+    void      set_row(size_t index, const Vec<R, T>& row);
+    void      set_column(size_t index, const Vec<C, T>& col);
+    void      set_translation(const Vec<3, T>& t);
+    void      set_vectors(const Vec<3, T>& right, const Vec<3, T>& up, const Vec<3, T>& at, const Vec<3, T>& pos);
 
     // Computation
     Mat<R, C, T> multiply(T scalar) const;
     Mat<R, C, T> multiply(const Mat<R, C, T>& rhs) const;
     Vec<C, T>    multiply(const Vec<C, T>& rhs) const;
-    
-    Vec<4, T> transform_vector(const Vec<4, T>& v) const;
-    Vec<3, T> transform_vector(const Vec<3, T>& v, T& w) const;
-    Vec<3, T> transform_vector(const Vec<3, T>& v) const;
-    
+    Vec<4, T>    transform_vector(const Vec<4, T>& v) const;
+    Vec<3, T>    transform_vector(const Vec<3, T>& v, T& w) const;
+    Vec<3, T>    transform_vector(const Vec<3, T>& v) const;
     Mat<R, C, T> transposed();
     void         transpose();
 };
@@ -446,9 +442,6 @@ namespace mat
     Mat<4, 4, T> inverse3x4(const Mat<4, 4, T>& mat)
     {
         const T* m = &mat.m[0];
-
-        // determinant
-        // T one_over_det = (T)1 / compute_determinant(mat);
 
         // determinant
         T det = (m[0] * (m[5] * m[10] - m[9] * m[6])) - (m[4] * (m[1] * m[10] - m[9] * m[2])) +
@@ -853,6 +846,9 @@ typedef Mat<3, 4, f32> Mat34f;
 typedef Mat<3, 3, f32> mat3;
 typedef Mat<4, 4, f32> mat4;
 typedef Mat<2, 2, f32> mat2;
+typedef Mat<3, 3, f32> mat3f;
+typedef Mat<4, 4, f32> mat4f;
+typedef Mat<2, 2, f32> mat2f;
 typedef Mat<4, 4, f32> float4x4;
 typedef Mat<3, 4, f32> float3x4;
 typedef Mat<4, 3, f32> float4x3;

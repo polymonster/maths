@@ -6,6 +6,7 @@
 #pragma once
 
 #include "util.h"
+
 #include <cassert>
 #include <cmath>
 #include <iostream>

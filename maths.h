@@ -119,12 +119,12 @@ namespace maths
     // Implementation
     //
         
-    inline f32 deg_to_rad(f32 degree_angle)
+    maths_inline f32 deg_to_rad(f32 degree_angle)
     {
         return (degree_angle * (f32)M_PI_OVER_180);
     }
     
-    inline f32 rad_to_deg(f32 radian_angle)
+    maths_inline f32 rad_to_deg(f32 radian_angle)
     {
         return (radian_angle * (f32)M_180_OVER_PI);
     }
@@ -270,13 +270,13 @@ namespace maths
     }
     
     // Get distance to plane x defined by point on plane x0 and normal of plane xN
-    inline f32 plane_distance(const vec3f& x0, const vec3f& xN)
+    maths_inline f32 plane_distance(const vec3f& x0, const vec3f& xN)
     {
         return dot(xN, x0) * -1.0f;
     }
     
     // Get distance from point p0 to plane defined by point x0 and normal xn
-    inline f32 point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN)
+    maths_inline f32 point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN)
     {
         f32 d = plane_distance(x0, xN);
         return dot(p0, xN) + d;
