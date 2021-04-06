@@ -12,6 +12,7 @@
 #include <vector>
 
 #define MATHS_ALWAYS_INLINE
+
 #ifndef MATHS_ALWAYS_INLINE
 #define maths_inline inline
 #else
