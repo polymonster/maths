@@ -352,6 +352,11 @@ struct Vec<3, T>
     {
         return Vec<3, T>(1, 0, 1);
     }
+
+    inline static Vec<3, T> orange()
+    {
+        return Vec<3, T>(1, 0.5, 0);
+    }
 };
 
 template <typename T>
