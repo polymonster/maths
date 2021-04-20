@@ -34,6 +34,7 @@ struct Quat
     Quat  operator-() const;
     Quat  operator*(const Quat<T>& rhs) const;
     Quat& operator*=(const Quat<T>& rhs);
+    Quat& operator*=(const T& scale);
 
     void        euler_angles(T z_theta, T y_theta, T x_theta);
     void        axis_angle(Vec<3, T> axis, T w);
@@ -41,6 +42,7 @@ struct Quat
     void        axis_angle(Vec<4, T> v);
     void        get_matrix(Mat<4, 4, T>& lmatrix);
     void        from_matrix(Mat<4, 4, T> m);
+    void        from_matrix2(Mat<4, 4, T> m);
     Vec<3, T>   to_euler() const;
 };
 
@@ -71,7 +73,8 @@ template<typename T>
 maths_inline Quat<T> normalised(Quat<T>& q)
 {
     Quat<T> q2 = q;
-    return normalise(q2);
+    normalise(q2);
+    return q2;
 }
 
 template<typename T>
@@ -254,6 +257,14 @@ maths_inline Quat<T>& Quat<T>::operator*=(const Quat<T>& rhs)
     return *this;
 }
 
+template<typename T>
+maths_inline Quat<T>& Quat<T>::operator*=(const T& scale)
+{
+    for(size_t i = 0; i < 4; ++i)
+        v[i] *= scale;
+    return *this;
+}
+
 // member funcs
 template<typename T>
 inline void Quat<T>::euler_angles(T z_theta, T y_theta, T x_theta)
@@ -349,6 +360,71 @@ inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
     x    = (m.m[9] - m.m[6]) / w4;
     y    = (m.m[2] - m.m[8]) / w4;
     z    = (m.m[4] - m.m[1]) / w4;
+}
+
+template<typename T>
+inline void Quat<T>::from_matrix2(Mat<4, 4, T> m)
+{
+    // thanks!
+    // .. https://math.stackexchange.com/questions/893984/conversion-of-rotation-matrix-to-quaternion
+     
+    const T& m00 = m.m[0];
+    const T& m01 = m.m[4];
+    const T& m02 = m.m[8];
+    const T& m10 = m.m[1];
+    const T& m11 = m.m[5];
+    const T& m12 = m.m[9];
+    const T& m20 = m.m[2];
+    const T& m21 = m.m[6];
+    const T& m22 = m.m[10];
+    
+    T t = 0.0f;
+    
+    if (m22 < 0)
+    {
+        if (m00 > m11)
+        {
+            t = 1 + m00 -m11 -m22;
+            
+            x = t;
+            y = m01 + m10;
+            z = m20 + m02;
+            w = m12 - m21;
+        }
+        else
+        {
+            t = 1 -m00 + m11 -m22;
+            
+            x = m01+m10;
+            y = t;
+            z = m12+m21;
+            w = m20-m02;
+        }
+    }
+    else
+    {
+        if (m00 < -m11)
+        {
+            t = 1 -m00 -m11 + m22;
+            
+            x = m20+m02;
+            y = m12+m21;
+            z = t;
+            w = m01-m10;
+        }
+        else
+        {
+            t = 1 + m00 + m11 + m22;
+            
+            x = m12-m21;
+            y = m20-m02;
+            z = m01-m10;
+            w = t;
+        }
+    }
+    
+    T srt = 0.5 / sqrt(t);
+    *this *= srt;
 }
 
 template<typename T>
