@@ -6,6 +6,7 @@
 #pragma once
 
 #include "util.h"
+
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -351,6 +352,11 @@ struct Vec<3, T>
     inline static Vec<3, T> magenta()
     {
         return Vec<3, T>(1, 0, 1);
+    }
+
+    inline static Vec<3, T> orange()
+    {
+        return Vec<3, T>(1, 0.5, 0);
     }
 };
 

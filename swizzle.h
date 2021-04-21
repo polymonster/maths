@@ -342,8 +342,6 @@ SWIZZLE_FUNC(sqrt);
 SWIZZLE_FUNC(log);
 SWIZZLE_FUNC(log10);
 SWIZZLE_FUNC(log2);
-
-// vec
 SWIZZLE_FUNC(sgn);
 SWIZZLE_FUNC(round);
 SWIZZLE_FUNC(normalised);

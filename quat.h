@@ -6,6 +6,7 @@
 
 #include "mat.h"
 #include "vec.h"
+
 #include <float.h>
 #include <math.h>
 
@@ -26,13 +27,14 @@ struct Quat
     Quat();
     Quat(T z_theta, T y_theta, T x_theta);
     
-    Quat operator*(const T& scale) const;
-    Quat operator/(const T& scale) const;
-    Quat operator+(const Quat<T>& q) const;
-    Quat operator=(const Vec<4, T>& v) const;
-    Quat operator-() const;
+    Quat  operator*(const T& scale) const;
+    Quat  operator/(const T& scale) const;
+    Quat  operator+(const Quat<T>& q) const;
+    Quat  operator=(const Vec<4, T>& v) const;
+    Quat  operator-() const;
     Quat  operator*(const Quat<T>& rhs) const;
     Quat& operator*=(const Quat<T>& rhs);
+    Quat& operator*=(const T& scale);
 
     void        euler_angles(T z_theta, T y_theta, T x_theta);
     void        axis_angle(Vec<3, T> axis, T w);
@@ -40,18 +42,19 @@ struct Quat
     void        axis_angle(Vec<4, T> v);
     void        get_matrix(Mat<4, 4, T>& lmatrix);
     void        from_matrix(Mat<4, 4, T> m);
+    void        from_matrix2(Mat<4, 4, T> m);
     Vec<3, T>   to_euler() const;
 };
 
 // free funcs
 template<typename T>
-inline T dot(const Quat<T>& l, const Quat<T>& r)
+maths_inline T dot(const Quat<T>& l, const Quat<T>& r)
 {
     return l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
 }
 
 template<typename T>
-inline void normalise(Quat<T>& q)
+maths_inline void normalise(Quat<T>& q)
 {
     T rmag = (T)1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
     for(size_t i = 0; i < 4; ++i)
@@ -59,27 +62,44 @@ inline void normalise(Quat<T>& q)
 }
 
 template<typename T>
-inline T mag2(const Quat<T>& q)
+maths_inline void normalize(Quat<T>& q)
 {
-    return dot(q, q);
+    T rmag = (T)1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+    for(size_t i = 0; i < 4; ++i)
+        q.v[i] *= rmag;
 }
 
 template<typename T>
-inline Quat<T> normalised(Quat<T>& q)
+maths_inline Quat<T> normalised(Quat<T>& q)
+{
+    Quat<T> q2 = q;
+    normalise(q2);
+    return q2;
+}
+
+template<typename T>
+maths_inline Quat<T> normalized(Quat<T>& q)
 {
     Quat<T> q2 = q;
     return normalise(q2);
 }
 
+
 template<typename T>
-inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline T mag2(const Quat<T>& q)
+{
+    return dot(q, q);
+}
+
+template<typename T>
+maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
     Quat<T> lerped = (l * ((T)1 - t) + r * t);
     return normalise(lerped);
 }
 
 template<typename T>
-inline Quat<T> slerp(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline Quat<T> slerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
     static T eps = (T)0.0001;
     
@@ -105,8 +125,9 @@ inline Quat<T> slerp(const Quat<T>& l, const Quat<T>& r, T t)
     return l;
 }
 
+// another implementation of slerp
 template<typename T>
-inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
 {
     Quat<T> out_quat;
     
@@ -145,7 +166,7 @@ inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
 
 // constructors
 template<typename T>
-inline Quat<T>::Quat()
+maths_inline Quat<T>::Quat()
 {
     x = (T)0;
     y = (T)0;
@@ -154,14 +175,14 @@ inline Quat<T>::Quat()
 };
 
 template<typename T>
-inline Quat<T>::Quat(T z_theta, T y_theta, T x_theta)
+maths_inline Quat<T>::Quat(T z_theta, T y_theta, T x_theta)
 {
     euler_angles(z_theta, y_theta, x_theta);
 }
 
 // operators
 template<typename T>
-inline Quat<T> Quat<T>::operator*(const T& scale) const
+maths_inline Quat<T> Quat<T>::operator*(const T& scale) const
 {
     Quat out_quat;
     for(size_t i = 0; i < 4; ++i)
@@ -171,7 +192,7 @@ inline Quat<T> Quat<T>::operator*(const T& scale) const
 }
 
 template<typename T>
-inline Quat<T> Quat<T>::operator/(const T& scale) const
+maths_inline Quat<T> Quat<T>::operator/(const T& scale) const
 {
     Quat<T> out_quat;
     for(size_t i = 0; i < 4; ++i)
@@ -181,7 +202,7 @@ inline Quat<T> Quat<T>::operator/(const T& scale) const
 }
 
 template<typename T>
-inline Quat<T> Quat<T>::operator+(const Quat<T>& q) const
+maths_inline Quat<T> Quat<T>::operator+(const Quat<T>& q) const
 {
     Quat<T> out_quat;
     for(size_t i = 0; i < 4; ++i)
@@ -191,7 +212,7 @@ inline Quat<T> Quat<T>::operator+(const Quat<T>& q) const
 }
 
 template<typename T>
-inline Quat<T> Quat<T>::operator=(const Vec<4, T>& _v) const
+maths_inline Quat<T> Quat<T>::operator=(const Vec<4, T>& _v) const
 {
     Quat<T> out_quat;
     for(size_t i = 0; i < 4; ++i)
@@ -201,7 +222,7 @@ inline Quat<T> Quat<T>::operator=(const Vec<4, T>& _v) const
 }
 
 template<typename T>
-inline Quat<T> Quat<T>::operator-() const // Unary minus
+maths_inline Quat<T> Quat<T>::operator-() const // Unary minus
 {
     Quat<T> out_quat;
     for(size_t i = 0; i < 4; ++i)
@@ -212,7 +233,7 @@ inline Quat<T> Quat<T>::operator-() const // Unary minus
 
 // non commutative multiply
 template<typename T>
-inline Quat<T> Quat<T>::operator*(const Quat<T>& rhs) const
+maths_inline Quat<T> Quat<T>::operator*(const Quat<T>& rhs) const
 {
     Quat<T> res;
     res.w = w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z;
@@ -224,7 +245,7 @@ inline Quat<T> Quat<T>::operator*(const Quat<T>& rhs) const
 }
 
 template<typename T>
-inline Quat<T>& Quat<T>::operator*=(const Quat<T>& rhs)
+maths_inline Quat<T>& Quat<T>::operator*=(const Quat<T>& rhs)
 {
     Quat<T> res;
     res.w = w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z;
@@ -233,6 +254,14 @@ inline Quat<T>& Quat<T>::operator*=(const Quat<T>& rhs)
     res.z = w * rhs.z + x * rhs.y - y * rhs.x + z * rhs.w;
 
     *this = res;
+    return *this;
+}
+
+template<typename T>
+maths_inline Quat<T>& Quat<T>::operator*=(const T& scale)
+{
+    for(size_t i = 0; i < 4; ++i)
+        v[i] *= scale;
     return *this;
 }
 
@@ -262,13 +291,13 @@ inline void Quat<T>::euler_angles(T z_theta, T y_theta, T x_theta)
 }
 
 template<typename T>
-inline void Quat<T>::axis_angle(Vec<3, T> axis, T w)
+maths_inline void Quat<T>::axis_angle(Vec<3, T> axis, T w)
 {
     axis_angle(axis.x, axis.y, axis.z, w);
 }
 
 template<typename T>
-inline void Quat<T>::axis_angle(T lx, T ly, T lz, T lw)
+maths_inline void Quat<T>::axis_angle(T lx, T ly, T lz, T lw)
 {
     T half_angle = lw * (T)0.5;
 
@@ -281,7 +310,7 @@ inline void Quat<T>::axis_angle(T lx, T ly, T lz, T lw)
 }
 
 template<typename T>
-inline void Quat<T>::axis_angle(Vec<4, T> v)
+maths_inline void Quat<T>::axis_angle(Vec<4, T> v)
 {
     axis_angle(v.x, v.y, v.z, v.w);
 }
@@ -334,6 +363,71 @@ inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
 }
 
 template<typename T>
+inline void Quat<T>::from_matrix2(Mat<4, 4, T> m)
+{
+    // thanks!
+    // .. https://math.stackexchange.com/questions/893984/conversion-of-rotation-matrix-to-quaternion
+     
+    const T& m00 = m.m[0];
+    const T& m01 = m.m[4];
+    const T& m02 = m.m[8];
+    const T& m10 = m.m[1];
+    const T& m11 = m.m[5];
+    const T& m12 = m.m[9];
+    const T& m20 = m.m[2];
+    const T& m21 = m.m[6];
+    const T& m22 = m.m[10];
+    
+    T t = 0.0f;
+    
+    if (m22 < 0)
+    {
+        if (m00 > m11)
+        {
+            t = 1 + m00 -m11 -m22;
+            
+            x = t;
+            y = m01 + m10;
+            z = m20 + m02;
+            w = m12 - m21;
+        }
+        else
+        {
+            t = 1 -m00 + m11 -m22;
+            
+            x = m01+m10;
+            y = t;
+            z = m12+m21;
+            w = m20-m02;
+        }
+    }
+    else
+    {
+        if (m00 < -m11)
+        {
+            t = 1 -m00 -m11 + m22;
+            
+            x = m20+m02;
+            y = m12+m21;
+            z = t;
+            w = m01-m10;
+        }
+        else
+        {
+            t = 1 + m00 + m11 + m22;
+            
+            x = m12-m21;
+            y = m20-m02;
+            z = m01-m10;
+            w = t;
+        }
+    }
+    
+    T srt = 0.5 / sqrt(t);
+    *this *= srt;
+}
+
+template<typename T>
 inline Vec<3, T> Quat<T>::to_euler() const
 {
     Vec<3, T> euler;
@@ -362,7 +456,7 @@ inline Vec<3, T> Quat<T>::to_euler() const
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& out, const Quat<T>& q)
+maths_inline std::ostream& operator<<(std::ostream& out, const Quat<T>& q)
 {
     out << q.v[0];
     for (size_t i = 1; i < 4; ++i)
