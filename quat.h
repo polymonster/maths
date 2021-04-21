@@ -42,7 +42,6 @@ struct Quat
     void        axis_angle(Vec<4, T> v);
     void        get_matrix(Mat<4, 4, T>& lmatrix);
     void        from_matrix(Mat<4, 4, T> m);
-    void        from_matrix2(Mat<4, 4, T> m);
     Vec<3, T>   to_euler() const;
 };
 
@@ -99,68 +98,40 @@ maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 }
 
 template<typename T>
-maths_inline Quat<T> slerp(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline Quat<T> slerp(Quat<T> q1, Quat<T> q2, T t)
 {
-    static T eps = (T)0.0001;
-    
-    T magnitude = sqrt(mag2(l) * mag2(r));
-    T product = dot(l, r) / magnitude;
-    T absproduct = abs(product);
-    
-    if(absproduct < T((T)1 - eps))
-    {
-        const T theta = acos(absproduct);
-        const T d = sin(theta);
-        const T sign = (product < 0) ? T(-1) : T(1);
-        const T s0 = sin((T(1) - t) * theta) / d;
-        const T s1 = sin(sign * t * theta) / d;
-        
-        Quat<T> q;
-        q.x = l.x * s0 + r.x * s1;
-        q.y = l.y * s0 + r.y * s1;
-        q.z = l.z * s0 + r.z * s1;
-        q.w = l.w * s0 + r.w * s1;
-    }
-    
-    return l;
-}
+    T w1, x1, y1, z1, w2, x2, y2, z2, w3, x3, y3, z3;
+    T theta, mult1, mult2;
 
-// another implementation of slerp
-template<typename T>
-maths_inline Quat<T> slerp2(const Quat<T>& l, const Quat<T>& r, T t)
-{
+    w1 = q1.w; x1 = q1.x; y1 = q1.y; z1 = q1.z;
+    w2 = q2.w; x2 = q2.x; y2 = q2.y; z2 = q2.z;
+
+    // reverse the sign of q2 if q1.q2 < 0.
+    if (w1*w2 + x1*x2 + y1*y2 + z1*z2 < 0)
+    {
+        w2 = -w2; x2 = -x2; y2 = -y2; z2 = -z2;
+    }
+       
+    theta = acos(w1*w2 + x1*x2 + y1*y2 + z1*z2);
+
+    constexpr T k_epsilon = (T)0.000001;
+    if (theta > k_epsilon)
+    {
+        mult1 = sin( (1-t)*theta ) / sin( theta );
+        mult2 = sin( t*theta ) / sin( theta );
+    }
+    else
+    {
+        mult1 = 1 - t;
+        mult2 = t;
+    }
+
     Quat<T> out_quat;
-    
-    T dotproduct = l.x * r.x + l.y * r.y + l.z * r.z + l.w * r.w;
-    T theta, st, sut, sout, coeff1, coeff2;
-    
-    if(t <= (T)0)
-        return l;
-    
-    if(t >= (T)1)
-        return r;
-    
-    // quats are equal
-    if(dotproduct >= (T)1)
-        return l;
-    
-    theta = (T)acos(dotproduct);
-    if (theta < (T)0)
-        theta = -theta;
-    
-    st     = (T)sin(theta);
-    sut    = (T)sin(t * theta);
-    sout   = (T)sin(((T)1 - t) * theta);
-    coeff1 = sout / st;
-    coeff2 = sut / st;
-    
-    out_quat.x = coeff1 * l.x + coeff2 * r.x;
-    out_quat.y = coeff1 * l.y + coeff2 * r.y;
-    out_quat.z = coeff1 * l.z + coeff2 * r.z;
-    out_quat.w = coeff1 * l.w + coeff2 * r.w;
-    
-    normalise(out_quat);
-    
+    out_quat.w = mult1*w1 + mult2*w2;
+    out_quat.x = mult1*x1 + mult2*x2;
+    out_quat.y = mult1*y1 + mult2*y2;
+    out_quat.z = mult1*z1 + mult2*z2;
+
     return out_quat;
 }
 
@@ -347,23 +318,6 @@ inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 
 template<typename T>
 inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
-{
-    T ms = (T)1 + (T)m.m[0] + (T)m.m[5] + (T)m.m[10];
-    
-    w = sqrt(ms) / (T)2;
-    
-    // guards agaisnt nans but the results arent accuracte.
-    if(ms < (T)0)
-        w = (T)1;
-
-    T w4 = ((T)4 * w);
-    x    = (m.m[9] - m.m[6]) / w4;
-    y    = (m.m[2] - m.m[8]) / w4;
-    z    = (m.m[4] - m.m[1]) / w4;
-}
-
-template<typename T>
-inline void Quat<T>::from_matrix2(Mat<4, 4, T> m)
 {
     // thanks!
     // .. https://math.stackexchange.com/questions/893984/conversion-of-rotation-matrix-to-quaternion
