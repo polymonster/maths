@@ -614,8 +614,8 @@ maths_inline T smooth_start5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 template<class T>
 maths_inline T smooth_stop2(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
-    t = t / d - 1;
-    return -c * (t*t + (T)1) + b;
+    t /= d;
+    return -c * t * (t - 2) + b;
 }
 
 template<class T>
