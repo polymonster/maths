@@ -101,7 +101,7 @@ maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 template<typename T>
 maths_inline Quat<T> slerp(Quat<T> q1, Quat<T> q2, T t)
 {
-    T w1, x1, y1, z1, w2, x2, y2, z2, w3, x3, y3, z3;
+    T w1, x1, y1, z1, w2, x2, y2, z2;
     T theta, mult1, mult2;
 
     w1 = q1.w; x1 = q1.x; y1 = q1.y; z1 = q1.z;
