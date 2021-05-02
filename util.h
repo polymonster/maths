@@ -64,6 +64,12 @@ maths_inline T cube(const T& x)
 }
 
 template <class T>
+maths_inline T rsqrt(const T& x)
+{
+    return (T)1 / sqrt(x);
+}
+
+template <class T>
 maths_inline T min(T a1, T a2, T a3)
 {
     return min(a1, min(a2, a3));

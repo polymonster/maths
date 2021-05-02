@@ -40,6 +40,8 @@ namespace maths
     
     // Generic
     vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
+    void  get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2);
+    void  get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2);
     void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
     void  get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners);
 
@@ -194,16 +196,19 @@ namespace maths
         return out_rgb;
     }
 
+    // convert rgb8 packed in u32 to vec4 (f32) rgba
     inline vec4f rgba8_to_vec4f(u32 rgba)
     {
+        constexpr f32 k_one_over_255 = 1.0f/255.0f;
         return vec4f(
-            ((rgba >>  0) & 0xff) / 255.0f,
-            ((rgba >>  8) & 0xff) / 255.0f,
-            ((rgba >> 16) & 0xff) / 255.0f,
-            ((rgba >> 24) & 0xff) / 255.0f
+            ((rgba >>  0) & 0xff) * k_one_over_255,
+            ((rgba >>  8) & 0xff) * k_one_over_255,
+            ((rgba >> 16) & 0xff) * k_one_over_255,
+            ((rgba >> 24) & 0xff) * k_one_over_255
         );
     }
 
+    // converted vec4 (f32) rgba into a packed u32 containing rgba8
     inline u32 vec4f_to_rgba8(vec4f v)
     {
         u32 rgba = 0;
@@ -212,6 +217,43 @@ namespace maths
         rgba |= ((u32)(v[2] * 255.0f)) << 16;
         rgba |= ((u32)(v[3] * 255.0f)) << 24;
         return rgba;
+    }
+    
+    // given the normalised vector n, constructs orthonormal basis return in n, b1, b2
+    inline void get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2)
+    {
+        // choose a vector orthogonal to n as the direction of b2.
+        if(fabs(n.x) > fabs(n.z))
+        {
+            b2 = vec3f(-n.y, n.x, 0.0f);
+        }
+        else
+        {
+            b2 = vec3f(0.0f, -n.z, n.y);
+        }
+        
+        // normalise b2
+        b2 *= rsqrt(dot(b2, b2));
+        
+        // construct b1 using cross product
+        b1 = cross(b2, n);
+    }
+    
+    // given noralised vector n construct an orthonormal basis without sqrt..
+    inline void get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2)
+    {
+        constexpr f32 k_singularity = -0.99999999f;
+        if(n.z < k_singularity)
+        {
+            b1 = vec3f(0.0f, -1.0f, 0.0f);
+            b2 = vec3f(-1.0f, 0.0f, 0.0f);
+            return;
+        }
+        
+        f32 a = 1.0f/(1.0f + n.z);
+        f32 b = -n.x * n.y * a;
+        b1 = vec3f(1.0f - n.x * n.x * a, b, -n.x);
+        b2 = vec3f(b, 1.0f - n.y * n.y * a, -n.y);
     }
     
     // Project point p by view_projection to normalised device coordinates, perfroming homogenous divide
