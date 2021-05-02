@@ -26,6 +26,7 @@ struct Quat
 
     Quat();
     Quat(T z_theta, T y_theta, T x_theta);
+    Quat(T x, T y, T z, T w);
     
     Quat  operator*(const T& scale) const;
     Quat  operator/(const T& scale) const;
@@ -149,6 +150,15 @@ template<typename T>
 maths_inline Quat<T>::Quat(T z_theta, T y_theta, T x_theta)
 {
     euler_angles(z_theta, y_theta, x_theta);
+}
+
+template<typename T>
+maths_inline Quat<T>::Quat(T x, T y, T z, T w)
+{
+    this->x = x;
+    this->y = y;
+    this->z = z;
+    this->w = w;
 }
 
 // operators
