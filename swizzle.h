@@ -314,7 +314,7 @@ SWIZZLE_HORIZ_FUNC(mag2);
 // swizzle functions performing component wise operations
 //
 
-#define SWIZZLE_FUNC(SCALAR_FUNC)                    \
+#define SWIZZLE_FUNC(SCALAR_FUNC)                           \
 template <size_t N, typename T, size_t ...SW>               \
 Vec<N, T> SCALAR_FUNC(const Swizzle<T, N, SW...>& s)        \
 {                                                           \
@@ -336,7 +336,6 @@ SWIZZLE_FUNC(fabs);
 SWIZZLE_FUNC(exp);
 SWIZZLE_FUNC(exp2);
 SWIZZLE_FUNC(frac);
-SWIZZLE_FUNC(pow);
 SWIZZLE_FUNC(trunc);
 SWIZZLE_FUNC(sqrt);
 SWIZZLE_FUNC(log);
@@ -366,6 +365,7 @@ Vec<N, T> VEC_FUNC(Swizzle<T, N, SW...>& s1, const Vec<N, T>& v)                
 VEC_X_X(cross);
 VEC_X_X(min_union);
 VEC_X_X(max_union);
+VEC_X_X(pow);
 
 #define T_X_X(VEC_FUNC)                                                                     \
 template <size_t N, typename T, size_t ...SW>                                               \
