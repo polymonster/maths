@@ -39,11 +39,12 @@ namespace maths
     // convenience and to keep the library header only
     
     // Generic
-    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
-    void  get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2);
-    void  get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2);
-    void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
-    void  get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners);
+    vec3f       get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
+    void        get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2);
+    void        get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2);
+    void        get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out);
+    void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
+    transform   get_transform_from_matrix(const mat4& mat);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -208,7 +209,7 @@ namespace maths
         );
     }
 
-    // converted vec4 (f32) rgba into a packed u32 containing rgba8
+    // convert vec4 (f32) rgba into a packed u32 containing rgba8
     inline u32 vec4f_to_rgba8(vec4f v)
     {
         u32 rgba = 0;
@@ -219,8 +220,8 @@ namespace maths
         return rgba;
     }
     
-    // given the normalised vector n, constructs orthonormal basis return in n, b1, b2
-    inline void get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2)
+    // given the normalised vector n, constructs an orthonormal basis return in n, b1, b2
+    inline void get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         // choose a vector orthogonal to n as the direction of b2.
         if(fabs(n.x) > fabs(n.z))
@@ -239,8 +240,8 @@ namespace maths
         b1 = cross(b2, n);
     }
     
-    // given noralised vector n construct an orthonormal basis without sqrt..
-    inline void get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2)
+    // given the normalised vector n construct an orthonormal basis without sqrt..
+    inline void get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         constexpr f32 k_singularity = -0.99999999f;
         if(n.z < k_singularity)
@@ -256,7 +257,7 @@ namespace maths
         b2 = vec3f(b, 1.0f - n.y * n.y * a, -n.y);
     }
     
-    // Project point p by view_projection to normalised device coordinates, perfroming homogenous divide
+    // roject point p by view_projection to normalised device coordinates, perfroming homogenous divide
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
@@ -830,7 +831,19 @@ namespace maths
             corners[i+4] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
         }
     }
-    
+
+    // returns a transform extracting translation, scale and quaternion rotation from a 4x4 matrix
+    inline transform get_transform_from_matrix(const mat4& mat)
+    {
+        transform t;
+        t.translation = mat.get_translation();
+        t.rotation.from_matrix(mat);
+        t.scale.x = mag((vec3f)mat.get_row(0).xyz);
+        t.scale.y = mag((vec3f)mat.get_row(1).xyz);
+        t.scale.z = mag((vec3f)mat.get_row(2).xyz);
+        return t;
+    }
+
     // Returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
     // Intersection point is stored in ip
     inline bool ray_vs_aabb(const vec3f& emin, const vec3f& emax, const vec3f& r1, const vec3f& rv, vec3f& ip)
