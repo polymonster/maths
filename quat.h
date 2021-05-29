@@ -387,7 +387,7 @@ inline void Quat<T>::from_matrix(Mat<4, 4, T> m)
         }
     }
     
-    T srt = 0.5 / sqrt(t);
+    T srt = (T)0.5 / (T)sqrt(t);
     *this *= srt;
 }
 

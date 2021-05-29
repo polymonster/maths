@@ -33,17 +33,18 @@ namespace maths
         vec3f scale = vec3f::one();
     };
 
-    // Collection of tests and useful maths functions
+    // a collection of tests and useful maths functions
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
     
     // Generic
-    vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
-    void  get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2);
-    void  get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2);
-    void  get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out);
-    void  get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners);
+    vec3f       get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
+    void        get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2);
+    void        get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2);
+    void        get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out);
+    void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
+    transform   get_transform_from_matrix(const mat4& mat);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -208,7 +209,7 @@ namespace maths
         );
     }
 
-    // converted vec4 (f32) rgba into a packed u32 containing rgba8
+    // convert vec4 (f32) rgba into a packed u32 containing rgba8
     inline u32 vec4f_to_rgba8(vec4f v)
     {
         u32 rgba = 0;
@@ -219,8 +220,8 @@ namespace maths
         return rgba;
     }
     
-    // given the normalised vector n, constructs orthonormal basis return in n, b1, b2
-    inline void get_orthonormal_basis_hughes_moeller(vec3f& n, vec3f& b1, vec3f& b2)
+    // given the normalised vector n, constructs an orthonormal basis return in n, b1, b2
+    inline void get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         // choose a vector orthogonal to n as the direction of b2.
         if(fabs(n.x) > fabs(n.z))
@@ -239,8 +240,8 @@ namespace maths
         b1 = cross(b2, n);
     }
     
-    // given noralised vector n construct an orthonormal basis without sqrt..
-    inline void get_orthonormal_basis_frisvad(vec3f& n, vec3f& b1, vec3f& b2)
+    // given the normalised vector n construct an orthonormal basis without sqrt..
+    inline void get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         constexpr f32 k_singularity = -0.99999999f;
         if(n.z < k_singularity)
@@ -256,7 +257,7 @@ namespace maths
         b2 = vec3f(b, 1.0f - n.y * n.y * a, -n.y);
     }
     
-    // Project point p by view_projection to normalised device coordinates, perfroming homogenous divide
+    // project point p by view_projection to normalised device coordinates, perfroming homogenous divide
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
@@ -265,7 +266,7 @@ namespace maths
         return ndc.xyz;
     }
     
-    // Project point p to screen coordinates of viewport
+    // project point p to screen coordinates of viewport after projecting to normalised device coordinates first
     inline vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
         vec3f ndc = project_to_ndc(p, view_projection);
@@ -274,7 +275,7 @@ namespace maths
         return sc;
     }
     
-    // Unproject normalised device coordinate p wih viewport using iverse view_projection
+    // unproject normalised device coordinate p wih viewport using inverse view_projection
     inline vec3f unproject_ndc(const vec3f& p, const mat4& view_projection)
     {
         mat4 inv = mat::inverse4x4(view_projection);
@@ -284,7 +285,7 @@ namespace maths
         return ppc.xyz / ppc.w;
     }
     
-    // Unproject screen coordinate p wih viewport using inverse view_projection
+    // unproject screen coordinate p wih viewport using inverse view_projection
     inline vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
@@ -293,7 +294,7 @@ namespace maths
         return unproject_ndc(ndc, view_projection);
     }
     
-    // Convert azimuth / altitude to vec3f xyz
+    // convert azimuth / altitude to vec3f xyz
     inline vec3f azimuth_altitude_to_xyz(f32 azimuth, f32 altitude)
     {
         f32 z   = sin(altitude);
@@ -304,27 +305,27 @@ namespace maths
         return vec3f(x, z, y);
     }
     
-    // Convert vector xyz to azimuth, altitude
+    // convert vector xyz to azimuth, altitude
     inline void xyz_to_azimuth_altitude(vec3f v, f32& azimuth, f32& altitude)
     {
         azimuth  = atan2(v.y, v.x);
         altitude = atan2(v.z, sqrt(v.x * v.x + v.y * v.y));
     }
     
-    // Get distance to plane x defined by point on plane x0 and normal of plane xN
+    // get distance to plane x defined by point on plane x0 and normal of plane xN
     maths_inline f32 plane_distance(const vec3f& x0, const vec3f& xN)
     {
         return dot(xN, x0) * -1.0f;
     }
     
-    // Get distance from point p0 to plane defined by point x0 and normal xn
+    // get distance from point p0 to plane defined by point x0 and normal xN
     maths_inline f32 point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN)
     {
         f32 d = plane_distance(x0, xN);
         return dot(p0, xN) + d;
     }
     
-    // Returns the intersection point of ray defined by origin r0 direction rV,
+    // returns the intersection point of ray defined by origin r0 and direction rV,
     // with plane defined by point on plane x0 normal of plane xN
     inline vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN)
     {
@@ -334,8 +335,8 @@ namespace maths
         return r0 + (rV * t);
     }
     
-    // Returns true if the ray (origin r0, direction rv) intersects with the triangle (t0,t1,t2)
-    // If it does intersect, ip is set to the intersectin point
+    // returns true if the ray (origin r0, direction rv) intersects with the triangle (t0,t1,t2)
+    // if it does intersect, ip is set to the intersectin point
     inline bool ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
     {
         vec3f n = get_normal(t0, t1, t2);
@@ -346,7 +347,7 @@ namespace maths
         return hit;
     }
     
-    // Returns the classification of an aabb vs a plane aabb defined by min and max
+    // returns the classification of an aabb vs a plane aabb defined by min and max
     // plane defined by point on plane x0 and normal of plane xN
     inline u32 aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN)
     {
@@ -365,9 +366,9 @@ namespace maths
         return INTERSECTS;
     }
     
-    // Returns the classification of a sphere vs a plane
-    // Sphere defined by centre s, and radius r
-    // Plane defined by point on plane x0 and normal of plane xN
+    // returns the classification of a sphere vs a plane
+    // sphere defined by centre s, and radius r
+    // plane defined by point on plane x0 and normal of plane xN
     inline u32 sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN)
     {
         f32 pd = plane_distance(x0, xN);
@@ -382,7 +383,7 @@ namespace maths
         return INTERSECTS;
     }
     
-    // Returns true if point p0 is inside aabb define by min and max
+    // returns true if point p0 is inside aabb defined by min and max extents
     template<size_t N, typename T>
     inline bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0)
     {
@@ -393,8 +394,8 @@ namespace maths
         return true;
     }
     
-    // Returns true if sphere with centre s0 and radius r0 overlaps
-    // Sphere with centre s1 and radius r1
+    // returns true if sphere with centre s0 and radius r0 overlaps
+    // sphere with centre s1 and radius r1
     inline bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1)
     {
         f32 rr = r0 + r1;
@@ -406,8 +407,8 @@ namespace maths
         return false;
     }
     
-    // Returns true if sphere with centre s0 and radius r0 overlaps
-    // AABB defined by aabb_min and aabb_max
+    // returns true if sphere with centre s0 and radius r0 overlaps
+    // AABB defined by aabb_min and aabb_max extents
     inline bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max)
     {
         vec3f cp = closest_point_on_aabb(s0, aabb_min, aabb_max);
@@ -416,7 +417,7 @@ namespace maths
         return d < r0;
     }
     
-    // Returns true if the aabb's defined by min0,max0 and min1,max1 overlap
+    // returns true if the aabb's defined by min0,max0 and min1,max1 overlap
     inline bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1)
     {
         // discard non overlaps quickly
@@ -469,13 +470,13 @@ namespace maths
         return true;
     }
 
-    // Returns true if sphere with centre s0 and radius r0 contains point p0
+    // returns true if sphere with centre s0 and radius r0 contains point p0
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
         return dist2(p0, s0) < r0 * r0;
     }
     
-    // Return true if point p is inside cone defined by position cp facing direction cv with height h and radius r
+    // return true if point p is inside cone defined by position cp facing direction cv with height h and radius r
     inline bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
         vec3f l2 = cp + cv * h;
@@ -491,7 +492,7 @@ namespace maths
         return false;
     }
     
-    // Return true if point p is inside convex hull defined by point list hull, with clockwise winding
+    // return true if point p is inside convex hull defined by point list 'hull', with clockwise winding
     // ... use convex_hull_from_points to generate a compatible convex hull from point cloud.
     inline bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull)
     {
@@ -515,11 +516,11 @@ namespace maths
         return true;
     }
     
-    // Returns true if the point p is inside the polygon, which may be concave
-    // It even supports self intersections!
+    // returns true if the point p is inside the polygon, which may be concave
+    // it even supports self intersections!
     inline bool point_inside_poly(const vec2f& p, const std::vector<vec2f>& poly)
     {
-        // Copyright (c) 1970-2003, Wm. Randolph Franklin
+        // copyright (c) 1970-2003, Wm. Randolph Franklin
         // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
         intptr_t npol = (intptr_t)poly.size();
         intptr_t i, j;
@@ -533,7 +534,7 @@ namespace maths
         return c;
     }
     
-    // Returns the closest point from p0 on sphere s0 with radius r0
+    // returns the closest point from p0 on sphere s0 with radius r0
     inline vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
         vec3f v  = normalised(p0 - s0);
@@ -542,7 +543,7 @@ namespace maths
         return cp;
     }
     
-    // Returns closest point on aabb defined by aabb_min -> aabb_max to the point p0
+    // returns closest point on aabb defined by aabb_min -> aabb_max to the point p0
     template<size_t N, typename T>
     inline Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max)
     {
@@ -550,7 +551,7 @@ namespace maths
         return min_union(t1, aabb_max);
     }
     
-    // Returns the closest point to p on the line segment l1 to l2
+    // returns the closest point to p on the line segment l1-l2
     template<size_t N, typename T>
     inline Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p)
     {
@@ -569,7 +570,7 @@ namespace maths
         return l1 + v2 * t;
     }
     
-    // Returns the distance (t) of p along the line l1-l2
+    // returns the distance (t) of p along the line l1-l2
     template<size_t N, typename T>
     inline T distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p)
     {
@@ -579,7 +580,7 @@ namespace maths
         return dot(v2, v1);
     }
     
-    // Returns true if the line and ray intersect and stores the intersection point in ip
+    // returns true if the line and ray intersect and stores the intersection point in ip
     inline bool line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip)
     {
         vec3f da = l2 - l1;
@@ -599,7 +600,7 @@ namespace maths
         return false;
     }
     
-    // Returns true if the line l1-l2 intersects with s1-s2 and stores the intersection point in ip
+    // returns true if the line l1-l2 intersects with s1-s2 and stores the intersection point in ip
     inline bool line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip)
     {
         vec3f da = l2 - l1;
@@ -621,7 +622,7 @@ namespace maths
         return false;
     }
     
-    // Returns true if the line l1-l2 intersects with the polygon, and stores an the intersection points in ips in an unspecified order
+    // returns true if the line l1-l2 intersects with the polygon, and stores an the intersection points in ips in an unspecified order
     // (if you need them to be sorted some way you have to do it yourself)
     inline bool line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips)
     {
@@ -636,7 +637,7 @@ namespace maths
         return ips.empty() ? false : true;
     }
     
-    // Returns the closest point to p on the line the ray r0 with diection rV
+    // returns the closest point to p on the line the ray r0 with diection rV
     inline vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p)
     {
         vec3f v1 = p - r0;
@@ -702,7 +703,7 @@ namespace maths
         }
     }
     
-    // Returns true if p is inside the triangle v1-v2-v3
+    // returns true if p is inside the triangle v1-v2-v3
     inline bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3)
     {
         vec3f cp1, cp2;
@@ -728,7 +729,7 @@ namespace maths
         return true;
     }
     
-    // Returns the cloest point on triangle v1-v2-v3 to point p
+    // returns the cloest point on triangle v1-v2-v3 to point p
     // side is 1 or -1 depending on whether the point is infront or behind the triangle
     inline vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side)
     {
@@ -763,7 +764,7 @@ namespace maths
         return cp;
     }
     
-    // Get normal of triangle v1-v2-v3 with left handed winding
+    // get normal of triangle v1-v2-v3 with left handed winding
     inline vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3)
     {
         vec3f vA = v3 - v1;
@@ -830,8 +831,20 @@ namespace maths
             corners[i+4] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
         }
     }
-    
-    // Returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
+
+    // returns a transform extracting translation, scale and quaternion rotation from a 4x4 matrix
+    inline transform get_transform_from_matrix(const mat4& mat)
+    {
+        transform t;
+        t.translation = mat.get_translation();
+        t.rotation.from_matrix(mat);
+        t.scale.x = mag((vec3f)mat.get_row(0).xyz);
+        t.scale.y = mag((vec3f)mat.get_row(1).xyz);
+        t.scale.z = mag((vec3f)mat.get_row(2).xyz);
+        return t;
+    }
+
+    // returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
     // Intersection point is stored in ip
     inline bool ray_vs_aabb(const vec3f& emin, const vec3f& emax, const vec3f& r1, const vec3f& rv, vec3f& ip)
     {
@@ -862,7 +875,7 @@ namespace maths
         return true;
     }
     
-    // Returns true if there is an intersection bewteen ray with origin r1 and direction rv and obb defined by matrix mat
+    // returns true if there is an intersection bewteen ray with origin r1 and direction rv and obb defined by matrix mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
     inline bool ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip)
     {
@@ -878,7 +891,7 @@ namespace maths
         return ii;
     }
     
-    // Returns the closest point to point p on the obb defined by mat
+    // returns the closest point to point p on the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
     inline vec3f closest_point_on_obb(const mat4& mat, const vec3f& p)
     {
@@ -891,7 +904,7 @@ namespace maths
         return tcp;
     }
     
-    // Returns if the point p is inside the obb defined by mat
+    // returns if the point p is inside the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
     inline bool point_inside_obb(const mat4& mat, const vec3f& p)
     {
@@ -901,7 +914,7 @@ namespace maths
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
     
-    // Returns a convex hull wound clockwise from point cloud "points"
+    // returns a convex hull wound clockwise from point cloud "points"
     inline void convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& points)
     {
         std::vector<vec3f> to_sort;

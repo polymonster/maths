@@ -1211,6 +1211,7 @@ maths_inline void update_minmax(const Vec<N, T>& x, Vec<N, T>& xmin, Vec<N, T>& 
 // vec functions of cmath, performing component wise op
 //
 
+// component wise ops on single vec
 #define VEC_FUNC(SCALAR_FUNC)               \
 template<size_t N, typename T>              \
 Vec<N, T> SCALAR_FUNC(const Vec<N, T> v)    \
@@ -1219,6 +1220,17 @@ Vec<N, T> SCALAR_FUNC(const Vec<N, T> v)    \
     for(size_t i = 0; i < N; ++i)           \
         r[i] = (T)SCALAR_FUNC(v[i]);        \
     return r;                               \
+}
+
+// component wise ops on 2 vecs
+#define VEC_FUNC_X_X(SCALAR_FUNC)                               \
+template<size_t N, typename T>                                  \
+Vec<N, T> SCALAR_FUNC(const Vec<N, T>& v, const Vec<N, T>& v2)  \
+{                                                               \
+    Vec<N, T> r;                                                \
+    for(size_t i = 0; i < N; ++i)                               \
+        r[i] = (T)SCALAR_FUNC(v[i], v2[i]);                     \
+    return r;                                                   \
 }
 
 VEC_FUNC(sgn);
@@ -1235,12 +1247,13 @@ VEC_FUNC(fabs);
 VEC_FUNC(exp);
 VEC_FUNC(exp2);
 VEC_FUNC(frac);
-VEC_FUNC(pow);
 VEC_FUNC(trunc);
 VEC_FUNC(sqrt);
 VEC_FUNC(log);
 VEC_FUNC(log10);
 VEC_FUNC(log2);
+
+VEC_FUNC_X_X(pow);
 
 //
 // abbreviations
