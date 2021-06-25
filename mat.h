@@ -800,6 +800,59 @@ namespace mat
         return create_perspective_projection(left, right, bottom, top, znear, zfar);
     }
 
+    template<typename T>
+    inline Mat<4, 4, T> create_perspective_projection_inverse_depth(T left, T right, T bottom, T top, T znear, T zfar)
+    {
+        Mat<4, 4, T> m;
+
+        m.m[0] = ((T)2 * znear) / (right - left);
+        m.m[1] = 0;
+        m.m[2] = (right + left) / (right - left);
+        m.m[3] = 0;
+        m.m[4] = 0;
+        m.m[5] = (2 * znear) / (top - bottom);
+        m.m[6] = (top + bottom) / (top - bottom);
+        m.m[7] = 0;
+        m.m[8] = 0;
+        m.m[9] = 0;
+        m.m[10] = (-znear) / (znear - zfar);
+        m.m[11] = (-znear * zfar) / (znear - zfar);
+        m.m[12] = 0;
+        m.m[13] = 0;
+        m.m[14] = -1;
+        m.m[15] = 0;
+
+        return m;
+    }
+
+    template <typename T>
+    inline Mat<4, 4, T> create_perspective_projection_yup_inverse_depth(T fov, T aspect, T znear, T zfar)
+    {
+        Mat<4, 4, T> m;
+
+        T tfov = (T)tan(fov * 0.5);
+        T right = tfov * aspect * znear;
+        T left = -right;
+
+        T top = tfov * znear;
+        T bottom = -top;
+        
+        return create_perspective_projection_inverse_depth(left, right, bottom, top, znear, zfar);
+    }
+    
+    template <typename T>
+    inline Mat<4, 4, T> create_perspective_projection_inverse_depth(T fov, T aspect, T znear, T zfar)
+    {
+        T tfov = (T)tan(fov * 0.5);
+        T right = tfov * aspect * znear;
+        T left = -right;
+
+        T bottom = tfov * znear;
+        T top = -bottom;
+
+        return create_perspective_projection_inverse_depth(left, right, bottom, top, znear, zfar);
+    }
+
     template <typename T>
     inline Mat<4, 4, T> create_orthographic_projection(T left, T right, T bottom, T top, T znear, T zfar)
     {
