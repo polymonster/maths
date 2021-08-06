@@ -108,6 +108,7 @@ namespace maths
     // Ray / Line
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
+    bool  ray_sphere_intersect(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
@@ -344,6 +345,38 @@ namespace maths
         bool hit = point_inside_triangle(p, t0, t1, t2);
         if(hit)
             ip = p;
+        return hit;
+    }
+
+    // returns true if the ray (origin r0, direction rv) intersects with the sphere at s0 with radius r
+    // if it does intersect, ip is set to the intersectin point
+    inline bool ray_sphere_intersect(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip)
+    {
+        vec3f oc = r0 - s0;
+        f32 a = dot(rv, rv);
+        f32 b = 2.0 * dot(oc, rv);
+        f32 c = dot(oc,oc) - r*r;
+        f32 discriminant = b*b - 4*a*c;
+        bool hit = discriminant > 0.0f;
+        if(hit)
+        {
+            f32 t1 = (-b - sqrt(discriminant)) / (2.0*a);
+            f32 t2 = (-b + sqrt(discriminant)) / (2.0*a);
+            f32 t;
+            if (t1 > 0.0f && t2 > 0.0f)
+            {
+                // shooting from outside
+                // get nearest
+                t = std::min(t1, t2);
+            }
+            else
+            {
+                // shooting from inside
+                // get hit in ray dir
+                t = (t1 > 0.0f ? t1 : t2);
+            }
+            ip = r0 + rv * t;
+        }
         return hit;
     }
     
