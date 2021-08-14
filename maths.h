@@ -354,14 +354,14 @@ namespace maths
     {
         vec3f oc = r0 - s0;
         f32 a = dot(rv, rv);
-        f32 b = 2.0 * dot(oc, rv);
+        f32 b = 2.0f * dot(oc, rv);
         f32 c = dot(oc,oc) - r*r;
         f32 discriminant = b*b - 4*a*c;
         bool hit = discriminant > 0.0f;
         if(hit)
         {
-            f32 t1 = (-b - sqrt(discriminant)) / (2.0*a);
-            f32 t2 = (-b + sqrt(discriminant)) / (2.0*a);
+            f32 t1 = (-b - sqrt(discriminant)) / (2.0f*a);
+            f32 t2 = (-b + sqrt(discriminant)) / (2.0f*a);
             f32 t;
             if (t1 > 0.0f && t2 > 0.0f)
             {

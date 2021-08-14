@@ -3,10 +3,18 @@
 // License: https://github.com/polymonster/maths/blob/master/license.md
 
 #pragma once
-
-template <typename T, size_t W, size_t...SW>
+  
+template <typename T, size_t W, size_t... SW>
 struct Swizzle
 {
+    // W is the width of the swizzle, not the width of the vector, the swizzle of W=2 (.zw) would need to write to
+    // index 2 and 3, this is ok because the swizzle is backed by a union with a vec containing T v[4]
+    // we know the posinter to v[0] and the sizeof the struct is such that a v4 is 16 bytes...
+    // but technically this is undefined behaviour.
+    
+    // when writing, &v[0] = cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
+    
+    // need a compile time way to find the max index in SW to make this array large enough to write into
     T v[W];
     
     template <typename T2, size_t W2, size_t... SW2>
@@ -15,9 +23,13 @@ struct Swizzle
         static_assert(W == W2, "error: assigning swizzle of different dimensions");
         size_t i1[] = {SW...};
         size_t i2[] = {SW2...};
-        for(size_t x = 0; x < W; ++x)
-            v[i1[x]] = lhs.v[i2[x]];
         
+        // cast to T* to avoid UBsan warning
+        T* vw = &v[0];
+        const T* vr = &lhs.v[0];
+        for(size_t x = 0; x < W; ++x)
+            vw[i1[x]] = vr[i2[x]];
+
         return *this;
     }
     
@@ -26,8 +38,11 @@ struct Swizzle
     {
         static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
         size_t i1[] = {SW...};
+        
+        // cast to T* to avoid UBsan warning
+        T* vw = &v[0];
         for(size_t x = 0; x < W; ++x)
-            v[i1[x]] = lhs.v[x];
+            vw[i1[x]] = lhs.v[x];
         
         return *this;
     }
