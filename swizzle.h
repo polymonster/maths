@@ -42,7 +42,7 @@ struct Swizzle
         // cast to T* to avoid UBsan warning
         T* vw = &v[0];
         for(size_t x = 0; x < W; ++x)
-            vw[i1[x]] = lhs.v[x];
+            vw[i1[x]] = (T)lhs.v[x];
         
         return *this;
     }
