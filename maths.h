@@ -45,6 +45,9 @@ namespace maths
     void        get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out);
     void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
     transform   get_transform_from_matrix(const mat4& mat);
+    
+    template<typename T, size_t N>
+    Vec<N, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -256,6 +259,26 @@ namespace maths
         f32 b = -n.x * n.y * a;
         b1 = vec3f(1.0f - n.x * n.x * a, b, -n.x);
         b2 = vec3f(b, 1.0f - n.y * n.y * a, -n.y);
+    }
+    
+    // returns the barycentric coordinates of point p within triangle t0-t10-t2
+    // with the result packed into a vec (u = x, v = y, w = z)
+    template<size_t N, typename T>
+    Vec<3, T> barycentric(const Vec<N, T>& p, const Vec<N, T>& t0, const Vec<N, T>& t1, const Vec<N, T>& t2)
+    {
+        Vec<N, T> v0 = t1 - t0, v1 = t2 - t0, v2 = p - t0;
+        T d00 = dot(v0, v0);
+        T d01 = dot(v0, v1);
+        T d11 = dot(v1, v1);
+        T d20 = dot(v2, v0);
+        T d21 = dot(v2, v1);
+        T denom = d00 * d11 - d01 * d01;
+        
+        T v = (d11 * d20 - d01 * d21) / denom;
+        T w = (d00 * d21 - d01 * d20) / denom;
+        T u = 1.0f - v - w;
+        
+        return {u, v, w};
     }
     
     // project point p by view_projection to normalised device coordinates, perfroming homogenous divide

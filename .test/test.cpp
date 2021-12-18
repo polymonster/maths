@@ -10,6 +10,7 @@
 typedef unsigned int u32;
 typedef int s32;
 typedef float f32;
+typedef unsigned char u8;
 
 using namespace maths;
 
@@ -3239,5 +3240,83 @@ TEST_CASE( "Point AABB Distance", "[maths]")
         const vec2f aabb_max = {(f32)291.221558, (f32)532.797485};
         f32 result = point_aabb_distance(p0, aabb_min, aabb_max);
         REQUIRE(require_func(result,float(0.0)));
+    }
+}
+
+TEST_CASE( "Barycentric 2D", "[maths]")
+{
+	// ensure deterministic
+	srand(2211);
+	
+	// run 10 randomised test cases, the answer can be verified against the creation data.
+	for(u32 t = 0; t < 5; ++t)
+    {
+    	// random tri        
+        vec2f tri[3];
+        for(u32 i = 0; i < 3; ++i)
+        {
+        	tri[i][0] = (f32)(rand()%255);
+        	tri[i][1] = (f32)(rand()%255);
+        }
+        
+        // select random weights
+        u8 ratio[3];
+        ratio[0] = (rand() % 255);
+        ratio[1] = (rand() % (255 - ratio[0]));
+        ratio[2] = 255 - ratio[1] - ratio[0];
+        
+        // char weights to float (0 -> 1)
+		vec3f fratio;
+        for(u32 r = 0; r < 3; ++r)
+            fratio[r] = (f32)ratio[r] / 255.0f;
+            
+        // random point inside tri
+        vec2f random_point = tri[0] * fratio[0] + tri[1] * fratio[1] + tri[2] * fratio[2];
+        
+        // barycentric function itself
+        vec3f bary = maths::barycentric<2, f32>(random_point, tri[0], tri[1], tri[2]);
+        
+        // bary must be equal to the weights we created the random_point from
+        REQUIRE(require_func(bary, fratio));
+    }
+}
+
+TEST_CASE( "Barycentric 3D", "[maths]")
+{
+	// ensure deterministic
+	srand(1122);
+	
+	// run 10 randomised test cases, the answer can be verified against the creation data.
+	for(u32 t = 0; t < 5; ++t)
+    {
+    	// random tri        
+        vec3f tri[3];
+        for(u32 i = 0; i < 3; ++i)
+        {
+        	tri[i][0] = (f32)(rand()%255);
+        	tri[i][1] = (f32)(rand()%255);
+        	tri[i][2] = (f32)(rand()%255);
+        }
+        
+        // select random weights
+        u8 ratio[3];
+        ratio[0] = (rand() % 255);
+        ratio[1] = (rand() % (255 - ratio[0]));
+        ratio[2] = 255 - ratio[1] - ratio[0];
+        
+        // char weights to float (0 -> 1)
+		vec3f fratio;
+        for(u32 r = 0; r < 3; ++r)
+            fratio[r] = (f32)ratio[r] / 255.0f;
+            
+        // random point inside tri
+        vec3f random_point = tri[0] * fratio[0] + tri[1] * fratio[1] + tri[2] * fratio[2];
+        
+        // barycentric function itself
+        vec3f bary = maths::barycentric<3, f32>(random_point, tri[0], tri[1], tri[2]);
+        
+        // bary must be equal to the weights we created the random_point from
+        // printf("%f, %f, %f -> %f, %f, %f\n", bary.x, bary.y, bary.z, fratio.x, fratio.y, fratio.z);
+        REQUIRE(require_func(bary, fratio));
     }
 }
