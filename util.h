@@ -559,16 +559,16 @@ template<class T>
 maths_inline T impulse(T k, T x)
 {
     const T h = k * x;
-    return h * exp(1.0 - h);
+    return h * exp((T)1.0 - h);
 }
 
 template<class T>
 maths_inline T cubic_pulse(T c, T w, T x)
 {
     x = fabs(x - c);
-    if (x > w) return 0.0;
+    if (x > w) return (T)0.0;
     x /= w;
-    return 1.0 - x * x*(3.0 - 2.0*x);
+    return (T)1.0 - x * x*((T)3.0 - (T)2.0*x);
 }
 
 template<class T>
@@ -580,14 +580,14 @@ maths_inline T exp_step(T x, T k, T n)
 template<class T>
 maths_inline T parabola(T x, T k)
 {
-    return pow(4.0 * x * (1.0 - x), k);
+    return pow((T)4.0 * x * ((T)1.0 - x), k);
 }
 
 template<class T>
 maths_inline T pcurve(T x, T a, T b)
 {
     T k = pow(a + b, a + b) / (pow(a, a)*pow(b, b));
-    return k * pow(x, a) * pow(1.0 - x, b);
+    return k * pow(x, a) * pow((T)1.0 - x, b);
 }
 
 template<class T>
@@ -653,7 +653,7 @@ inline T soften_towards_edge(T c, T p, T e, T r)
     T cd = abs(e - c);
     if (cd < pd)
     {
-        T s = smooth_step<T>(cd, 0.0, r, 0.0, 1.0);
+        T s = smooth_step<T>(cd, (T)0.0, r, (T)0.0, (T)1.0);
         return lerp(p, c, s);
     }
     return c;
@@ -670,7 +670,7 @@ inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
 template<class T>
 inline T exp_sustained_impulse(T x, T f, T k)
 {
-    T s = max<T>(x-f, 0);
+    T s = max<T>(x-f, (T)0);
     return min<T>(x*x/(f*f), (T)1 + ((T)2/f)*s*(T)exp(-k*s));
 }
 
