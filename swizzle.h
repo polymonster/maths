@@ -3,30 +3,43 @@
 // License: https://github.com/polymonster/maths/blob/master/license.md
 
 #pragma once
+
+#if __cplusplus >= 201402L
+// c++14 onwards
+template <size_t... SW>
+constexpr size_t max_elem() {
+    std::initializer_list<size_t> l = {SW...};
+    return std::max(l)+1;
+}
+#define SW_TYPE_SIZE max_elem<SW...>()
+#define SW_ASSIGN(v) v
+#else
+// c++11..
+// W is the width of the swizzle, not the width of the vector, the swizzle of W=2 (.zw) would need to write to
+// index 2 and 3, this is ok because the swizzle is backed by a union with a vec containing T v[4]
+// we know the pointer to v[0] and the sizeof the struct is such that a v4 is 16 bytes...
+// this is undefined behaviour so proceed with caution, but has been tested and works on clang, gcc and msvc.
+// when writing, &v[0] = cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
+#define SW_ASSIGN(v) &v[0]
+#define SW_TYPE_SIZE W
+#endif
   
 template <typename T, size_t W, size_t... SW>
 struct Swizzle
 {
-    // W is the width of the swizzle, not the width of the vector, the swizzle of W=2 (.zw) would need to write to
-    // index 2 and 3, this is ok because the swizzle is backed by a union with a vec containing T v[4]
-    // we know the posinter to v[0] and the sizeof the struct is such that a v4 is 16 bytes...
-    // but technically this is undefined behaviour.
-    
-    // when writing, &v[0] = cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
-    
-    // need a compile time way to find the max index in SW to make this array large enough to write into
-    T v[W];
+    // in c++14 we know the min size of the array we require for a swizzle at compile time.
+    // in c++11 it might be possible, but I havent figured it out! so it requires a hack to work around UB
+    T v[SW_TYPE_SIZE];
     
     template <typename T2, size_t W2, size_t... SW2>
     Swizzle<T, W, SW...>& operator=(const Swizzle<T2, W2, SW2...>& lhs)
-    {
+    {        
         static_assert(W == W2, "error: assigning swizzle of different dimensions");
         size_t i1[] = {SW...};
         size_t i2[] = {SW2...};
         
-        // cast to T* to avoid UBsan warning
-        T* vw = &v[0];
-        const T* vr = &lhs.v[0];
+        auto vw = SW_ASSIGN(v);
+        auto vr = SW_ASSIGN(lhs.v);
         for(size_t x = 0; x < W; ++x)
             vw[i1[x]] = vr[i2[x]];
 
@@ -39,8 +52,7 @@ struct Swizzle
         static_assert(W == N, "error: assigning vector to swizzle of different dimensions");
         size_t i1[] = {SW...};
         
-        // cast to T* to avoid UBsan warning
-        T* vw = &v[0];
+        auto vw = SW_ASSIGN(v);
         for(size_t x = 0; x < W; ++x)
             vw[i1[x]] = (T)lhs.v[x];
         

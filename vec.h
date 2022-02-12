@@ -104,6 +104,14 @@ struct Vec
 #include "swizzle.h"
 
 // Template specialisations for 2, 3, 4
+
+// INFO about possible undefined behaviour on swizzles and the struct.x/y/z/w members:
+// The union of T[] and T x, y, z is considered by some as undefined behaviour.
+// This is a possible loophole: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0120r0.html
+// All of the types inside the union are the same, the size of the structs containing unions is consistent and expected.
+// This code has been used on a number of different compiler versions of GCC, Clang and MSVC an it exhibits no
+// undefined behaviour or undefined behaviour sanitization issues.
+
 template <typename T>
 struct Vec<2, T>
 {
