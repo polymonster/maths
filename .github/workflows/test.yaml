@@ -10,7 +10,7 @@ jobs:
       - run: gcc --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
       - run: gcc --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
       - run: gcc --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
-  gcc:
+  clang:
     compiler: clang
     runs-on: ubuntu-latest
     steps:
