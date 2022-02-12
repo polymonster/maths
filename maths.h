@@ -62,10 +62,16 @@ namespace maths
     u32   vec4f_to_rgba8(vec4f);
     
     // Projection
+    // ndc = normalised device coordinates (-1 to 1)
+    // sc = screen coordinates (viewport (0,0) to (width, height)
+    // vdown = y.0 = top, y.height = bottom
+    // vup (no suffix) = y.0 bottom, y.height = top
     vec3f project_to_ndc(const vec3f& p, const mat4& view_projection);
     vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
+    vec3f project_to_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
     vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
+    vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
 
     // Overlaps
     u32  aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
@@ -291,9 +297,21 @@ namespace maths
     }
     
     // project point p to screen coordinates of viewport after projecting to normalised device coordinates first
+    // coordinates are vup in the y-axis y.0 = bottom y.height = top
     inline vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
         vec3f ndc = project_to_ndc(p, view_projection);
+        vec3f sc  = ndc * 0.5f + 0.5f;
+        sc.xy *= vec2f((f32)viewport.x, (f32)viewport.y);
+        return sc;
+    }
+    
+    // project point p to screen coordinates of viewport after projecting to normalised device coordinates first
+    // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
+    inline vec3f project_to_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    {
+        vec3f ndc = project_to_ndc(p, view_projection);
+        ndc.y *= -1.0f;
         vec3f sc  = ndc * 0.5f + 0.5f;
         sc.xy *= vec2f((f32)viewport.x, (f32)viewport.y);
         return sc;
@@ -310,9 +328,21 @@ namespace maths
     }
     
     // unproject screen coordinate p wih viewport using inverse view_projection
+    // coordinates are vup in the y-axis y.0 = bottom y.height = top
     inline vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
+        vec3f ndc    = vec3f(ndc_xy, p.z);
+        
+        return unproject_ndc(ndc, view_projection);
+    }
+    
+    // unproject screen coordinate p wih viewport using inverse view_projection
+    // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
+    inline vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    {
+        vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
+        ndc_xy.y *= -1.0f;
         vec3f ndc    = vec3f(ndc_xy, p.z);
         
         return unproject_ndc(ndc, view_projection);
