@@ -1,13 +1,10 @@
 name: Maths Tests
 on: [push]
 jobs:
-  cpp20:
-    runs-on: ubuntu-latest
-    steps:
-      - run: c++ --std=c++20 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
   cpp17:
     runs-on: ubuntu-latest
     steps:
+      - run: ls
       - run: c++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
   cpp14:
     runs-on: ubuntu-latest
