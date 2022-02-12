@@ -1,4 +1,4 @@
-name: Maths Tests
+name: gcc/clang
 on: [push]
 jobs:
   gcc:
