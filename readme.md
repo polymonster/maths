@@ -6,25 +6,31 @@
 
 Another C++ maths library.. you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.   
 
-There is a [live demo](https://www.polymonster.co.uk/pmtech/examples/maths_functions.html) via wasm/webgl.
+There is a [live demo](https://www.polymonster.co.uk/pmtech/examples/maths_functions.html) via WebAssembly and WebGL.
 
 ## Requirements
 
-Supported Compilers: msvc2017+, Gcc 7.0+, Clang 6.0+, emcc 2.0.
+Supported Compilers: MSVC 2017+, GCC 7.0+, Clang 6.0+, EMCC 2.0.
 
-C++11 or later is required because the vec implementation relies heavily on template parameter pack, anonymous unions, anonymous structs, etc...
+C++11 or later is required for template parameter packs to use swizzles and C++14 or upward is recommended to use `constexpr std::max` on parameter packs. Tested with C++20, C++17, C++14 and C++11. 
 
 ## Usage
 
 The entire library is header only, add the maths directory to your include search path and simply include:
 
 ```c++
-#include "maths.h" // instersection, geometric tests and conversion functions
+#include "maths.h" // intersection, geometric tests and conversion functions
 #include "util.h"  // min, max, swap, smoothstep, scalar functions.. etc
 #include "vec.h"   // vector of any dimension and type
 #include "mat.h"   // matrix of any dimension and type
 #include "quat.h"  // quaternion of any type
 ``` 
+
+### Running Tests
+
+```shell
+c++ --std=c++11 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+```
 
 ## Features
 
@@ -40,12 +46,12 @@ For that shader like feeling.
 vec4f swizz = v.wzyx;       // construct from swizzle
 swizz = v.xxxx;             // assign from swizzle
 swizz.wyxz = v.xxyy;        // assign swizzle to swizzle
-vec2f v2 = swizz.yz;        // contstruct truncated
+vec2f v2 = swizz.yz;        // construct truncated
 swizz.wx = v.xy;            // assign truncated
 swizz.xyz *= swizz2.www;    // arithmetic on swizzles
-vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmentic
+vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmetic
 
-// sometimes you may need to cast from swizzle to vec if c++ cant apply implict casts
+// sometimes you may need to cast from swizzle to vec if c++ cant apply implicit casts
 f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 ```
 
