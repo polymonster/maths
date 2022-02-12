@@ -19,7 +19,7 @@ constexpr size_t max_elem() {
 // index 2 and 3, this is ok because the swizzle is backed by a union with a vec containing T v[4]
 // we know the pointer to v[0] and the sizeof the struct is such that a v4 is 16 bytes...
 // this is undefined behaviour so proceed with caution, but has been tested and works on clang, gcc and msvc.
-// when writing to a swizzle in operator=, requires a cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
+// when writing to a swizzle in operator=, requires a cast to a T* (ie. float*) and the write, to avoid UB sanitizer warning
 #define SW_ASSIGN(v) &v[0]
 #define SW_TYPE_SIZE W
 #endif
