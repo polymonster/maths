@@ -1,14 +1,22 @@
 name: Maths Tests
 on: [push]
 jobs:
-  build:
-    strategy:
-      matrix:
-        compiler: [gcc, clang]
+  gcc:
+    compiler: gcc
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: c++ --version
-      - run: c++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-      - run: c++ --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-      - run: c++ --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
+      - run: gcc --version
+      - run: gcc --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: gcc --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: gcc --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
+  gcc:
+    compiler: clang
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang++ --version
+      - run: clang++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: clang++ --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: clang++ --std=c++11 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+
