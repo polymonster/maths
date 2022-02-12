@@ -1,16 +1,10 @@
 name: Maths Tests
 on: [push]
 jobs:
-  cpp17:
+  cpp:
     runs-on: ubuntu-latest
     steps:
-      - run: ls
+      - uses: actions/checkout@v2
       - run: c++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-  cpp14:
-    runs-on: ubuntu-latest
-    steps:
       - run: c++ --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-  cpp11:
-    runs-on: ubuntu-latest
-    steps:
       - run: c++ --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
