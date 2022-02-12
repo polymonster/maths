@@ -5,10 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: gcc --version
-      - run: gcc --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-      - run: gcc --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-      - run: gcc --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
+      - run: g++ --version
+      - run: g++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: g++ --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+      - run: g++ --std=c++11 -Wno-braced-scalar-init -fprofile-arcs -ftest-coverage -fPIC -fno-inline -fno-inline-small-functions -fno-default-inline --coverage .test/test.cpp -o .test/test && ./".test/test"
   clang:
     runs-on: ubuntu-latest
     steps:
