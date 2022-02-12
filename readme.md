@@ -1,6 +1,6 @@
 
 # maths  
-[![gcc_clang](https://github.com/polymonster/maths/actions/workflows/test/badge.svg)](https://github.com/polymonster/maths/actions)
+[![gcc_clang](https://github.com/polymonster/maths/actions/workflows/test.yaml/badge.svg)](https://github.com/polymonster/maths/actions)
 [![vc2017](https://ci.appveyor.com/api/projects/status/uny5ae4bf3kp2p0m?svg=true)](https://ci.appveyor.com/project/polymonster/maths)
 [![codecov](https://codecov.io/gh/polymonster/maths/branch/master/graph/badge.svg)](https://codecov.io/gh/polymonster/maths) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
