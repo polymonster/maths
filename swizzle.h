@@ -19,7 +19,7 @@ constexpr size_t max_elem() {
 // index 2 and 3, this is ok because the swizzle is backed by a union with a vec containing T v[4]
 // we know the pointer to v[0] and the sizeof the struct is such that a v4 is 16 bytes...
 // this is undefined behaviour so proceed with caution, but has been tested and works on clang, gcc and msvc.
-// when writing, &v[0] = cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
+// when writing to a swizzle in operator=, requires a cast to a T* (ie. float*) and written to, to avoid UB sanitizer warning
 #define SW_ASSIGN(v) &v[0]
 #define SW_TYPE_SIZE W
 #endif
@@ -28,7 +28,7 @@ template <typename T, size_t W, size_t... SW>
 struct Swizzle
 {
     // in c++14 we know the min size of the array we require for a swizzle at compile time.
-    // in c++11 it might be possible, but I havent figured it out! so it requires a hack to work around UB
+    // in c++11 it might be possible, but I havent figured it out! so it requires a hack to work around UBSan
     T v[SW_TYPE_SIZE];
     
     template <typename T2, size_t W2, size_t... SW2>
