@@ -42,6 +42,7 @@ struct Quat
     void        axis_angle(T lx, T ly, T lz, T lw);
     void        axis_angle(Vec<4, T> v);
     void        get_matrix(Mat<4, 4, T>& lmatrix);
+    void        get_matrix(Mat<4, 4, T>& lmatrix) const;
     void        from_matrix(Mat<4, 4, T> m);
     Vec<3, T>   to_euler() const;
 };
@@ -299,7 +300,7 @@ maths_inline void Quat<T>::axis_angle(Vec<4, T> v)
 template<typename T>
 inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 {
-    normalise(*this);
+    normalise(*this); // urgh
     
     static const T _0 = (T)0;
     static const T _1 = (T)1;
@@ -324,6 +325,14 @@ inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
     lmatrix.m[13] = _0;
     lmatrix.m[14] = _0;
     lmatrix.m[15] = _1;
+}
+
+template<typename T>
+inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix) const
+{
+    auto cp = *this;
+    normalise(cp);
+    cp.get_matrix(lmatrix);
 }
 
 template<typename T>
