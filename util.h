@@ -523,9 +523,9 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3, float alpha)
         T square = sqr(p1-p0);
         
         f32 sum = 0.0f;
-        size_t numComponents = sizeof(p1.v) / sizeof(p1.v[0]);
+        size_t numComponents = sizeof(p1) / sizeof(((f32*)&p1)[0]);
         for(size_t i = 0; i < numComponents; ++i)
-            sum += square.v[i];
+            sum += ((f32*)&square)[i];
         
         f32 b = sqrt(sum);
         f32 c = pow(b, alpha);
