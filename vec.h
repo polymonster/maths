@@ -488,6 +488,11 @@ struct Vec<4, T>
         return Vec<4, T>(0, 0, 0, 0);
     }
 
+    inline static Vec<4, T> flt_max()
+    {
+        return Vec<4, T>(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+    }
+
     inline static Vec<4, T> unit_x()
     {
         return Vec<4, T>(1, 0, 0, 0);
