@@ -96,7 +96,7 @@ template<typename T>
 maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
     Quat<T> lerped = (l * ((T)1 - t) + r * t);
-    return normalise(lerped);
+    return normalised(lerped);
 }
 
 template<typename T>
