@@ -25,6 +25,7 @@ namespace maths
         BEHIND     = 1,
         INFRONT    = 2,
     };
+    typedef u32 classification;
     
     struct transform
     {
@@ -46,8 +47,8 @@ namespace maths
     void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
     transform   get_transform_from_matrix(const mat4& mat);
     
-    template<typename T, size_t N>
-    Vec<N, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
+    template<size_t N, typename T>
+    Vec<3, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
 
     // Angles
     f32   deg_to_rad(f32 degree_angle);
@@ -73,9 +74,13 @@ namespace maths
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
     vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
 
+    // Plane Classification
+    classification aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
+    classification sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
+    classification capsule_vs_plane(const vec3f& c1, const vec3f& c2, f32 r, const vec3f& x, const vec3f& n);
+    classification cone_vs_plane(const vec3f& cp, const vec3f& cv, f32 h, f32 r, const vec3f& x, const vec3f& n);
+    
     // Overlaps
-    u32  aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
-    u32  sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
@@ -442,7 +447,7 @@ namespace maths
     
     // returns the classification of an aabb vs a plane aabb defined by min and max
     // plane defined by point on plane x0 and normal of plane xN
-    inline u32 aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN)
+    inline classification aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN)
     {
         vec3f e      = (aabb_max - aabb_min) / 2.0f;
         vec3f centre = aabb_min + e;
@@ -462,7 +467,7 @@ namespace maths
     // returns the classification of a sphere vs a plane
     // sphere defined by centre s, and radius r
     // plane defined by point on plane x0 and normal of plane xN
-    inline u32 sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN)
+    inline classification sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN)
     {
         f32 pd = plane_distance(x0, xN);
         f32 d  = dot(xN, s) + pd;
@@ -473,6 +478,68 @@ namespace maths
         if (d < -r)
             return BEHIND;
         
+        return INTERSECTS;
+    }
+
+    // returns the classification of a capsule defined by line c1-c2 with radius r vs a plane defined by point on plane x and normal n
+    inline classification capsule_vs_plane(const vec3f& c1, const vec3f& c2, f32 r, const vec3f& x, const vec3f& n)
+    {
+        auto pd = plane_distance(x, n);
+        // classify both spheres at the ends of the capsule
+        // sphere 1
+        auto d1 = dot(n, c1) + pd;
+        auto r1 = INTERSECTS;
+        if(d1 > r)
+        {
+            r1 = INFRONT;
+        }
+        else if (d1 < -r)
+        {
+            r1 = BEHIND;
+        }
+        
+        // sphere 2
+        auto d2 = dot(n, c2) + pd;
+        auto r2 = INTERSECTS;
+        if(d2 > r)
+        {
+            r2 = INFRONT;
+        }
+        else if (d2 < -r)
+        {
+            r2 = BEHIND;
+        }
+        
+        // ..
+        if(r1 == r2) {
+            // if both speheres are the same, we return their classification this could give us infront, behind or intersects
+            return r1;
+        }
+        else {
+            // the else case means r1 != r2 and this means we are on opposite side of the plane or one of them intersects
+            return INTERSECTS;
+        }
+    }
+    
+    // return the classification of cone defined by position cp, direction cv with height h and radius at the base of r. vs the plane defined by point x and normal n
+    inline classification cone_vs_plane(const vec3f& cp, const vec3f& cv, f32 h, f32 r, const vec3f& x, const vec3f& n)
+    {
+        auto tip = cp + cv * h;
+        auto pd = plane_distance(x, n);
+        // check if the tip and cones extent are on different sides of the plane
+        auto d1 = dot(n, tip) + pd;
+        // extent from the tip is at the base centre point perp of cv at the radius edge... we need to choose the side toward the plane
+        auto perp = normalize(cross(cross(n, -cv), -cv));
+        auto extent = cp + perp * r * sgn(dot(cv, n));
+        auto d2 = dot(n, extent);
+        //
+        if(d1 < 0.0f && d2 < 0.0f) {
+            return BEHIND;
+        }
+        else if(d1 > 0.0f && d2 > 0.0f)
+        {
+            return INFRONT;
+        }
         return INTERSECTS;
     }
     
@@ -813,27 +880,8 @@ namespace maths
     // returns true if p is inside the triangle v1-v2-v3
     inline bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3)
     {
-        vec3f cp1, cp2;
-        
-        // edge 1
-        cp1 = cross(v2 - v1, v3 - v1);
-        cp2 = cross(v2 - v1, p - v1);
-        if (dot(cp1, cp2) < 0)
-            return false;
-        
-        // edge 2
-        cp1 = cross(v3 - v1, v2 - v1);
-        cp2 = cross(v3 - v1, p - v1);
-        if (dot(cp1, cp2) < 0)
-            return false;
-        
-        // edge 3
-        cp1 = cross(v3 - v2, v1 - v2);
-        cp2 = cross(v3 - v2, p - v2);
-        if (dot(cp1, cp2) < 0)
-            return false;
-        
-        return true;
+        vec3f w = barycentric<3, f32>(p, v1, v2, v3);
+        return w.x >= 0.0f && w.y >= 0.0f && w.z >= 0.0f;
     }
     
     // returns the cloest point on triangle v1-v2-v3 to point p
