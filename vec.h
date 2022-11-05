@@ -837,7 +837,7 @@ maths_inline Vec<N, T> clamp(const Vec<N, T>& a, const Vec<N, T>& lower, const V
 }
 
 template <size_t N, typename T>
-maths_inline Vec<N, T> saturated(const Vec<N, T>& a)
+maths_inline Vec<N, T> saturate(const Vec<N, T>& a)
 {
     Vec<N, T> res = a;
     for (size_t i = 0; i < N; ++i)
@@ -849,18 +849,6 @@ maths_inline Vec<N, T> saturated(const Vec<N, T>& a)
     }
 
     return res;
-}
-
-template <size_t N, typename T>
-maths_inline void saturate(const Vec<N, T>& a)
-{
-    for (size_t i = 0; i < N; ++i)
-    {
-        if (a[i] < 0)
-            a[i] = 0;
-        else if (a[i] > 1)
-            a[i] = 1;
-    }
 }
 
 template <size_t N, typename T>

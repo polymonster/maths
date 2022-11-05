@@ -92,6 +92,7 @@ namespace maths
     bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
     bool point_inside_poly(const vec2f& p, const std::vector<vec2f>& poly);
+    bool point_inside_frustum(const vec3f& p, vec4f* planes);
     
     // Closest Point
     template<size_t N, typename T>
@@ -102,6 +103,12 @@ namespace maths
     vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
     vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
+
+    // Shortest Line
+    bool      shortest_line_segment_between_lines(
+        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
+    bool      shortest_line_segment_between_line_segments(
+        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
 
     // Point Distance
     template<size_t N, typename T>
@@ -619,6 +626,20 @@ namespace maths
         }
         return c;
     }
+
+    // returns true if point pos inside the frustum defined by 6 planes, xyz = normal, w = plane constant (distance)
+    inline bool point_inside_frustum(const vec3f& pos, vec4f* planes)
+    {
+        for (size_t p = 0; p < 6; ++p)
+        {
+            f32 d = dot(pos, planes[p].xyz) + planes[p].w;
+            if (d > 0.0f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     
     // returns the closest point from p0 on sphere s0 with radius r0
     inline vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
@@ -849,6 +870,90 @@ namespace maths
         
         return cp;
     }
+
+    // return the shortest line segment between 2 infinite lines defined by points on the lines p1-p2 and p3-p4
+    // storing the result in r0-r1 if any exists, returns false if the lines are orthogonal
+    inline bool shortest_line_segment_between_lines(
+        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1)
+    {
+        // https://web.archive.org/web/20120404121511/http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/lineline.c
+        auto p13 = p1 - p3;
+        auto p43 = p4 - p3;
+        
+        constexpr f32 k_epsilon = 0.00001f;
+        if(mag2(p43) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto p21 = p2 - p1;
+        if(mag2(p21) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto d1343 = dot(p13, p43);
+        auto d4321 = dot(p43, p21);
+        auto d1321 = dot(p13, p21);
+        auto d4343 = dot(p43, p43);
+        auto d2121 = dot(p21, p21);
+        
+        auto denom = d2121 * d4343 - d4321 * d4321;
+        if(abs(denom) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto numer = d1343 * d4321 - d1321 * d4343;
+        auto mua = numer / denom;
+        auto mub = (d1343 + d4321 * mua) / d4343;
+        
+        r0 = p1 + (p21 * mua);
+        r1 = p3 + (p43 * mub);
+        return true;
+    }
+
+    // return the shortest line segment between 2 line segments defined by points on the lines p1-p2 and p3-p4
+    // storing the result in r0-r1 if any exists, returns false if the lines are orthogonal
+    inline bool shortest_line_segment_between_line_segments(
+        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1)
+    {
+        // https://web.archive.org/web/20120404121511/http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/lineline.c
+        auto p13 = p1 - p3;
+        auto p43 = p4 - p3;
+        
+        constexpr f32 k_epsilon = 0.00001f;
+        if(mag2(p43) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto p21 = p2 - p1;
+        if(mag2(p21) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto d1343 = dot(p13, p43);
+        auto d4321 = dot(p43, p21);
+        auto d1321 = dot(p13, p21);
+        auto d4343 = dot(p43, p43);
+        auto d2121 = dot(p21, p21);
+        
+        auto denom = d2121 * d4343 - d4321 * d4321;
+        if(abs(denom) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto numer = d1343 * d4321 - d1321 * d4343;
+        auto mua = saturate(numer / denom);
+        auto mub = saturate((d1343 + d4321 * mua) / d4343);
+        
+        r0 = p1 + (p21 * mua);
+        r1 = p3 + (p43 * mub);
+        return true;
+    }
     
     // get normal of triangle v1-v2-v3 with left handed winding
     inline vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3)
@@ -1013,12 +1118,18 @@ namespace maths
         size_t curi = 0;
         for (size_t i = 1; i < to_sort.size(); ++i)
         {
+            // sort by x
             if(to_sort[i].x > cur.x)
-                if(to_sort[i].y > cur.y)
-                {
-                    cur = to_sort[i];
-                    curi = i;
-                }
+            {
+                cur = to_sort[i];
+                curi = i;
+            }
+            else if(to_sort[i].x == cur.x && to_sort[i].y > cur.y)
+            {
+                // if we share same x, sort by y
+                cur = to_sort[i];
+                curi = i;
+            }
         }
         
         // wind

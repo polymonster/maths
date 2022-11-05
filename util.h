@@ -332,13 +332,6 @@ maths_inline T saturate(T v)
     return v;
 }
 
-template <class T>
-maths_inline T saturated(T& v)
-{
-    v = max(v, (T)0);
-    v = min(v, (T)1);
-}
-
 #ifdef WIN32__
 maths_inline int lround(double x)
 {
