@@ -525,22 +525,26 @@ namespace maths
     inline classification cone_vs_plane(const vec3f& cp, const vec3f& cv, f32 h, f32 r, const vec3f& x, const vec3f& n)
     {
         auto tip = cp + cv * h;
-        auto pd = plane_distance(x, n);
+        auto pd = maths::plane_distance(x, n);
         // check if the tip and cones extent are on different sides of the plane
         auto d1 = dot(n, tip) + pd;
-        // extent from the tip is at the base centre point perp of cv at the radius edge... we need to choose the side toward the plane
+        // extent from the tip is at the base centre point perp of cv at the radius edge
         auto perp = normalize(cross(cross(n, -cv), -cv));
-        auto extent = cp + perp * r * sgn(dot(cv, n));
-        auto d2 = dot(n, extent);
+        auto extent = cp + perp * r;
+        auto extent2 = cp + perp * r * -1.0f;
+        // take left and right extent.
+        auto d2 = dot(n, extent) + pd;
+        auto d3 = dot(n, extent2) + pd;
+        
         //
-        if(d1 < 0.0f && d2 < 0.0f) {
-            return BEHIND;
+        if(d1 < 0.0f && d2 < 0.0f && d3 < 0.0f) {
+            return maths::BEHIND;
         }
-        else if(d1 > 0.0f && d2 > 0.0f)
+        else if(d1 > 0.0f && d2 > 0.0f && d3 > 0.0f)
         {
-            return INFRONT;
+            return maths::INFRONT;
         }
-        return INTERSECTS;
+        return maths::INTERSECTS;
     }
     
     // returns true if point p0 is inside aabb defined by min and max extents
