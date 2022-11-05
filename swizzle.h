@@ -371,7 +371,7 @@ SWIZZLE_FUNC(log2);
 SWIZZLE_FUNC(sgn);
 SWIZZLE_FUNC(round);
 SWIZZLE_FUNC(normalize);
-SWIZZLE_FUNC(saturated);
+SWIZZLE_FUNC(saturate);
 
 //
 // return vec, with different combination of swiz and vec
