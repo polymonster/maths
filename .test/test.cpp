@@ -3206,6 +3206,26 @@ TEST_CASE( "Point Inside Cone", "[maths]")
         bool result = point_inside_cone(p, cp, cv, h, r);
         REQUIRE(require_func(result,bool(0)));
     }
+    {
+        //point_inside_cone---------------------------
+        const vec3f cp = vec3f(1.54f, 0.25f, 4.01f);
+        const vec3f cv = vec3f(0.263491f, 0.958387f, -0.109847f);
+        auto p = cp + cv * 0.1f;
+        f32 h = 1.08f;
+        f32 r = 0.0599999f;
+        bool result = point_inside_cone(p, cp, cv, h, r);
+        REQUIRE(require_func(result,bool(1)));
+    }
+    {
+        //point_inside_cone---------------------------
+        const vec3f cp = vec3f(-3.79f, 0.65f, 0.89f);
+        const vec3f cv = vec3f(0.520281f, 0.414765f, -0.74651f);
+        auto p = cp + cv * 0.1f;
+        f32 h = 3.65f;
+        f32 r = 4.71f;
+        bool result = point_inside_cone(p, cp, cv, h, r);
+        REQUIRE(require_func(result,bool(1)));
+    }
 }
 TEST_CASE( "Point AABB Distance", "[maths]")
 {
