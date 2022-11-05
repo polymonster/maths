@@ -1013,12 +1013,18 @@ namespace maths
         size_t curi = 0;
         for (size_t i = 1; i < to_sort.size(); ++i)
         {
+            // sort by x
             if(to_sort[i].x > cur.x)
-                if(to_sort[i].y > cur.y)
-                {
-                    cur = to_sort[i];
-                    curi = i;
-                }
+            {
+                cur = to_sort[i];
+                curi = i;
+            }
+            else if(to_sort[i].x == cur.x && to_sort[i].y > cur.y)
+            {
+                // if we share same x, sort by y
+                cur = to_sort[i];
+                curi = i;
+            }
         }
         
         // wind
