@@ -62,7 +62,7 @@ namespace maths
     u32   vec4f_to_rgba8(vec4f);
     
     // Projection
-    // ndc = normalised device coordinates (-1 to 1)
+    // ndc = normalized device coordinates (-1 to 1)
     // sc = screen coordinates (viewport (0,0) to (width, height)
     // vdown = y.0 = top, y.height = bottom
     // vup (no suffix) = y.0 bottom, y.height = top
@@ -230,7 +230,7 @@ namespace maths
         return rgba;
     }
     
-    // given the normalised vector n, constructs an orthonormal basis return in n, b1, b2
+    // given the normalized vector n, constructs an orthonormal basis return in n, b1, b2
     inline void get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         // choose a vector orthogonal to n as the direction of b2.
@@ -243,14 +243,14 @@ namespace maths
             b2 = vec3f(0.0f, -n.z, n.y);
         }
         
-        // normalise b2
+        // normalize b2
         b2 *= rsqrt(dot(b2, b2));
         
         // construct b1 using cross product
         b1 = cross(b2, n);
     }
     
-    // given the normalised vector n construct an orthonormal basis without sqrt..
+    // given the normalized vector n construct an orthonormal basis without sqrt..
     inline void get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         constexpr f32 k_singularity = -0.99999999f;
@@ -287,7 +287,7 @@ namespace maths
         return {u, v, w};
     }
     
-    // project point p by view_projection to normalised device coordinates, perfroming homogenous divide
+    // project point p by view_projection to normalized device coordinates, perfroming homogenous divide
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
@@ -296,7 +296,7 @@ namespace maths
         return ndc.xyz;
     }
     
-    // project point p to screen coordinates of viewport after projecting to normalised device coordinates first
+    // project point p to screen coordinates of viewport after projecting to normalized device coordinates first
     // coordinates are vup in the y-axis y.0 = bottom y.height = top
     inline vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
@@ -306,7 +306,7 @@ namespace maths
         return sc;
     }
     
-    // project point p to screen coordinates of viewport after projecting to normalised device coordinates first
+    // project point p to screen coordinates of viewport after projecting to normalized device coordinates first
     // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
     inline vec3f project_to_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
@@ -317,7 +317,7 @@ namespace maths
         return sc;
     }
     
-    // unproject normalised device coordinate p wih viewport using inverse view_projection
+    // unproject normalized device coordinate p wih viewport using inverse view_projection
     inline vec3f unproject_ndc(const vec3f& p, const mat4& view_projection)
     {
         mat4 inv = mat::inverse4x4(view_projection);
@@ -623,7 +623,7 @@ namespace maths
     // returns the closest point from p0 on sphere s0 with radius r0
     inline vec3f closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
-        vec3f v  = normalised(p0 - s0);
+        vec3f v  = normalize(p0 - s0);
         vec3f cp = s0 + v * r0;
         
         return cp;
@@ -642,7 +642,7 @@ namespace maths
     inline Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p)
     {
         Vec<N, T>  v1 = p - l1;
-        Vec<N, T>  v2 = normalised(l2 - l1);
+        Vec<N, T>  v2 = normalize(l2 - l1);
         
         T d = dist(l1, l2);
         T t = dot(v2, v1);
@@ -661,7 +661,7 @@ namespace maths
     inline T distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p)
     {
         Vec<N, T>  v1 = p - l1;
-        Vec<N, T>  v2 = normalised(l2 - l1);
+        Vec<N, T>  v2 = normalize(l2 - l1);
         
         return dot(v2, v1);
     }
@@ -819,7 +819,7 @@ namespace maths
     // side is 1 or -1 depending on whether the point is infront or behind the triangle
     inline vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side)
     {
-        vec3f n = normalised(cross(v3 - v1, v2 - v1));
+        vec3f n = normalize(cross(v3 - v1, v2 - v1));
         
         f32 d = point_plane_distance(p, v1, n);
         
@@ -856,7 +856,7 @@ namespace maths
         vec3f vA = v3 - v1;
         vec3f vB = v2 - v1;
         
-        return normalised(cross(vB, vA));
+        return normalize(cross(vB, vA));
     }
     
     // extracts frustum planes in the form of (xyz = planes normal, w = plane constant / distance from origin)
@@ -892,8 +892,8 @@ namespace maths
         for (size_t i = 0; i < 6; ++i)
         {
             size_t offset = i * 3;
-            vec3f v1 = normalised(plane_vectors[offset + 1] - plane_vectors[offset + 0]);
-            vec3f v2 = normalised(plane_vectors[offset + 2] - plane_vectors[offset + 0]);
+            vec3f v1 = normalize(plane_vectors[offset + 1] - plane_vectors[offset + 0]);
+            vec3f v2 = normalize(plane_vectors[offset + 2] - plane_vectors[offset + 0]);
 
             planes_out[i].xyz = cross(v1, v2);
             planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);
@@ -971,7 +971,7 @@ namespace maths
         invm.set_translation(vec3f::zero());
         vec3f trv = invm.transform_vector(vec4f(rv, 1.0f)).xyz;
         
-        bool ii = ray_vs_aabb(-vec3f::one(), vec3f::one(), tr1, normalised(trv), ip);
+        bool ii = ray_vs_aabb(-vec3f::one(), vec3f::one(), tr1, normalize(trv), ip);
         
         ip = mat.transform_vector(vec4f(ip, 1.0f)).xyz;
         return ii;

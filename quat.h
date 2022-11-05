@@ -55,36 +55,14 @@ maths_inline T dot(const Quat<T>& l, const Quat<T>& r)
 }
 
 template<typename T>
-maths_inline void normalise(Quat<T>& q)
+maths_inline Quat<T> normalize(const Quat<T>& q)
 {
+    Quat<T> q2;
     T rmag = (T)1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
     for(size_t i = 0; i < 4; ++i)
-        q.v[i] *= rmag;
-}
-
-template<typename T>
-maths_inline void normalize(Quat<T>& q)
-{
-    T rmag = (T)1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
-    for(size_t i = 0; i < 4; ++i)
-        q.v[i] *= rmag;
-}
-
-template<typename T>
-maths_inline Quat<T> normalised(Quat<T>& q)
-{
-    Quat<T> q2 = q;
-    normalise(q2);
+        q2.v[i] = q.v[i] * rmag;
     return q2;
 }
-
-template<typename T>
-maths_inline Quat<T> normalized(Quat<T>& q)
-{
-    Quat<T> q2 = q;
-    return normalise(q2);
-}
-
 
 template<typename T>
 maths_inline T mag2(const Quat<T>& q)
@@ -96,7 +74,7 @@ template<typename T>
 maths_inline Quat<T> nlerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
     Quat<T> lerped = (l * ((T)1 - t) + r * t);
-    return normalised(lerped);
+    return normalize(lerped);
 }
 
 template<typename T>
@@ -276,7 +254,7 @@ inline void Quat<T>::euler_angles(T z_theta, T y_theta, T x_theta)
     y = cos_z_2 * sin_y_2 * cos_x_2 + sin_z_2 * cos_y_2 * sin_x_2;
     z = sin_z_2 * cos_y_2 * cos_x_2 - cos_z_2 * sin_y_2 * sin_x_2;
 
-    normalise(*this);
+    *this = normalize(*this);
 }
 
 template<typename T>
@@ -295,7 +273,7 @@ maths_inline void Quat<T>::axis_angle(T lx, T ly, T lz, T lw)
     y = ly * (T)sin(half_angle);
     z = lz * (T)sin(half_angle);
 
-    normalise(*this);
+    *this = normalize(*this);
 }
 
 template<typename T>
@@ -307,7 +285,7 @@ maths_inline void Quat<T>::axis_angle(Vec<4, T> v)
 template<typename T>
 inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 {
-    normalise(*this); // urgh
+    *this = normalize(*this);
     
     static const T _0 = (T)0;
     static const T _1 = (T)1;
@@ -337,8 +315,7 @@ inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix)
 template<typename T>
 inline void Quat<T>::get_matrix(Mat<4, 4, T>& lmatrix) const
 {
-    auto cp = *this;
-    normalise(cp);
+    auto cp = normalize(*this);
     cp.get_matrix(lmatrix);
 }
 

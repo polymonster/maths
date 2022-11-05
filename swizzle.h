@@ -370,7 +370,7 @@ SWIZZLE_FUNC(log10);
 SWIZZLE_FUNC(log2);
 SWIZZLE_FUNC(sgn);
 SWIZZLE_FUNC(round);
-SWIZZLE_FUNC(normalised);
+SWIZZLE_FUNC(normalize);
 SWIZZLE_FUNC(saturated);
 
 //

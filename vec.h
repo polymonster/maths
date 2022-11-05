@@ -972,13 +972,7 @@ maths_inline T dist(const Vec<N, T>& a, const Vec<N, T>& b)
 }
 
 template <size_t N, typename T>
-maths_inline void normalize(Vec<N, T>& a)
-{
-    a /= mag(a);
-}
-
-template <size_t N, typename T>
-maths_inline Vec<N, T> normalized(const Vec<N, T>& a)
+maths_inline Vec<N, T> normalize(const Vec<N, T>& a)
 {
     return a / mag(a);
 }
@@ -990,18 +984,6 @@ maths_inline T infnorm(const Vec<N, T>& a)
     for (size_t i = 1; i < N; ++i)
         d = max(std::fabs(a.v[i]), d);
     return d;
-}
-
-template <size_t N, typename T>
-maths_inline void normalise(Vec<N, T>& a)
-{
-    a /= mag(a);
-}
-
-template <size_t N, typename T>
-maths_inline Vec<N, T> normalised(const Vec<N, T>& a)
-{
-    return a / mag(a);
 }
 
 template <size_t N, typename T>
