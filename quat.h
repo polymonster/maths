@@ -71,17 +71,15 @@ maths_inline T mag2(const Quat<T>& q)
 }
 
 template<typename T>
-maths_inline Quat<T> nlerp(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
-    Quat<T> lerped = (l * ((T)1 - t) + r * t);
-    return normalize(lerped);
+    return (l * ((T)1 - t) + r * t);
 }
 
 template<typename T>
-maths_inline Quat<T> lerp(const Quat<T>& l, const Quat<T>& r, T t)
+maths_inline Quat<T> nlerp(const Quat<T>& l, const Quat<T>& r, T t)
 {
-    Quat<T> lerped = (l * ((T)1 - t) + r * t);
-    return lerped;
+    return normalize(lerp(l, r, t));
 }
 
 template<typename T>
