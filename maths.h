@@ -129,12 +129,13 @@ namespace maths
     // Ray / Line
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
     bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
-    bool  ray_sphere_intersect(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip);
+    bool  ray_vs_sphere(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip);
     bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
+    bool  ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c1, const vec3f& c2, f32 r, vec3f& ip);
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
@@ -415,7 +416,7 @@ namespace maths
 
     // returns true if the ray (origin r0, direction rv) intersects with the sphere at s0 with radius r
     // if it does intersect, ip is set to the intersectin point
-    inline bool ray_sphere_intersect(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip)
+    inline bool ray_vs_sphere(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip)
     {
         vec3f oc = r0 - s0;
         f32 a = dot(rv, rv);
@@ -1006,6 +1007,46 @@ namespace maths
         r1 = p3 + (p43 * mub);
         return true;
     }
+
+    inline bool shortest_line_segment_between_line_and_line_segment(
+        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1)
+    {
+        // https://web.archive.org/web/20120404121511/http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/lineline.c
+        auto p13 = p1 - p3;
+        auto p43 = p4 - p3;
+        
+        constexpr f32 k_epsilon = 0.00001f;
+        if(mag2(p43) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto p21 = p2 - p1;
+        if(mag2(p21) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto d1343 = dot(p13, p43);
+        auto d4321 = dot(p43, p21);
+        auto d1321 = dot(p13, p21);
+        auto d4343 = dot(p43, p43);
+        auto d2121 = dot(p21, p21);
+        
+        auto denom = d2121 * d4343 - d4321 * d4321;
+        if(abs(denom) < k_epsilon)
+        {
+            return false;
+        }
+        
+        auto numer = d1343 * d4321 - d1321 * d4343;
+        auto mua = numer / denom;
+        auto mub = saturate((d1343 + d4321 * mua) / d4343);
+        
+        r0 = p1 + (p21 * mua);
+        r1 = p3 + (p43 * mub);
+        return true;
+    }
     
     // get normal of triangle v1-v2-v3 with left handed winding
     inline vec3f get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3)
@@ -1132,6 +1173,92 @@ namespace maths
         
         ip = mat.transform_vector(vec4f(ip, 1.0f)).xyz;
         return ii;
+    }
+
+    // returns true if there is an intersection between ray wih origin r0 and direction rv against the capsule with line c0 - c1 and radius cr
+    // the intersection point is stored in ip if one exists
+    inline bool ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip)
+    {
+        vec3f l0, l1;
+        bool nonartho = shortest_line_segment_between_line_and_line_segment(r0, r0 + rv, c0, c1, l0, l1);
+        if(nonartho)
+        {
+            if(dist2(l0, l1) < sqr(cr))
+            {
+                // intesection of ray and infinite cylinder about axis
+                // https://stackoverflow.com/questions/4078401/trying-to-optimize-line-vs-cylinder-intersection
+                vec3f a = c0;
+                vec3f b = c1;
+                vec3f v = rv;
+                f32 r = cr;
+                
+                vec3f ab = b - a;
+                vec3f ao = r0 - a;
+                vec3f aoxab = cross(ao, ab);
+                vec3f vxab = cross(v, ab);
+                f32 ab2 = dot(ab, ab);
+                
+                f32 aa = dot(vxab, vxab);
+                f32 bb = 2.0f * dot(vxab, aoxab);
+                f32 cc = dot(aoxab, aoxab) - (r*r * ab2);
+                f32 dd = bb * bb - 4.0f * aa * cc;
+                
+                vec3f ipc;
+                bool bc = false;
+                if(dd >= 0.0f)
+                {
+                    f32 t = (-bb - sqrt(dd)) / (2.0f * aa);
+                    
+                    if(t >= 0.0f)
+                    {
+                        ipc = r0 + rv * t;
+                        
+                        // clamps to finite cylinder extents
+                        f32 ipd = maths::distance_on_line(a, b, ipc);
+                        if(ipd >= 0.0f && ipd <= dist(a, b))
+                        {
+                            bc = true;
+                        }
+                    }
+                }
+                
+                // intersections with the end spheres
+                vec3f ips1;
+                bool bs1 = maths::ray_vs_sphere(r0, rv, c0, cr, ips1);
+                
+                vec3f ips2;
+                bool bs2 = maths::ray_vs_sphere(r0, rv, c1, cr, ips2);
+                
+                // we need to choose the closes intersection if we have multiple
+                vec3f ips[3] = {ips1, ips2, ipc};
+                bool  bips[3] = {bs1, bs2, bc};
+                
+                u32 iclosest = -1;
+                f32 dclosest = FLT_MAX;
+                for(u32 i = 0; i < 3; ++i)
+                {
+                    if(bips[i])
+                    {
+                        f32 dd = distance_on_line(r0, r0 + rv, ips[i]);
+                        if(dd < dclosest)
+                        {
+                            iclosest = i;
+                            dclosest = dd;
+                        }
+                    }
+                }
+                
+                // we should always get a valid iclosest
+                if(iclosest != -1)
+                {
+                    ip = ips[iclosest];
+                }
+                
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     // returns the closest point to point p on the obb defined by mat
