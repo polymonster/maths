@@ -136,6 +136,7 @@ namespace maths
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c1, const vec3f& c2, f32 r, vec3f& ip);
+    bool  ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip);
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
@@ -1260,7 +1261,88 @@ namespace maths
         
         return false;
     }
-    
+
+    // returns true if there is an intersection between ray wih origin r0 and direction rv against the cylinder with line c0 - c1 and radius cr
+    // the intersection point is stored in ip if one exists
+    inline bool ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip)
+    {
+        // intesection of ray and infinite cylinder about axis
+        // https://stackoverflow.com/questions/4078401/trying-to-optimize-line-vs-cylinder-intersection
+        vec3f a = c0;
+        vec3f b = c1;
+        vec3f v = rv;
+        f32 r = cr;
+        
+        vec3f ab = b - a;
+        vec3f ao = r0 - a;
+        vec3f aoxab = cross(ao, ab);
+        vec3f vxab = cross(v, ab);
+        f32 ab2 = dot(ab, ab);
+        
+        f32 aa = dot(vxab, vxab);
+        f32 bb = 2.0f * dot(vxab, aoxab);
+        f32 cc = dot(aoxab, aoxab) - (r*r * ab2);
+        f32 dd = bb * bb - 4.0f * aa * cc;
+        
+        vec3f ipc;
+        if(dd >= 0.0f)
+        {
+            f32 t = (-bb - sqrt(dd)) / (2.0f * aa);
+            
+            if(t >= 0.0f)
+            {
+                ipc = r0 + rv * t;
+                
+                // clamps to finite cylinder extents
+                f32 ipd = maths::distance_on_line(a, b, ipc);
+                if(ipd >= 0.0f && ipd <= dist(a, b))
+                {
+                    ip = ipc;
+                    return true;
+                }
+            }
+        }
+        
+        // intersect with the top and bottom circles
+        vec3f ip_top = ray_plane_intersect(r0, rv, c0, normalize(c0 - c1));
+        vec3f ip_bottom = ray_plane_intersect(r0, rv, c1, normalize(c1 - c0));
+        
+        bool btop = false;
+        f32 r2 = r*r;
+        if(dist2(ip_top, c0) < r2)
+        {
+            ip = ip_top;
+            btop = true;
+        }
+        
+        if(dist2(ip_bottom, c1) < r2)
+        {
+            if(btop)
+            {
+                f32 d1 = distance_on_line(r0, r0 + rv, ip_top);
+                f32 d2 = distance_on_line(r0, r0 + rv, ip_bottom);
+                
+                if(d2 < d1)
+                {
+                    ip = ip_bottom;
+                    return true;
+                }
+            }
+            else
+            {
+                ip = ip_bottom;
+                return true;
+            }
+        }
+        
+        if(btop)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+
     // returns the closest point to point p on the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
     inline vec3f closest_point_on_obb(const mat4& mat, const vec3f& p)
