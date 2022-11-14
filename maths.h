@@ -86,6 +86,7 @@ namespace maths
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
     bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f& aabb_extent, vec4f* planes);
     bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes);
+    bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr);
     // todo: obb vs obb
 
     // Point Test
@@ -636,6 +637,14 @@ namespace maths
         return true;
     }
 
+    // returns true if the sphere with centre s0 and radius sr overlaps the capsule with line c0-c1 and radius cr
+    inline bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr)
+    {
+        auto cp = closest_point_on_line(cp0, cp1, s0);
+        auto r2 = sqr(sr + cr);
+        return dist2(s0, cp) < r2;
+    }
+
     // returns true if sphere with centre s0 and radius r0 contains point p0
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
@@ -1180,8 +1189,13 @@ namespace maths
     // the intersection point is stored in ip if one exists
     inline bool ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip)
     {
+        // shortest line seg within radius will indicate we intersect an infinite cylinder about an axis
         vec3f l0, l1;
         bool nonartho = shortest_line_segment_between_line_and_line_segment(r0, r0 + rv, c0, c1, l0, l1);
+        
+        // check we intesect the cylinder
+        vec3f ipc = vec3f::flt_max();
+        bool bc = false;
         if(nonartho)
         {
             if(dist2(l0, l1) < sqr(cr))
@@ -1204,8 +1218,6 @@ namespace maths
                 f32 cc = dot(aoxab, aoxab) - (r*r * ab2);
                 f32 dd = bb * bb - 4.0f * aa * cc;
                 
-                vec3f ipc;
-                bool bc = false;
                 if(dd >= 0.0f)
                 {
                     f32 t = (-bb - sqrt(dd)) / (2.0f * aa);
@@ -1222,43 +1234,44 @@ namespace maths
                         }
                     }
                 }
-                
-                // intersections with the end spheres
-                vec3f ips1;
-                bool bs1 = maths::ray_vs_sphere(r0, rv, c0, cr, ips1);
-                
-                vec3f ips2;
-                bool bs2 = maths::ray_vs_sphere(r0, rv, c1, cr, ips2);
-                
-                // we need to choose the closes intersection if we have multiple
-                vec3f ips[3] = {ips1, ips2, ipc};
-                bool  bips[3] = {bs1, bs2, bc};
-                
-                u32 iclosest = -1;
-                f32 dclosest = FLT_MAX;
-                for(u32 i = 0; i < 3; ++i)
-                {
-                    if(bips[i])
-                    {
-                        f32 dd = distance_on_line(r0, r0 + rv, ips[i]);
-                        if(dd < dclosest)
-                        {
-                            iclosest = i;
-                            dclosest = dd;
-                        }
-                    }
-                }
-                
-                // we should always get a valid iclosest
-                if(iclosest != -1)
-                {
-                    ip = ips[iclosest];
-                }
-                
-                return true;
             }
         }
         
+        // if our line doesnt intersect the cylinder, we might still intersect the top / bottom sphere
+        // test intersections with the end spheres
+        vec3f ips1 = vec3f::flt_max();
+        bool bs1 = maths::ray_vs_sphere(r0, rv, c0, cr, ips1);
+        
+        vec3f ips2 = vec3f::flt_max();
+        bool bs2 = maths::ray_vs_sphere(r0, rv, c1, cr, ips2);
+        
+        // we need to choose the closes intersection if we have multiple
+        vec3f ips[3] = {ips1, ips2, ipc};
+        bool  bips[3] = {bs1, bs2, bc};
+        
+        u32 iclosest = -1;
+        f32 dclosest = FLT_MAX;
+        for(u32 i = 0; i < 3; ++i)
+        {
+            if(bips[i])
+            {
+                f32 dd = distance_on_line(r0, r0 + rv, ips[i]);
+                if(dd < dclosest)
+                {
+                    iclosest = i;
+                    dclosest = dd;
+                }
+            }
+        }
+        
+        // if we have a valid closest point
+        if(iclosest != -1)
+        {
+            ip = ips[iclosest];
+            return true;
+        }
+        
+        // no intersection is found
         return false;
     }
 
