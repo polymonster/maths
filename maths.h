@@ -105,10 +105,14 @@ namespace maths
     Vec<N, T> closest_point_on_aabb(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
     template<size_t N, typename T>
     Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p);
+    vec3f     closest_point_on_plane(const vec3f& p, const vec3f& x, const vec3f& n);
     vec3f     closest_point_on_obb(const mat4& mat, const vec3f& p);
     vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
     vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
+    vec2f     closest_point_on_polygon(const vec2f& p, std::vector<vec2f> poly);
+    vec2f     closest_point_on_convex_hull(const vec2f& p, std::vector<vec2f> hull);
+    vec3f     closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
 
     // Shortest Line
     bool      shortest_line_segment_between_lines(
@@ -126,6 +130,10 @@ namespace maths
     T     distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p);
     f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
     f32   plane_distance(const vec3f& x0, const vec3f& xN);
+    f32   point_sphere_distance(const vec3f& p0, const vec3f& s0, f32 r);
+    f32   point_polygon_distance(const vec2f& p, std::vector<vec2f> poly);
+    f32   point_convex_hull_distance(const vec2f& p, std::vector<vec2f> hull);
+    f32   point_cone_distance(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     
     // Ray / Line
     vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
@@ -392,6 +400,31 @@ namespace maths
     {
         f32 d = plane_distance(x0, xN);
         return dot(p0, xN) + d;
+    }
+
+    // returns the unsigned distance from point p0 to the sphere centred at s0 with radius r
+    maths_inline f32 point_sphere_distance(const vec3f& p0, const vec3f& s0, f32 r)
+    {
+        vec3f cp = closest_point_on_sphere(s0, r, p0);
+        return dist(p0, cp);
+    }
+
+    // returns the unsigned distance from point p to polygon defined by pairs of points which define the polygons edges
+    maths_inline f32 point_polygon_distance(const vec2f& p, std::vector<vec2f> poly)
+    {
+        return dist(p, closest_point_on_polygon(p, poly));
+    }
+
+    // returns the unsigned distance from point p to convex hull defined by pairs of points which define the hulls edges
+    maths_inline f32 point_convex_hull_distance(const vec2f& p, std::vector<vec2f> hull)
+    {
+        return dist(p, closest_point_on_polygon(p, hull));
+    }
+
+    // retuns the unsigned distance from point p to the edge of the cone defined start poisiton cp, direction cv with height h and radius r
+    maths_inline f32 point_cone_distance(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
+    {
+        return dist(closest_point_on_cone(p, cp, cv, h, r), p);
     }
     
     // returns the intersection point of ray defined by origin r0 and direction rV,
@@ -934,6 +967,77 @@ namespace maths
         return cp;
     }
 
+    // returns the closest point from p to the polygon defined by array of points
+    // where each point pair defines an edge of the polygon
+    inline vec2f closest_point_on_polygon(const vec2f& p, std::vector<vec2f> poly)
+    {
+        f32 cd = FLT_MAX;
+        vec2f cp = vec2f::flt_max();
+        for(u32 i = 0, n = poly.size(); i < n; ++i)
+        {
+            u32 j = (i + 1) % n;
+            
+            // distance to closest point
+            vec2f cp2 = closest_point_on_line(poly[i], poly[j], p);
+            f32 d2 = dist2(cp2, p);
+            if(d2 < cd)
+            {
+                cd = d2;
+                cp = cp2;
+            }
+        }
+        
+        return cp;
+    }
+
+    // returns the closest point from p to the convex hull defined by array of points
+    // where each point pair defines an edge of the convex_hull
+    inline vec2f closest_point_on_convex_hull(const vec2f& p, std::vector<vec2f> hull)
+    {
+        return closest_point_on_polygon(p, hull);
+    }
+
+    // returns the closest point from p to the cone defined by cone defined by position cp facing direction cv with height h and radius r
+    inline vec3f closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
+    {
+        auto l2 = cp + cv * h;
+        auto dh = distance_on_line(p, cp, l2) / h;
+        auto x0 = closest_point_on_line(p, cp, l2);
+        auto d = dist(x0, p);
+        
+        if (dh >= 1.0f)
+        {
+            // clamp to the tip
+            return l2;
+        }
+        else if (dh <= 0.0f)
+        {
+            // clamp to the base
+            // base plane
+            auto pp = closest_point_on_plane(p, cp, cv);
+            auto vv = pp - x0;
+            auto m = mag(pp - x0);
+            if (m < r)
+            {
+                return pp;
+            }
+            else
+            {
+                auto v = vv / m;
+                return x0 + v * r;
+            }
+        }
+        else if (d < dh * r)
+        {
+            // inside the code???
+            return p;
+        }
+
+        // clamp to the radius
+        auto v = normalize(p - x0);
+        return x0 + (v * dh * r);
+    }
+
     // return the shortest line segment between 2 infinite lines defined by points on the lines p1-p2 and p3-p4
     // storing the result in r0-r1 if any exists, returns false if the lines are orthogonal
     inline bool shortest_line_segment_between_lines(
@@ -1354,6 +1458,12 @@ namespace maths
         }
         
         return false;
+    }
+
+    // returns the closest point to p on the plane defined by point on plane x and normal n
+    maths_inline vec3f closest_point_on_plane(const vec3f& p, const vec3f& x, const vec3f& n)
+    {
+        return p - n * (dot(p, n) - dot(x, n));
     }
 
     // returns the closest point to point p on the obb defined by mat
