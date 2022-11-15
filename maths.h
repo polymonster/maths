@@ -75,6 +75,7 @@ namespace maths
     vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
 
     // Plane Classification
+    classification point_vs_plane(const vec3f& p, const vec3f& x, const vec3f& n);
     classification aabb_vs_plane(const vec3f& aabb_min, const vec3f& aabb_max, const vec3f& x0, const vec3f& xN);
     classification sphere_vs_plane(const vec3f& s, f32 r, const vec3f& x0, const vec3f& xN);
     classification capsule_vs_plane(const vec3f& c1, const vec3f& c2, f32 r, const vec3f& x, const vec3f& n);
@@ -480,6 +481,23 @@ namespace maths
         }
         return hit;
     }
+
+    // returns the classification of the point p vs the plane defined by point on plane x and normal n
+    inline classification point_vs_plane(const vec3f& p, const vec3f& x, const vec3f& n)
+    {
+        f32 d = point_plane_distance(p, x, n);
+        if(d < 0.0f)
+        {
+            return BEHIND;
+        }
+        else if(d > 0.0f)
+        {
+            return INFRONT;
+        }
+        
+        // point is on the plane
+        return INTERSECTS;
+    }
     
     // returns the classification of an aabb vs a plane aabb defined by min and max
     // plane defined by point on plane x0 and normal of plane xN
@@ -560,14 +578,14 @@ namespace maths
     // return the classification of cone defined by position cp, direction cv with height h and radius at the base of r. vs the plane defined by point x and normal n
     inline classification cone_vs_plane(const vec3f& cp, const vec3f& cv, f32 h, f32 r, const vec3f& x, const vec3f& n)
     {
-        auto tip = cp + cv * h;
+        auto l2 = cp + cv * h;
         auto pd = maths::plane_distance(x, n);
         // check if the tip and cones extent are on different sides of the plane
-        auto d1 = dot(n, tip) + pd;
+        auto d1 = dot(n, cp) + pd;
         // extent from the tip is at the base centre point perp of cv at the radius edge
-        auto perp = normalize(cross(cross(n, -cv), -cv));
-        auto extent = cp + perp * r;
-        auto extent2 = cp + perp * r * -1.0f;
+        auto perp = normalize(cross(cross(n, cv), cv));
+        auto extent = l2 + perp * r;
+        auto extent2 = l2 + perp * r * -1.0f;
         // take left and right extent.
         auto d2 = dot(n, extent) + pd;
         auto d3 = dot(n, extent2) + pd;
@@ -1000,42 +1018,23 @@ namespace maths
     // returns the closest point from p to the cone defined by cone defined by position cp facing direction cv with height h and radius r
     inline vec3f closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
+        // centre point of the cones base (where radius is largest)
         auto l2 = cp + cv * h;
-        auto dh = distance_on_line(p, cp, l2) / h;
-        auto x0 = closest_point_on_line(p, cp, l2);
-        auto d = dist(x0, p);
         
-        if (dh >= 1.0f)
+        // find point onbase plane and clamp to the extent
+        vec3f cplane = closest_point_on_plane(p, l2, cv);
+        vec3f extent = l2 + normalize(cplane - l2) * r;
+        
+        // test closest point on line with the axis along the side and bottom of the cone
+        vec3f e1 = closest_point_on_line(cp, extent, p);
+        vec3f e2 = closest_point_on_line(l2, extent, p);
+        
+        if(dist2(p, e1) < dist2(p, e2))
         {
-            // clamp to the tip
-            return l2;
+            return e1;
         }
-        else if (dh <= 0.0f)
-        {
-            // clamp to the base
-            // base plane
-            auto pp = closest_point_on_plane(p, cp, cv);
-            auto vv = pp - x0;
-            auto m = mag(pp - x0);
-            if (m < r)
-            {
-                return pp;
-            }
-            else
-            {
-                auto v = vv / m;
-                return x0 + v * r;
-            }
-        }
-        else if (d < dh * r)
-        {
-            // inside the code???
-            return p;
-        }
-
-        // clamp to the radius
-        auto v = normalize(p - x0);
-        return x0 + (v * dh * r);
+        
+        return e2;
     }
 
     // return the shortest line segment between 2 infinite lines defined by points on the lines p1-p2 and p3-p4
