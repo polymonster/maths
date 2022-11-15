@@ -825,6 +825,7 @@ TEST_CASE( "Point Plane Distance", "[maths]")
         REQUIRE(require_func(result,f32(-11.387)));
     }
 }
+
 TEST_CASE( "Ray Plane Intersect", "[maths]")
 {
     {
@@ -918,6 +919,7 @@ TEST_CASE( "Ray Plane Intersect", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)-14.1651, (f32)7.17647, (f32)-2.8108)));
     }
 }
+
 TEST_CASE( "AABB Plane Classification", "[maths]")
 {
     {
@@ -1011,6 +1013,7 @@ TEST_CASE( "AABB Plane Classification", "[maths]")
         REQUIRE(require_func(result,u32(1)));
     }
 }
+
 TEST_CASE( "Sphere Plane Classification", "[maths]")
 {
     {
@@ -1104,6 +1107,7 @@ TEST_CASE( "Sphere Plane Classification", "[maths]")
         REQUIRE(require_func(result,u32(2)));
     }
 }
+
 TEST_CASE( "Point Inside AABB / Closest Point on AABB", "[maths]")
 {
     {
@@ -1267,6 +1271,7 @@ TEST_CASE( "Point Inside AABB / Closest Point on AABB", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)4.85, (f32)8.25, (f32)-0.82)));
     }
 }
+
 TEST_CASE( "Closest Point on Line / Point Segment Distance", "[maths]")
 {
     {
@@ -1430,6 +1435,7 @@ TEST_CASE( "Closest Point on Line / Point Segment Distance", "[maths]")
         REQUIRE(require_func(result,float(9.20771)));
     }
 }
+
 TEST_CASE( "Closest Point on Ray", "[maths]")
 {
     {
@@ -1513,6 +1519,7 @@ TEST_CASE( "Closest Point on Ray", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)-8.02185, (f32)-9.73144, (f32)-9.11775)));
     }
 }
+
 TEST_CASE( "Point Inside Triangle / Point Triangle Distance / Closest Point on Triangle / Get Normal", "[maths]")
 {
     {
@@ -2030,6 +2037,7 @@ TEST_CASE( "Point Inside Triangle / Point Triangle Distance / Closest Point on T
         REQUIRE(require_func(side,{-1}));
     }
 }
+
 TEST_CASE( "Sphere vs Sphere", "[maths]")
 {
     {
@@ -2123,6 +2131,7 @@ TEST_CASE( "Sphere vs Sphere", "[maths]")
         REQUIRE(require_func(result,bool(0)));
     }
 }
+
 TEST_CASE( "Sphere vs AABB", "[maths]")
 {
     {
@@ -2216,6 +2225,7 @@ TEST_CASE( "Sphere vs AABB", "[maths]")
         REQUIRE(require_func(result,bool(1)));
     }
 }
+
 TEST_CASE( "AABB vs AABB", "[maths]")
 {
     {
@@ -2309,6 +2319,7 @@ TEST_CASE( "AABB vs AABB", "[maths]")
         REQUIRE(require_func(result,bool(1)));
     }
 }
+
 TEST_CASE( "Point inside Sphere", "[maths]")
 {
     {
@@ -2472,6 +2483,7 @@ TEST_CASE( "Point inside Sphere", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)5.32367, (f32)-7.73655, (f32)3.61206)));
     }
 }
+
 TEST_CASE( "Ray vs AABB", "[maths]")
 {
     {
@@ -2585,6 +2597,7 @@ TEST_CASE( "Ray vs AABB", "[maths]")
         REQUIRE(require_func(ip,{(f32)2.33334, (f32)-10.62, (f32)-0.16}));
     }
 }
+
 TEST_CASE( "Ray vs OBB", "[maths]")
 {
     {
@@ -2768,6 +2781,7 @@ TEST_CASE( "Ray vs OBB", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)-3.25784, (f32)0.408874, (f32)1.61336)));
     }
 }
+
 TEST_CASE( "Line vs Line", "[maths]")
 {
     {
@@ -2881,6 +2895,7 @@ TEST_CASE( "Line vs Line", "[maths]")
         REQUIRE(require_func(ip,{(f32)0, (f32)0, (f32)0}));
     }
 }
+
 TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
 {
     {
@@ -3104,6 +3119,7 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         REQUIRE(require_func(result,vec3f((f32)3.99812, (f32)0.973554, (f32)6.40428)));
     }
 }
+
 TEST_CASE( "Point Inside Cone", "[maths]")
 {
     {
@@ -3227,6 +3243,7 @@ TEST_CASE( "Point Inside Cone", "[maths]")
         REQUIRE(require_func(result,bool(1)));
     }
 }
+
 TEST_CASE( "Point AABB Distance", "[maths]")
 {
     {
@@ -3340,3 +3357,198 @@ TEST_CASE( "Barycentric 3D", "[maths]")
         REQUIRE(require_func(bary, fratio));
     }
 }
+
+TEST_CASE( "Point Inside Frustum", "[maths]")
+{
+    {
+        mat4f view_proj = {
+            (f32)0.855009794,
+            (f32)1.45178811E-8,
+            (f32)0.467094004,
+            (f32)0,
+            (f32)0.398109883,
+            (f32)1.52001739,
+            (f32)-0.728735209,
+            (f32)0,
+            (f32)0.42081967,
+            (f32)-0.479521453,
+            (f32)-0.770305216,
+            (f32)59.9920006,
+            (f32)0.420735508,
+            (f32)-0.47942555,
+            (f32)-0.770151138,
+            (f32)60
+        };
+
+        vec4f planes[6];
+        maths::get_frustum_planes_from_matrix(view_proj, &planes[0]);
+        
+        // fail / outside
+        {
+            vec3f p = {(f32)77.0899963, (f32)-5.5999999, (f32)81.6499938};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(0));
+        }
+
+        // fail / outside
+        {
+            vec3f p = {(f32)-55.0800018, (f32)0.420000076, (f32)-20.1299973};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(0));
+        }
+
+        // fail / outside
+        {
+            vec3f p = {(f32)-74.9700012, (f32)-6.73000002, (f32)17.2900009};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(0));
+        }
+
+        // pass / inside
+        {
+            vec3f p = {(f32)-4.40000153, (f32)-0.670000076, (f32)30.9900055};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(1));
+        }
+
+        // pass / inside
+        {
+            vec3f p = {(f32)88.2100067, (f32)9.67000007, (f32)6.72000122};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(1));
+        }
+
+        // pass / inside
+        {
+            vec3f p = {(f32)17.4499969, (f32)2.27999973, (f32)40.9100037};
+            bool i = maths::point_inside_frustum(p, &planes[0]);
+            REQUIRE(i == bool(1));
+        }
+    }
+}
+
+TEST_CASE( "Ray vs Sphere", "[maths]")
+{
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)-15.203737, (f32)6.055606, (f32)-4.583255};
+        vec3f rv = {(f32)0.554472, (f32)-0.831708, (f32)-0.028680};
+        vec3f sp = {(f32)-3.880000, (f32)-6.970000, (f32)1.690000};
+        f32 sr = (f32)6.730000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(0));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)21.496956, (f32)1.133426, (f32)-4.004637};
+        vec3f rv = {(f32)-0.831786, (f32)0.025206, (f32)0.554524};
+        vec3f sp = {(f32)8.260000, (f32)5.120000, (f32)2.670000};
+        f32 sr = (f32)8.160000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(1));
+        REQUIRE(require_func(ip, {(f32)15.077011, (f32)1.327969, (f32)0.275327}));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)15.056831, (f32)17.546116, (f32)-11.426116};
+        vec3f rv = {(f32)-0.401653, (f32)-0.647563, (f32)0.647563};
+        vec3f sp = {(f32)3.360000, (f32)4.850000, (f32)7.450001};
+        f32 sr = (f32)9.670000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(1));
+        REQUIRE(require_func(ip, {(f32)8.351185, (f32)6.734973, (f32)-0.614972}));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)10.119667, (f32)-22.706263, (f32)-0.770485};
+        vec3f rv = {(f32)-0.452623, (f32)0.786135, (f32)-0.420860};
+        vec3f sp = {(f32)4.900000, (f32)-8.760000, (f32)-8.040000};
+        f32 sr = (f32)2.920000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(1));
+        REQUIRE(require_func(ip, {(f32)3.408228, (f32)-11.049554, (f32)-7.010945}));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)-0.795774, (f32)7.815088, (f32)-6.405851};
+        vec3f rv = {(f32)0.351940, (f32)-0.507207, (f32)0.786689};
+        vec3f sp = {(f32)4.080000, (f32)-7.720000, (f32)-0.670000};
+        f32 sr = (f32)8.010000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(0));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)-18.862858, (f32)-4.954368, (f32)-15.356733};
+        vec3f rv = {(f32)0.683748, (f32)0.275071, (f32)0.675888};
+        vec3f sp = {(f32)6.690001, (f32)-8.850000, (f32)-9.060000};
+        f32 sr = (f32)0.630000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(0));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)18.464821, (f32)-4.349220, (f32)-17.132975};
+        vec3f rv = {(f32)-0.702914, (f32)-0.036995, (f32)0.710313};
+        vec3f sp = {(f32)1.230000, (f32)5.050000, (f32)-1.180000};
+        f32 sr = (f32)4.510000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(0));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)5.099485, (f32)-7.040759, (f32)6.173443};
+        vec3f rv = {(f32)-0.437602, (f32)0.733279, (f32)-0.520391};
+        vec3f sp = {(f32)8.280001, (f32)1.370000, (f32)3.580000};
+        f32 sr = (f32)5.010000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(0));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)2.137793, (f32)13.814747, (f32)-21.165298};
+        vec3f rv = {(f32)0.420438, (f32)-0.586862, (f32)0.691972};
+        vec3f sp = {(f32)9.010000, (f32)-4.100000, (f32)-1.690000};
+        f32 sr = (f32)6.950001;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(1));
+        REQUIRE(require_func(ip, {(f32)11.407633, (f32)0.875597, (f32)-5.908689}));
+    }
+    {
+        vec3f ip = {(f32)0.0, (f32)0.0, (f32)0.0};
+        vec3f r0 = {(f32)-5.456035, (f32)-5.839826, (f32)14.385654};
+        vec3f rv = {(f32)-0.179207, (f32)0.896038, (f32)-0.406204};
+        vec3f sp = {(f32)-8.480000, (f32)2.440000, (f32)2.950000};
+        f32 sr = (f32)9.580000;
+        bool i = maths::ray_vs_sphere(r0, rv, sp, sr, ip);
+        REQUIRE(i == bool(1));
+        REQUIRE(require_func(ip, {(f32)-6.550752, (f32)-0.366241, (f32)11.904296}));
+    }
+}
+
+// TODO:
+// ray triangle
+// ray_vs_capsule
+// ray_vs_cylinder
+
+// convex hull from points
+// point inside hull
+// closest point on hull
+// closest point on poly
+// point hull distance
+// point poly distance
+
+// line_segment_between_line_segment
+
+// capsule_vs_plane
+// cone_vs_plane
+// point vs plane
+
+// sphere_vs_capsule
+// point inside poly
+// point sphere distance
+
+// closest point on cone
+// point cone distance
+
+// quat
