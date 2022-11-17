@@ -4325,12 +4325,261 @@ TEST_CASE("Cone vs Plane", "[maths]")
     }
 }
 
+TEST_CASE("Point/Sphere Distance", "[maths]") 
+{
+    {
+        vec3f sp = {(f32)-1.600000, (f32)-3.880000, (f32)-6.970000};
+        f32 sr = (f32)4.970000;
+        vec3f p = {(f32)-5.080000, (f32)0.420000, (f32)9.870001};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 12.755294));
+    }
+    {
+        vec3f sp = {(f32)-7.220000, (f32)8.160000, (f32)3.350000};
+        f32 sr = (f32)5.600000;
+        vec3f p = {(f32)1.690000, (f32)7.090000, (f32)1.570000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 3.548846));
+    }
+    {
+        vec3f sp = {(f32)-0.210000, (f32)1.490000, (f32)-4.210000};
+        f32 sr = (f32)2.670000;
+        vec3f p = {(f32)0.970000, (f32)8.260000, (f32)5.120000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 8.917675));
+    }
+    {
+        vec3f sp = {(f32)7.450001, (f32)2.280000, (f32)-9.090000};
+        f32 sr = (f32)3.930000;
+        vec3f p = {(f32)-1.790000, (f32)9.670000, (f32)-3.280000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 9.251267));
+    }
+    {
+        vec3f sp = {(f32)6.680000, (f32)4.900000, (f32)-8.760000};
+        f32 sr = (f32)1.530000;
+        vec3f p = {(f32)-8.059999, (f32)-6.430000, (f32)0.010000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 19.026007));
+    }
+    {
+        vec3f sp = {(f32)-9.760000, (f32)8.010000, (f32)-1.470000};
+        f32 sr = (f32)7.219999;
+        vec3f p = {(f32)-8.040000, (f32)5.300000, (f32)-0.970000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 3.971538));
+    }
+    {
+        vec3f sp = {(f32)-6.010000, (f32)9.680000, (f32)-5.880000};
+        f32 sr = (f32)6.350000;
+        vec3f p = {(f32)-7.690000, (f32)7.450001, (f32)-8.250000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 2.687733));
+    }
+    {
+        vec3f sp = {(f32)3.190000, (f32)4.540000, (f32)2.230000};
+        f32 sr = (f32)9.719999;
+        vec3f p = {(f32)-3.210000, (f32)3.350000, (f32)0.060000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 2.858149));
+    }
+    {
+        vec3f sp = {(f32)3.170000, (f32)5.250000, (f32)-8.000000};
+        f32 sr = (f32)7.400000;
+        vec3f p = {(f32)9.290001, (f32)2.230000, (f32)-9.460000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 0.421002));
+    }
+    {
+        vec3f sp = {(f32)3.220000, (f32)-6.950000, (f32)1.760000};
+        f32 sr = (f32)5.530000;
+        vec3f p = {(f32)1.290000, (f32)-4.470000, (f32)4.830000};
+        f32 dd = maths::point_sphere_distance(p, sp, sr);
+        REQUIRE(require_func(dd, 1.136801));
+    }
+}
+
+TEST_CASE("Point/Cone", "[maths]") 
+{
+    {
+        vec3f cp = {(f32)13.270000, (f32)2.290000, (f32)3.400000};
+        vec3f cv = {(f32)0.526860, (f32)-0.833470, (f32)0.166570};
+        f32 h = (f32)3.030000;
+        f32 r = (f32)8.880000;
+        vec3f p = {(f32)-4.580000, (f32)9.870000, (f32)-9.970000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 21.913309));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)10.240630, (f32)-3.991611, (f32)-1.699705}));
+    }
+    {
+        vec3f cp = {(f32)-0.670000, (f32)0.990000, (f32)-7.220000};
+        vec3f cv = {(f32)0.825527, (f32)0.544982, (f32)-0.146629};
+        f32 h = (f32)8.350000;
+        f32 r = (f32)8.160000;
+        vec3f p = {(f32)-7.910000, (f32)11.570000, (f32)10.600000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 17.609268));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)4.383177, (f32)10.083116, (f32)-1.920115}));
+    }
+    {
+        vec3f cp = {(f32)3.100000, (f32)6.330000, (f32)-0.210000};
+        vec3f cv = {(f32)-0.236535, (f32)0.969756, (f32)0.060208};
+        f32 h = (f32)5.790000;
+        f32 r = (f32)6.490000;
+        vec3f p = {(f32)-6.740000, (f32)5.120000, (f32)7.670000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 7.358819));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)-3.155349, (f32)10.503510, (f32)4.159968}));
+    }
+    {
+        vec3f cp = {(f32)8.360001, (f32)4.850000, (f32)7.450001};
+        vec3f cv = {(f32)0.305963, (f32)-0.738557, (f32)0.600767};
+        f32 h = (f32)0.910000;
+        f32 r = (f32)7.720000;
+        vec3f p = {(f32)9.670000, (f32)11.720000, (f32)3.930000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 7.197949));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)11.125882, (f32)6.039529, (f32)8.104102}));
+    }
+    {
+        vec3f cp = {(f32)7.080000, (f32)14.440000, (f32)-3.320000};
+        vec3f cv = {(f32)-0.811891, (f32)-0.129089, (f32)0.569358};
+        f32 h = (f32)6.240000;
+        f32 r = (f32)4.900000;
+        vec3f p = {(f32)3.570000, (f32)10.010000, (f32)1.530000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 0.057009));
+        // point_inside_cone
+        REQUIRE(overlap == bool(1));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)3.523714, (f32)10.002641, (f32)1.562458}));
+    }
+    {
+        vec3f cp = {(f32)11.660000, (f32)5.490000, (f32)-4.760000};
+        vec3f cv = {(f32)-0.497079, (f32)-0.855900, (f32)-0.142643};
+        f32 h = (f32)8.530000;
+        f32 r = (f32)6.990000;
+        vec3f p = {(f32)10.299999, (f32)4.030000, (f32)-7.780000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 0.631556));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)10.134563, (f32)3.588377, (f32)-7.359925}));
+    }
+    {
+        vec3f cp = {(f32)-7.020000, (f32)4.810000, (f32)1.350000};
+        vec3f cv = {(f32)0.754257, (f32)-0.605441, (f32)-0.254044};
+        f32 h = (f32)13.650000;
+        f32 r = (f32)4.870000;
+        vec3f p = {(f32)14.080000, (f32)2.280000, (f32)14.330000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 15.629295));
+        // point_inside_cone
+        REQUIRE(overlap == bool(0));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)5.753925, (f32)-2.019639, (f32)1.821424}));
+    }
+    {
+        vec3f cp = {(f32)1.160000, (f32)5.800000, (f32)3.670000};
+        vec3f cv = {(f32)-0.850492, (f32)0.438373, (f32)0.290675};
+        f32 h = (f32)4.390000;
+        f32 r = (f32)8.520000;
+        vec3f p = {(f32)-1.020000, (f32)5.920000, (f32)7.200001};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 1.261747));
+        // point_inside_cone
+        REQUIRE(overlap == bool(1));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)-0.004237, (f32)5.198958, (f32)7.400818}));
+    }
+    {
+        vec3f cp = {(f32)11.510000, (f32)10.490000, (f32)7.660000};
+        vec3f cv = {(f32)0.001249, (f32)-0.209566, (f32)0.977794};
+        f32 h = (f32)6.100000;
+        f32 r = (f32)14.670000;
+        vec3f p = {(f32)8.340000, (f32)14.390000, (f32)11.840000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 0.841472));
+        // point_inside_cone
+        REQUIRE(overlap == bool(1));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)8.157934, (f32)14.814392, (f32)11.136566}));
+    }
+    {
+        vec3f cp = {(f32)7.950001, (f32)4.360000, (f32)-6.260000};
+        vec3f cv = {(f32)-0.625592, (f32)0.727616, (f32)0.281442};
+        f32 h = (f32)12.310000;
+        f32 r = (f32)5.650000;
+        vec3f p = {(f32)3.270000, (f32)12.730000, (f32)-4.190000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 2.170182));
+        // point_inside_cone
+        REQUIRE(overlap == bool(1));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)5.131972, (f32)13.424145, (f32)-5.062304}));
+    }
+    {
+        vec3f cp = {(f32)1.840000, (f32)0.550000, (f32)6.559999};
+        vec3f cv = {(f32)0.081153, (f32)0.994310, (f32)-0.069000};
+        f32 h = (f32)1.640000;
+        f32 r = (f32)13.990000;
+        vec3f p = {(f32)10.340000, (f32)0.830000, (f32)1.750000};
+        bool overlap = maths::point_inside_cone(p, cp, cv, h, r);
+        vec3f cpp = maths::closest_point_on_cone(p, cp, cv, h, r);
+        f32 dd = maths::point_cone_distance(p, cp, cv, h, r);
+        // point_cone_distance
+        REQUIRE(require_func(dd, 0.163782));
+        // point_inside_cone
+        REQUIRE(overlap == bool(1));
+        // closest_point_on_cone
+        REQUIRE(require_func(cpp, {(f32)10.343329, (f32)0.666263, (f32)1.751929}));
+    }
+}
+
 // TODO:
-// cone_vs_plane
-// point sphere distance
-// point inside cone (inside cases)
-// closest point on cone
-// point cone distance
 // line_segment_between_line_segment
 // ray vs line segment
 
