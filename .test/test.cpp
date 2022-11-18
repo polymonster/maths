@@ -826,96 +826,96 @@ TEST_CASE( "Point Plane Distance", "[maths]")
     }
 }
 
-TEST_CASE( "Ray Plane Intersect", "[maths]")
+TEST_CASE( "Ray vs Plane", "[maths]")
 {
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-2.48, (f32)5.66, (f32)-2.84};
         const vec3f rV = {(f32)0.437602, (f32)-0.733279, (f32)0.520391};
         const vec3f x0 = {(f32)5.01, (f32)-1.03, (f32)8.71};
         const vec3f xN = {(f32)-0.723007, (f32)0.371545, (f32)0.582422};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-0.682132, (f32)2.64736, (f32)-0.701995)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)1.77, (f32)-6.03, (f32)-7.06};
         const vec3f rV = {(f32)0.0350043, (f32)-0.796348, (f32)-0.603825};
         const vec3f x0 = {(f32)7.45, (f32)-8.25, (f32)6.35};
         const vec3f xN = {(f32)-0.0185944, (f32)0.390482, (f32)0.920423};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)1.31114, (f32)4.40918, (f32)0.855423)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)9.68, (f32)-5.88, (f32)-7.4};
         const vec3f rV = {(f32)0.39763, (f32)0.655741, (f32)-0.641789};
         const vec3f x0 = {(f32)-6.05, (f32)9.68, (f32)1.13};
         const vec3f xN = {(f32)0.257437, (f32)-0.806637, (f32)0.532037};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)15.925, (f32)4.41882, (f32)-17.4797)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)9.42, (f32)3.65, (f32)-9.18};
         const vec3f rV = {(f32)-0.420438, (f32)0.586862, (f32)-0.691972};
         const vec3f x0 = {(f32)6.95, (f32)-2.88, (f32)6.71};
         const vec3f xN = {(f32)0.0088175, (f32)0.793575, (f32)-0.608408};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)16.5009, (f32)-6.23374, (f32)2.47397)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-2.62, (f32)0.57, (f32)6.16};
         const vec3f rV = {(f32)0.816799, (f32)-0.544533, (f32)-0.190586};
         const vec3f x0 = {(f32)3.35, (f32)0.0600004, (f32)9.72};
         const vec3f xN = {(f32)-0.101274, (f32)-0.253185, (f32)0.962102};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-21.4103, (f32)13.0969, (f32)10.5444)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)4.54, (f32)2.23, (f32)-7.11};
         const vec3f rV = {(f32)0.914885, (f32)0.0762403, (f32)0.39645};
         const vec3f x0 = {(f32)-8.77, (f32)5.06, (f32)8.13};
         const vec3f xN = {(f32)0.747052, (f32)-0.661674, (f32)-0.064033};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-14.7198, (f32)0.62502, (f32)-15.4559)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-7.8, (f32)8.44, (f32)-6.34};
         const vec3f rV = {(f32)0.273377, (f32)-0.594997, (f32)0.755807};
         const vec3f x0 = {(f32)3.63, (f32)-2.62, (f32)8.44};
         const vec3f xN = {(f32)0.758448, (f32)0.42136, (f32)0.497205};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)1.54009, (f32)-11.8884, (f32)19.4826)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-3.77, (f32)-0.53, (f32)3.85};
         const vec3f rV = {(f32)-0.865617, (f32)-0.292015, (f32)0.406736};
         const vec3f x0 = {(f32)2.47, (f32)-6.15, (f32)4.96};
         const vec3f xN = {(f32)-0.133875, (f32)-0.687226, (f32)-0.714001};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-77.7139, (f32)-25.4749, (f32)38.5947)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-8.56, (f32)9.68, (f32)7.35};
         const vec3f rV = {(f32)0.179207, (f32)-0.896038, (f32)0.406204};
         const vec3f x0 = {(f32)-9.58, (f32)-9.89, (f32)-3.21};
         const vec3f xN = {(f32)0.678999, (f32)-0.73123, (f32)-0.0652884};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-5.14312, (f32)-7.40441, (f32)15.0949)));
     }
     {
-        //ray_plane_intersect---------------------------
+        //ray_vs_plane---------------------------
         const vec3f r0 = {(f32)-1.82, (f32)-6.04, (f32)6.92};
         const vec3f rV = {(f32)-0.601116, (f32)0.643548, (f32)-0.473821};
         const vec3f x0 = {(f32)-3.31, (f32)3.97, (f32)5.53};
         const vec3f xN = {(f32)0.372336, (f32)-0.594154, (f32)-0.712985};
-        vec3f result = ray_plane_intersect(r0, rV, x0, xN);
+        vec3f result = ray_vs_plane(r0, rV, x0, xN);
         REQUIRE(require_func(result,vec3f((f32)-14.1651, (f32)7.17647, (f32)-2.8108)));
     }
 }
@@ -3535,7 +3535,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)31.650002, (f32)0.000000, (f32)-5.080002};
         vec3f t1 = {(f32)-19.580000, (f32)0.000000, (f32)29.870003};
         vec3f t2 = {(f32)-24.969999, (f32)0.000000, (f32)-26.730000};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)7.290001, (f32)0.000000, (f32)-1.600000}));
     }
@@ -3546,7 +3546,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)45.599998, (f32)0.000000, (f32)-40.669998};
         vec3f t1 = {(f32)-19.010000, (f32)0.000000, (f32)-47.220001};
         vec3f t2 = {(f32)-31.840000, (f32)0.000000, (f32)3.349998};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
     {
@@ -3556,7 +3556,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)41.489998, (f32)0.000000, (f32)15.790001};
         vec3f t1 = {(f32)38.209999, (f32)0.000000, (f32)-30.330000};
         vec3f t2 = {(f32)-43.279999, (f32)0.000000, (f32)-36.070000};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
     {
@@ -3566,7 +3566,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-7.020000, (f32)0.000000, (f32)-28.120001};
         vec3f t1 = {(f32)-38.770000, (f32)0.000000, (f32)45.050003};
         vec3f t2 = {(f32)18.820000, (f32)0.000000, (f32)17.519997};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)5.660000, (f32)0.000000, (f32)-2.840000}));
     }
@@ -3577,7 +3577,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-11.290001, (f32)0.000000, (f32)8.279999};
         vec3f t1 = {(f32)-38.630001, (f32)0.000000, (f32)43.580002};
         vec3f t2 = {(f32)-18.230000, (f32)0.000000, (f32)-26.030001};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
     {
@@ -3587,7 +3587,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)12.980000, (f32)0.000000, (f32)31.419998};
         vec3f t1 = {(f32)-46.009998, (f32)0.000000, (f32)29.680000};
         vec3f t2 = {(f32)-45.880001, (f32)0.000000, (f32)-47.400002};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
     {
@@ -3597,7 +3597,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-39.939999, (f32)0.000000, (f32)-40.380001};
         vec3f t1 = {(f32)29.419998, (f32)0.000000, (f32)3.650002};
         vec3f t2 = {(f32)-29.180000, (f32)0.000000, (f32)48.519997};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)-2.330000, (f32)0.000000, (f32)8.209999}));
     }
@@ -3608,7 +3608,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-15.459999, (f32)0.000000, (f32)2.230000};
         vec3f t1 = {(f32)-27.110001, (f32)0.000000, (f32)17.599998};
         vec3f t2 = {(f32)39.050003, (f32)0.000000, (f32)11.259998};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)-8.770000, (f32)0.000000, (f32)5.060000}));
     }
@@ -3619,7 +3619,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)28.440002, (f32)0.000000, (f32)-26.340000};
         vec3f t1 = {(f32)-44.660000, (f32)0.000000, (f32)2.259998};
         vec3f t2 = {(f32)3.939999, (f32)0.000000, (f32)-36.369999};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
     {
@@ -3629,7 +3629,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-20.090000, (f32)0.000000, (f32)-49.669998};
         vec3f t1 = {(f32)-23.309999, (f32)0.000000, (f32)43.970001};
         vec3f t2 = {(f32)45.529999, (f32)0.000000, (f32)-44.529999};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)8.250000, (f32)0.000000, (f32)2.100000}));
     }
@@ -3640,7 +3640,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)31.550003, (f32)0.000000, (f32)-38.669998};
         vec3f t1 = {(f32)5.570000, (f32)0.000000, (f32)15.760002};
         vec3f t2 = {(f32)-18.219999, (f32)0.000000, (f32)32.660004};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)3.570000, (f32)0.000000, (f32)7.110001}));
     }
@@ -3651,7 +3651,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-40.830002, (f32)0.000000, (f32)16.430000};
         vec3f t1 = {(f32)44.190002, (f32)0.000000, (f32)-20.330000};
         vec3f t2 = {(f32)27.470001, (f32)0.000000, (f32)2.689999};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(1));
         REQUIRE(require_func(ip, {(f32)3.950000, (f32)0.000000, (f32)3.030000}));
     }
@@ -3662,7 +3662,7 @@ TEST_CASE( "Ray vs Triangle", "[maths]")
         vec3f t0 = {(f32)-15.410000, (f32)0.000000, (f32)4.060001};
         vec3f t1 = {(f32)-10.700001, (f32)0.000000, (f32)48.239998};
         vec3f t2 = {(f32)1.320000, (f32)0.000000, (f32)-40.270000};
-        bool i = maths::ray_triangle_intersect(r0, rv, t0, t1, t2, ip);
+        bool i = maths::ray_vs_triangle(r0, rv, t0, t1, t2, ip);
         REQUIRE(i == bool(0));
     }
 }
@@ -4579,8 +4579,284 @@ TEST_CASE("Point/Cone", "[maths]")
     }
 }
 
+TEST_CASE("Ray vs Line Segment", "[maths]") 
+{
+
+}
+
+TEST_CASE("Shortest Line Segment Between Line Segments", "[maths]") 
+{
+    {
+        vec3f l00 = {(f32)-4.970000, (f32)0.000000, (f32)-6.730000};
+        vec3f l01 = {(f32)7.290001, (f32)0.000000, (f32)-1.600000};
+        vec3f l10 = {(f32)1.690000, (f32)0.000000, (f32)7.090000};
+        vec3f l11 = {(f32)1.570000, (f32)0.000000, (f32)5.600000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)0.770429, (f32)0.000000, (f32)-4.328010}));
+        if(has) REQUIRE(require_func(r1, {(f32)1.570000, (f32)0.000000, (f32)5.600000}));
+    }
+    {
+        vec3f l00 = {(f32)-7.220000, (f32)0.000000, (f32)8.160000};
+        vec3f l01 = {(f32)3.350000, (f32)0.000000, (f32)0.970000};
+        vec3f l10 = {(f32)2.670000, (f32)0.000000, (f32)8.100000};
+        vec3f l11 = {(f32)6.330000, (f32)0.000000, (f32)-0.210000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)3.350000, (f32)0.000000, (f32)0.970000}));
+        if(has) REQUIRE(require_func(r1, {(f32)5.410576, (f32)0.000000, (f32)1.877545}));
+    }
+    {
+        vec3f l00 = {(f32)-1.790000, (f32)0.000000, (f32)9.670000};
+        vec3f l01 = {(f32)-3.280000, (f32)0.000000, (f32)3.930000};
+        vec3f l10 = {(f32)7.450001, (f32)0.000000, (f32)2.280000};
+        vec3f l11 = {(f32)-9.090000, (f32)0.000000, (f32)-8.059999};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-3.280000, (f32)0.000000, (f32)3.930000}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.476745, (f32)0.000000, (f32)-2.079339}));
+    }
+    {
+        vec3f l00 = {(f32)1.530000, (f32)0.000000, (f32)-2.920000};
+        vec3f l01 = {(f32)9.440001, (f32)0.000000, (f32)6.680000};
+        vec3f l10 = {(f32)-8.040000, (f32)0.000000, (f32)5.300000};
+        vec3f l11 = {(f32)-0.970000, (f32)0.000000, (f32)7.219999};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)9.440001, (f32)0.000000, (f32)6.680000}));
+        if(has) REQUIRE(require_func(r1, {(f32)-0.970000, (f32)0.000000, (f32)7.219999}));
+    }
+    {
+        vec3f l00 = {(f32)-9.760000, (f32)0.000000, (f32)8.010000};
+        vec3f l01 = {(f32)-1.470000, (f32)0.000000, (f32)-0.230000};
+        vec3f l10 = {(f32)-0.670000, (f32)0.000000, (f32)-7.020000};
+        vec3f l11 = {(f32)-0.190000, (f32)0.000000, (f32)-3.650000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-1.470000, (f32)0.000000, (f32)-0.230000}));
+        if(has) REQUIRE(require_func(r1, {(f32)-0.190000, (f32)0.000000, (f32)-3.650000}));
+    }
+    {
+        vec3f l00 = {(f32)8.139999, (f32)0.000000, (f32)0.630000};
+        vec3f l01 = {(f32)-4.640000, (f32)0.000000, (f32)4.250000};
+        vec3f l10 = {(f32)-9.060000, (f32)0.000000, (f32)6.290001};
+        vec3f l11 = {(f32)-4.990000, (f32)0.000000, (f32)-4.830000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-4.639999, (f32)0.000000, (f32)4.250000}));
+        if(has) REQUIRE(require_func(r1, {(f32)-7.879392, (f32)0.000000, (f32)3.064359}));
+    }
+    {
+        vec3f l00 = {(f32)-5.960000, (f32)0.000000, (f32)4.510000};
+        vec3f l01 = {(f32)-7.020000, (f32)0.000000, (f32)-8.120000};
+        vec3f l10 = {(f32)-1.180000, (f32)0.000000, (f32)-2.480000};
+        vec3f l11 = {(f32)5.660000, (f32)0.000000, (f32)-2.840000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-6.523049, (f32)0.000000, (f32)-2.198787}));
+        if(has) REQUIRE(require_func(r1, {(f32)-1.180000, (f32)0.000000, (f32)-2.480000}));
+    }
+    {
+        vec3f l00 = {(f32)1.440000, (f32)0.000000, (f32)5.010000};
+        vec3f l01 = {(f32)-1.030000, (f32)0.000000, (f32)8.709999};
+        vec3f l10 = {(f32)3.580000, (f32)0.000000, (f32)1.770000};
+        vec3f l11 = {(f32)-6.030000, (f32)0.000000, (f32)-7.060000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)1.440000, (f32)0.000000, (f32)5.010000}));
+        if(has) REQUIRE(require_func(r1, {(f32)3.580000, (f32)0.000000, (f32)1.770000}));
+    }
+    {
+        vec3f l00 = {(f32)-7.690000, (f32)0.000000, (f32)7.450001};
+        vec3f l01 = {(f32)-8.250000, (f32)0.000000, (f32)6.350000};
+        vec3f l10 = {(f32)-6.010000, (f32)0.000000, (f32)9.680000};
+        vec3f l11 = {(f32)-5.880000, (f32)0.000000, (f32)-7.400000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-7.690000, (f32)0.000000, (f32)7.450001}));
+        if(has) REQUIRE(require_func(r1, {(f32)-5.993125, (f32)0.000000, (f32)7.462916}));
+    }
+    {
+        vec3f l00 = {(f32)-9.920000, (f32)0.000000, (f32)-6.050000};
+        vec3f l01 = {(f32)9.680000, (f32)0.000000, (f32)1.130000};
+        vec3f l10 = {(f32)-0.380000, (f32)0.000000, (f32)9.420000};
+        vec3f l11 = {(f32)3.650000, (f32)0.000000, (f32)-9.180000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)2.023844, (f32)0.000000, (f32)-1.674653}));
+        if(has) REQUIRE(require_func(r1, {(f32)2.023841, (f32)0.000000, (f32)-1.674652}));
+    }
+    {
+        vec3f l00 = {(f32)8.209999, (f32)0.000000, (f32)6.950001};
+        vec3f l01 = {(f32)-2.880000, (f32)0.000000, (f32)6.709999};
+        vec3f l10 = {(f32)-1.690000, (f32)0.000000, (f32)-2.620000};
+        vec3f l11 = {(f32)0.570000, (f32)0.000000, (f32)6.160000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_line_segments(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)0.731690, (f32)0.000000, (f32)6.788161}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.570000, (f32)0.000000, (f32)6.160000}));
+    }
+}
+
+TEST_CASE("Shortest Line Segment Between Lines", "[maths]") 
+{
+    {
+        vec3f l00 = {(f32)-4.970000, (f32)-1.730000, (f32)7.290001};
+        vec3f l01 = {(f32)-1.600000, (f32)1.120000, (f32)-6.970000};
+        vec3f l10 = {(f32)5.600000, (f32)4.330000, (f32)0.990000};
+        vec3f l11 = {(f32)-7.220000, (f32)3.160000, (f32)3.350000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-3.714814, (f32)-0.668493, (f32)1.978739}));
+        if(has) REQUIRE(require_func(r1, {(f32)-3.949841, (f32)3.458447, (f32)2.748005}));
+    }
+    {
+        vec3f l00 = {(f32)2.670000, (f32)3.100000, (f32)6.330000};
+        vec3f l01 = {(f32)-0.210000, (f32)-3.510000, (f32)-4.210000};
+        vec3f l10 = {(f32)3.930000, (f32)-1.640000, (f32)4.850000};
+        vec3f l11 = {(f32)7.450001, (f32)-2.720000, (f32)-9.090000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)1.652786, (f32)0.765352, (f32)2.607278}));
+        if(has) REQUIRE(require_func(r1, {(f32)4.279663, (f32)-1.747283, (f32)3.465259}));
+    }
+    {
+        vec3f l00 = {(f32)1.530000, (f32)2.080000, (f32)9.440001};
+        vec3f l01 = {(f32)6.680000, (f32)-0.100000, (f32)-8.760000};
+        vec3f l10 = {(f32)7.219999, (f32)1.660000, (f32)-4.510000};
+        vec3f l11 = {(f32)-9.760000, (f32)3.010000, (f32)-1.470000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)5.347884, (f32)0.463886, (f32)-4.052328}));
+        if(has) REQUIRE(require_func(r1, {(f32)5.429743, (f32)1.802335, (f32)-4.189483}));
+    }
+    {
+        vec3f l00 = {(f32)-0.670000, (f32)-2.020000, (f32)-0.190000};
+        vec3f l01 = {(f32)-3.650000, (f32)-4.870000, (f32)8.650000};
+        vec3f l10 = {(f32)4.250000, (f32)1.690000, (f32)-8.850000};
+        vec3f l11 = {(f32)-9.060000, (f32)1.290000, (f32)-4.990000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)2.161434, (f32)0.687915, (f32)-8.589286}));
+        if(has) REQUIRE(require_func(r1, {(f32)2.227627, (f32)1.629223, (f32)-8.263496}));
+    }
+    {
+        vec3f l00 = {(f32)-5.960000, (f32)-0.490000, (f32)-7.020000};
+        vec3f l01 = {(f32)-8.120000, (f32)-3.770000, (f32)5.050000};
+        vec3f l10 = {(f32)-2.840000, (f32)-1.630000, (f32)-5.620000};
+        vec3f l11 = {(f32)1.440000, (f32)0.010000, (f32)-1.030000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)-5.898550, (f32)-0.396686, (f32)-7.363382}));
+        if(has) REQUIRE(require_func(r1, {(f32)-4.779817, (f32)-2.373295, (f32)-7.700318}));
+    }
+    {
+        vec3f l00 = {(f32)3.580000, (f32)-3.230000, (f32)-6.030000};
+        vec3f l01 = {(f32)-7.060000, (f32)4.040000, (f32)6.090000};
+        vec3f l10 = {(f32)6.350000, (f32)-2.020000, (f32)-8.580000};
+        vec3f l11 = {(f32)-6.010000, (f32)4.680000, (f32)-5.880000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)5.584741, (f32)-4.599781, (f32)-8.313595}));
+        if(has) REQUIRE(require_func(r1, {(f32)6.778583, (f32)-2.252322, (f32)-8.673622}));
+    }
+    {
+        vec3f l00 = {(f32)-9.920000, (f32)-1.050000, (f32)9.680000};
+        vec3f l01 = {(f32)1.130000, (f32)0.300000, (f32)0.060000};
+        vec3f l10 = {(f32)-9.180000, (f32)3.520000, (f32)-2.330000};
+        vec3f l11 = {(f32)8.209999, (f32)1.950000, (f32)-2.880000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(1));
+        if(has) REQUIRE(require_func(r0, {(f32)4.823111, (f32)0.751195, (f32)-3.155178}));
+        if(has) REQUIRE(require_func(r1, {(f32)4.969697, (f32)2.242540, (f32)-2.777518}));
+    }
+    {
+        vec3f l00 = {(f32)-9.920000, (f32)-1.050000, (f32)9.680000};
+        vec3f l01 = {(f32)1.130000, (f32)0.300000, (f32)0.060000};
+        vec3f l10 = {(f32)-9.180000, (f32)3.520000, (f32)-2.330000};
+        vec3f l11 = {(f32)1.870000, (f32)4.870001, (f32)-11.950000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(0));
+        if(has) REQUIRE(require_func(r0, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+    }
+    {
+        vec3f l00 = {(f32)-1.690000, (f32)2.380000, (f32)0.570000};
+        vec3f l01 = {(f32)6.160000, (f32)2.900000, (f32)6.400000};
+        vec3f l10 = {(f32)9.719999, (f32)-4.020000, (f32)0.950000};
+        vec3f l11 = {(f32)17.570000, (f32)-3.500000, (f32)6.780000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(0));
+        if(has) REQUIRE(require_func(r0, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+    }
+    {
+        vec3f l00 = {(f32)-8.740000, (f32)-3.770000, (f32)5.060000};
+        vec3f l01 = {(f32)8.129999, (f32)2.700000, (f32)2.380000};
+        vec3f l10 = {(f32)-6.340000, (f32)0.340000, (f32)2.260000};
+        vec3f l11 = {(f32)10.529999, (f32)6.810000, (f32)-0.420000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(0));
+        if(has) REQUIRE(require_func(r0, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+    }
+    {
+        vec3f l00 = {(f32)1.590000, (f32)1.230000, (f32)-0.530000};
+        vec3f l01 = {(f32)3.850000, (f32)-2.830000, (f32)2.720000};
+        vec3f l10 = {(f32)4.960000, (f32)3.850000, (f32)-3.770000};
+        vec3f l11 = {(f32)7.220000, (f32)-0.210000, (f32)-0.520000};
+        vec3f r0 = vec3f::zero();
+        vec3f r1 = vec3f::zero();
+        bool has = maths::shortest_line_segment_between_lines(l00, l01, l10, l11, r0, r1);
+        REQUIRE(has == bool(0));
+        if(has) REQUIRE(require_func(r0, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+        if(has) REQUIRE(require_func(r1, {(f32)0.000000, (f32)0.000000, (f32)0.000000}));
+    }
+}
+
 // TODO:
-// line_segment_between_line_segment
 // ray vs line segment
 
 // convex hull from points

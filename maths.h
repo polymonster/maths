@@ -137,20 +137,28 @@ namespace maths
     f32   point_cone_distance(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     
     // Ray / Line
-    vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
-    bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
+    vec3f ray_vs_plane(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
+    bool  ray_vs_triangle(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
     bool  ray_vs_sphere(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip);
-    bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
-    bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
-    bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
+    bool  ray_vs_line_segment(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c1, const vec3f& c2, f32 r, vec3f& ip);
     bool  ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip);
+    bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
+    bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
+    
+    //
+    // Deprecated Functions
+    //
+    
+    maths_deprecated vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
+    maths_deprecated bool  ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip);
+    maths_deprecated bool  line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     
     //
     // Implementation
@@ -169,6 +177,8 @@ namespace maths
     // Convert rgb [0-1] to hsv [0-1]
     inline vec3f rgb_to_hsv(vec3f rgb)
     {
+        // from Foley & van Dam p592
+        // optimized: http://lolengine.net/blog/2013/01/13/fast-rgb-to-hsv
         f32 r = rgb.r;
         f32 g = rgb.g;
         f32 b = rgb.b;
@@ -198,6 +208,7 @@ namespace maths
     // Convert hsv [0-1] to rgb [0-1]
     inline vec3f hsv_to_rgb(vec3f hsv)
     {
+        // from Foley & van Dam p593: http://en.wikipedia.org/wiki/HSL_and_HSV
         f32 h = hsv.r;
         f32 s = hsv.g;
         f32 v = hsv.b;
@@ -315,7 +326,6 @@ namespace maths
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
-        
         ndc /= ndc.w;
         return ndc.xyz;
     }
@@ -345,9 +355,7 @@ namespace maths
     inline vec3f unproject_ndc(const vec3f& p, const mat4& view_projection)
     {
         mat4 inv = mat::inverse4x4(view_projection);
-        
         vec4f ppc = inv.transform_vector(vec4f(p, 1.0f));
-        
         return ppc.xyz / ppc.w;
     }
     
@@ -357,7 +365,6 @@ namespace maths
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
         vec3f ndc    = vec3f(ndc_xy, p.z);
-        
         return unproject_ndc(ndc, view_projection);
     }
     
@@ -368,7 +375,6 @@ namespace maths
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
         ndc_xy.y *= -1.0f;
         vec3f ndc    = vec3f(ndc_xy, p.z);
-        
         return unproject_ndc(ndc, view_projection);
     }
     
@@ -379,7 +385,6 @@ namespace maths
         f32 hyp = cos(altitude);
         f32 y   = hyp * cos(azimuth);
         f32 x   = hyp * sin(azimuth);
-        
         return vec3f(x, z, y);
     }
     
@@ -430,24 +435,35 @@ namespace maths
     
     // returns the intersection point of ray defined by origin r0 and direction rV,
     // with plane defined by point on plane x0 normal of plane xN
-    inline vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN)
+    inline vec3f ray_vs_plane(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN)
     {
         f32 d = plane_distance(x0, xN);
         f32 t = -(dot(r0, xN) + d) / dot(rV, xN);
-        
         return r0 + (rV * t);
+    }
+    
+    // deprecated: use ray_vs_plane
+    inline vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN)
+    {
+        return ray_vs_plane(r0, rV, x0, xN);
     }
     
     // returns true if the ray (origin r0, direction rv) intersects with the triangle (t0,t1,t2)
     // if it does intersect, ip is set to the intersectin point
-    inline bool ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
+    inline bool ray_vs_triangle(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
     {
         vec3f n = get_normal(t0, t1, t2);
-        vec3f p = ray_plane_intersect(r0, rv, t0, n);
+        vec3f p = ray_vs_plane(r0, rv, t0, n);
         bool hit = point_inside_triangle(p, t0, t1, t2);
         if(hit)
             ip = p;
         return hit;
+    }
+    
+    // deprecated: use ray_vs_triangle
+    inline bool ray_triangle_intersect(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
+    {
+        return ray_vs_triangle(r0, rv, t0, t1, t2, ip);
     }
 
     // returns true if the ray (origin r0, direction rv) intersects with the sphere at s0 with radius r
@@ -589,15 +605,16 @@ namespace maths
         // take left and right extent.
         auto d2 = dot(n, extent) + pd;
         auto d3 = dot(n, extent2) + pd;
-        
-        //
-        if(d1 < 0.0f && d2 < 0.0f && d3 < 0.0f) {
+        // if tip and both extents lie on the same side, we are either infront or behind
+        if(d1 < 0.0f && d2 < 0.0f && d3 < 0.0f)
+        {
             return maths::BEHIND;
         }
         else if(d1 > 0.0f && d2 > 0.0f && d3 > 0.0f)
         {
             return maths::INFRONT;
         }
+        // otherwise we have points on either side of the plane meaning we intersect
         return maths::INTERSECTS;
     }
     
@@ -816,12 +833,11 @@ namespace maths
     {
         Vec<N, T>  v1 = p - l1;
         Vec<N, T>  v2 = normalize(l2 - l1);
-        
         return dot(v2, v1);
     }
     
-    // returns true if the line and ray intersect and stores the intersection point in ip
-    inline bool line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip)
+    // returns true if the line segment and ray intersect and stores the intersection point in ip
+    inline bool ray_vs_line_segment(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip)
     {
         vec3f da = l2 - l1;
         vec3f db = rV;
@@ -840,7 +856,13 @@ namespace maths
         return false;
     }
     
-    // returns true if the line l1-l2 intersects with s1-s2 and stores the intersection point in ip
+    // deprecated: use ray_vs_line_segment
+    inline bool line_vs_ray(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip)
+    {
+        return ray_vs_line_segment(l1, l2, r0, rV, ip);
+    }
+    
+    // returns true if the line segment l1-l2 intersects with s1-s2 and stores the intersection point in ip
     inline bool line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip)
     {
         vec3f da = l2 - l1;
@@ -882,7 +904,6 @@ namespace maths
     {
         vec3f v1 = p - r0;
         f32   t  = dot(v1, rV);
-        
         return r0 + rV * t;
     }
     
@@ -991,9 +1012,9 @@ namespace maths
     {
         f32 cd = FLT_MAX;
         vec2f cp = vec2f::flt_max();
-        for(u32 i = 0, n = poly.size(); i < n; ++i)
+        for(size_t i = 0, n = poly.size(); i < n; ++i)
         {
-            u32 j = (i + 1) % n;
+            size_t j = (i + 1) % n;
             
             // distance to closest point
             vec2f cp2 = closest_point_on_line(poly[i], poly[j], p);
@@ -1420,8 +1441,8 @@ namespace maths
         }
         
         // intersect with the top and bottom circles
-        vec3f ip_top = ray_plane_intersect(r0, rv, c0, normalize(c0 - c1));
-        vec3f ip_bottom = ray_plane_intersect(r0, rv, c1, normalize(c1 - c0));
+        vec3f ip_top = ray_vs_plane(r0, rv, c0, normalize(c0 - c1));
+        vec3f ip_bottom = ray_vs_plane(r0, rv, c1, normalize(c1 - c0));
         
         bool btop = false;
         f32 r2 = r*r;
@@ -1484,7 +1505,6 @@ namespace maths
     {
         mat4  invm = mat::inverse4x4(mat);
         vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
-        
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
     

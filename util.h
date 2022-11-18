@@ -23,6 +23,15 @@
 #endif
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#define maths_deprecated __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define maths_deprecated __declspec(deprecated)
+#else
+#pragma message("WARNING: deprecated not implemented for this compiler")
+#define maths_deprecated
+#endif
+
 #ifndef M_PI
 const double M_PI = 3.1415926535897932384626433832795;
 #endif
