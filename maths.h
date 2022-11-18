@@ -850,9 +850,13 @@ namespace maths
         if (s >= 0.0 && s <= 1.0)
         {
             ip = l1 + da * s;
+            f32 t = distance_on_line(r0, r0 + rV, ip);
+            if(t < 0.0f)
+            {
+                return false;
+            }
             return true;
         }
-        
         return false;
     }
     
