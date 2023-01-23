@@ -448,19 +448,12 @@ Swizzle<T, 2, 1, 1, 1, 1> yyyy;
 Swizzle<T, 2, 0, 0> xx; \
 Swizzle<T, 2, 0, 1> xy; \
 Swizzle<T, 2, 0, 2> xz; \
-Swizzle<T, 2, 0, 3> xw; \
 Swizzle<T, 2, 1, 0> yx; \
 Swizzle<T, 2, 1, 1> yy; \
 Swizzle<T, 2, 1, 2> yz; \
-Swizzle<T, 2, 1, 3> yw; \
 Swizzle<T, 2, 2, 0> zx; \
 Swizzle<T, 2, 2, 1> zy; \
 Swizzle<T, 2, 2, 2> zz; \
-Swizzle<T, 2, 2, 3> zw; \
-Swizzle<T, 2, 3, 0> wx; \
-Swizzle<T, 2, 3, 1> wy; \
-Swizzle<T, 2, 3, 2> wz; \
-Swizzle<T, 2, 3, 3> ww; \
 Swizzle<T, 3, 0, 0, 0> xxx; \
 Swizzle<T, 3, 0, 0, 1> xxy; \
 Swizzle<T, 3, 0, 0, 2> xxz; \

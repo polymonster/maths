@@ -1,4 +1,4 @@
-name: gcc/clang
+name: gcc/clang/msvc
 on: [push]
 jobs:
   gcc:
@@ -17,4 +17,10 @@ jobs:
       - run: clang++ --std=c++17 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
       - run: clang++ --std=c++14 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
       - run: clang++ --std=c++11 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-
+  msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: microsoft/setup-msbuild@v1.1
+      - run: msbuild .build.vcxproj /p:PlatformToolset=v142
+      - run: msbuild .build.vcxproj /p:PlatformToolset=v143
