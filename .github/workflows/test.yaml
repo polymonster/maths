@@ -24,4 +24,3 @@ jobs:
       - uses: microsoft/setup-msbuild@v1.1
       - run: msbuild .build.vcxproj /p:PlatformToolset=v142
       - run: msbuild .build.vcxproj /p:PlatformToolset=v143
-      - run: msbuild .build.vcxproj /p:PlatformToolset=v144
