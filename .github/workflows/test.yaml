@@ -22,6 +22,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1
-      - run: msbuild .build.vcxproj 
-
-
+      - run: msbuild .build.vcxproj /p:PlatformToolset=v142
