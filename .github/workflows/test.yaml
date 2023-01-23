@@ -1,4 +1,4 @@
-name: gcc/clang
+name: gcc/clang/msvc
 on: [push]
 jobs:
   gcc:
