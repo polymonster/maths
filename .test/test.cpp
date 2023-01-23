@@ -53,13 +53,13 @@ namespace
 
 TEST_CASE( "vec sizes", "[vec]" )
 {
-    REQUIRE(sizeof(vec2f), 8);
-    REQUIRE(sizeof(vec3f), 12);
-    REQUIRE(sizeof(vec4f), 16);
+    REQUIRE(sizeof(vec2f) == 8);
+    REQUIRE(sizeof(vec3f) == 12);
+    REQUIRE(sizeof(vec4f) == 16);
     
-    REQUIRE(sizeof(Vec<2, double>), 16);
-    REQUIRE(sizeof(Vec<3, double>), 24);
-    REQUIRE(sizeof(Vec<4, double>), 32);
+    REQUIRE(sizeof(Vec<2, double>) == 16);
+    REQUIRE(sizeof(Vec<3, double>) == 24);
+    REQUIRE(sizeof(Vec<4, double>) == 32);
 }
 
 TEST_CASE( "vec operator +", "[vec]" )
