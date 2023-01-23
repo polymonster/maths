@@ -418,30 +418,30 @@ Swizzle<T, 2, 0, 0> xx; \
 Swizzle<T, 2, 0, 1> xy; \
 Swizzle<T, 2, 1, 0> yx; \
 Swizzle<T, 2, 1, 1> yy; \
-Swizzle<T, 3, 0, 0, 0> xxx; \
-Swizzle<T, 3, 0, 0, 1> xxy; \
-Swizzle<T, 3, 0, 1, 0> xyx; \
-Swizzle<T, 3, 0, 1, 1> xyy; \
-Swizzle<T, 3, 1, 0, 0> yxx; \
-Swizzle<T, 3, 1, 0, 1> yxy; \
-Swizzle<T, 3, 1, 1, 0> yyx; \
-Swizzle<T, 3, 1, 1, 1> yyy; \
-Swizzle<T, 4, 0, 0, 0, 0> xxxx; \
-Swizzle<T, 4, 0, 0, 0, 1> xxxy; \
-Swizzle<T, 4, 0, 0, 1, 0> xxyx; \
-Swizzle<T, 4, 0, 0, 1, 1> xxyy; \
-Swizzle<T, 4, 0, 1, 0, 0> xyxx; \
-Swizzle<T, 4, 0, 1, 0, 1> xyxy; \
-Swizzle<T, 4, 0, 1, 1, 0> xyyx; \
-Swizzle<T, 4, 0, 1, 1, 1> xyyy; \
-Swizzle<T, 4, 1, 0, 0, 0> yxxx; \
-Swizzle<T, 4, 1, 0, 0, 1> yxxy; \
-Swizzle<T, 4, 1, 0, 1, 0> yxyx; \
-Swizzle<T, 4, 1, 0, 1, 1> yxyy; \
-Swizzle<T, 4, 1, 1, 0, 0> yyxx; \
-Swizzle<T, 4, 1, 1, 0, 1> yyxy; \
-Swizzle<T, 4, 1, 1, 1, 0> yyyx; \
-Swizzle<T, 4, 1, 1, 1, 1> yyyy;
+Swizzle<T, 2, 0, 0, 0> xxx; \
+Swizzle<T, 2, 0, 0, 1> xxy; \
+Swizzle<T, 2, 0, 1, 0> xyx; \
+Swizzle<T, 2, 0, 1, 1> xyy; \
+Swizzle<T, 2, 1, 0, 0> yxx; \
+Swizzle<T, 2, 1, 0, 1> yxy; \
+Swizzle<T, 2, 1, 1, 0> yyx; \
+Swizzle<T, 2, 1, 1, 1> yyy; \
+Swizzle<T, 2, 0, 0, 0, 0> xxxx; \
+Swizzle<T, 2, 0, 0, 0, 1> xxxy; \
+Swizzle<T, 2, 0, 0, 1, 0> xxyx; \
+Swizzle<T, 2, 0, 0, 1, 1> xxyy; \
+Swizzle<T, 2, 0, 1, 0, 0> xyxx; \
+Swizzle<T, 2, 0, 1, 0, 1> xyxy; \
+Swizzle<T, 2, 0, 1, 1, 0> xyyx; \
+Swizzle<T, 2, 0, 1, 1, 1> xyyy; \
+Swizzle<T, 2, 1, 0, 0, 0> yxxx; \
+Swizzle<T, 2, 1, 0, 0, 1> yxxy; \
+Swizzle<T, 2, 1, 0, 1, 0> yxyx; \
+Swizzle<T, 2, 1, 0, 1, 1> yxyy; \
+Swizzle<T, 2, 1, 1, 0, 0> yyxx; \
+Swizzle<T, 2, 1, 1, 0, 1> yyxy; \
+Swizzle<T, 2, 1, 1, 1, 0> yyyx; \
+Swizzle<T, 2, 1, 1, 1, 1> yyyy;
 
 // v3 swizzles
 #define swizzle_v3      \
@@ -481,87 +481,87 @@ Swizzle<T, 3, 2, 1, 2> zyz; \
 Swizzle<T, 3, 2, 2, 0> zzx; \
 Swizzle<T, 3, 2, 2, 1> zzy; \
 Swizzle<T, 3, 2, 2, 2> zzz; \
-Swizzle<T, 4, 0, 0, 0, 0> xxxx; \
-Swizzle<T, 4, 0, 0, 0, 1> xxxy; \
-Swizzle<T, 4, 0, 0, 0, 2> xxxz; \
-Swizzle<T, 4, 0, 0, 1, 0> xxyx; \
-Swizzle<T, 4, 0, 0, 1, 1> xxyy; \
-Swizzle<T, 4, 0, 0, 1, 2> xxyz; \
-Swizzle<T, 4, 0, 0, 2, 0> xxzx; \
-Swizzle<T, 4, 0, 0, 2, 1> xxzy; \
-Swizzle<T, 4, 0, 0, 2, 2> xxzz; \
-Swizzle<T, 4, 0, 1, 0, 0> xyxx; \
-Swizzle<T, 4, 0, 1, 0, 1> xyxy; \
-Swizzle<T, 4, 0, 1, 0, 2> xyxz; \
-Swizzle<T, 4, 0, 1, 1, 0> xyyx; \
-Swizzle<T, 4, 0, 1, 1, 1> xyyy; \
-Swizzle<T, 4, 0, 1, 1, 2> xyyz; \
-Swizzle<T, 4, 0, 1, 2, 0> xyzx; \
-Swizzle<T, 4, 0, 1, 2, 1> xyzy; \
-Swizzle<T, 4, 0, 1, 2, 2> xyzz; \
-Swizzle<T, 4, 0, 2, 0, 0> xzxx; \
-Swizzle<T, 4, 0, 2, 0, 1> xzxy; \
-Swizzle<T, 4, 0, 2, 0, 2> xzxz; \
-Swizzle<T, 4, 0, 2, 1, 0> xzyx; \
-Swizzle<T, 4, 0, 2, 1, 1> xzyy; \
-Swizzle<T, 4, 0, 2, 1, 2> xzyz; \
-Swizzle<T, 4, 0, 2, 2, 0> xzzx; \
-Swizzle<T, 4, 0, 2, 2, 1> xzzy; \
-Swizzle<T, 4, 0, 2, 2, 2> xzzz; \
-Swizzle<T, 4, 1, 0, 0, 0> yxxx; \
-Swizzle<T, 4, 1, 0, 0, 1> yxxy; \
-Swizzle<T, 4, 1, 0, 0, 2> yxxz; \
-Swizzle<T, 4, 1, 0, 1, 0> yxyx; \
-Swizzle<T, 4, 1, 0, 1, 1> yxyy; \
-Swizzle<T, 4, 1, 0, 1, 2> yxyz; \
-Swizzle<T, 4, 1, 0, 2, 0> yxzx; \
-Swizzle<T, 4, 1, 0, 2, 1> yxzy; \
-Swizzle<T, 4, 1, 0, 2, 2> yxzz; \
-Swizzle<T, 4, 1, 1, 0, 0> yyxx; \
-Swizzle<T, 4, 1, 1, 0, 1> yyxy; \
-Swizzle<T, 4, 1, 1, 0, 2> yyxz; \
-Swizzle<T, 4, 1, 1, 1, 0> yyyx; \
-Swizzle<T, 4, 1, 1, 1, 1> yyyy; \
-Swizzle<T, 4, 1, 1, 1, 2> yyyz; \
-Swizzle<T, 4, 1, 1, 2, 0> yyzx; \
-Swizzle<T, 4, 1, 1, 2, 1> yyzy; \
-Swizzle<T, 4, 1, 1, 2, 2> yyzz; \
-Swizzle<T, 4, 1, 2, 0, 0> yzxx; \
-Swizzle<T, 4, 1, 2, 0, 1> yzxy; \
-Swizzle<T, 4, 1, 2, 0, 2> yzxz; \
-Swizzle<T, 4, 1, 2, 1, 0> yzyx; \
-Swizzle<T, 4, 1, 2, 1, 1> yzyy; \
-Swizzle<T, 4, 1, 2, 1, 2> yzyz; \
-Swizzle<T, 4, 1, 2, 2, 0> yzzx; \
-Swizzle<T, 4, 1, 2, 2, 1> yzzy; \
-Swizzle<T, 4, 1, 2, 2, 2> yzzz; \
-Swizzle<T, 4, 2, 0, 0, 0> zxxx; \
-Swizzle<T, 4, 2, 0, 0, 1> zxxy; \
-Swizzle<T, 4, 2, 0, 0, 2> zxxz; \
-Swizzle<T, 4, 2, 0, 1, 0> zxyx; \
-Swizzle<T, 4, 2, 0, 1, 1> zxyy; \
-Swizzle<T, 4, 2, 0, 1, 2> zxyz; \
-Swizzle<T, 4, 2, 0, 2, 0> zxzx; \
-Swizzle<T, 4, 2, 0, 2, 1> zxzy; \
-Swizzle<T, 4, 2, 0, 2, 2> zxzz; \
-Swizzle<T, 4, 2, 1, 0, 0> zyxx; \
-Swizzle<T, 4, 2, 1, 0, 1> zyxy; \
-Swizzle<T, 4, 2, 1, 0, 2> zyxz; \
-Swizzle<T, 4, 2, 1, 1, 0> zyyx; \
-Swizzle<T, 4, 2, 1, 1, 1> zyyy; \
-Swizzle<T, 4, 2, 1, 1, 2> zyyz; \
-Swizzle<T, 4, 2, 1, 2, 0> zyzx; \
-Swizzle<T, 4, 2, 1, 2, 1> zyzy; \
-Swizzle<T, 4, 2, 1, 2, 2> zyzz; \
-Swizzle<T, 4, 2, 2, 0, 0> zzxx; \
-Swizzle<T, 4, 2, 2, 0, 1> zzxy; \
-Swizzle<T, 4, 2, 2, 0, 2> zzxz; \
-Swizzle<T, 4, 2, 2, 1, 0> zzyx; \
-Swizzle<T, 4, 2, 2, 1, 1> zzyy; \
-Swizzle<T, 4, 2, 2, 1, 2> zzyz; \
-Swizzle<T, 4, 2, 2, 2, 0> zzzx; \
-Swizzle<T, 4, 2, 2, 2, 1> zzzy; \
-Swizzle<T, 4, 2, 2, 2, 2> zzzz;
+Swizzle<T, 3, 0, 0, 0, 0> xxxx; \
+Swizzle<T, 3, 0, 0, 0, 1> xxxy; \
+Swizzle<T, 3, 0, 0, 0, 2> xxxz; \
+Swizzle<T, 3, 0, 0, 1, 0> xxyx; \
+Swizzle<T, 3, 0, 0, 1, 1> xxyy; \
+Swizzle<T, 3, 0, 0, 1, 2> xxyz; \
+Swizzle<T, 3, 0, 0, 2, 0> xxzx; \
+Swizzle<T, 3, 0, 0, 2, 1> xxzy; \
+Swizzle<T, 3, 0, 0, 2, 2> xxzz; \
+Swizzle<T, 3, 0, 1, 0, 0> xyxx; \
+Swizzle<T, 3, 0, 1, 0, 1> xyxy; \
+Swizzle<T, 3, 0, 1, 0, 2> xyxz; \
+Swizzle<T, 3, 0, 1, 1, 0> xyyx; \
+Swizzle<T, 3, 0, 1, 1, 1> xyyy; \
+Swizzle<T, 3, 0, 1, 1, 2> xyyz; \
+Swizzle<T, 3, 0, 1, 2, 0> xyzx; \
+Swizzle<T, 3, 0, 1, 2, 1> xyzy; \
+Swizzle<T, 3, 0, 1, 2, 2> xyzz; \
+Swizzle<T, 3, 0, 2, 0, 0> xzxx; \
+Swizzle<T, 3, 0, 2, 0, 1> xzxy; \
+Swizzle<T, 3, 0, 2, 0, 2> xzxz; \
+Swizzle<T, 3, 0, 2, 1, 0> xzyx; \
+Swizzle<T, 3, 0, 2, 1, 1> xzyy; \
+Swizzle<T, 3, 0, 2, 1, 2> xzyz; \
+Swizzle<T, 3, 0, 2, 2, 0> xzzx; \
+Swizzle<T, 3, 0, 2, 2, 1> xzzy; \
+Swizzle<T, 3, 0, 2, 2, 2> xzzz; \
+Swizzle<T, 3, 1, 0, 0, 0> yxxx; \
+Swizzle<T, 3, 1, 0, 0, 1> yxxy; \
+Swizzle<T, 3, 1, 0, 0, 2> yxxz; \
+Swizzle<T, 3, 1, 0, 1, 0> yxyx; \
+Swizzle<T, 3, 1, 0, 1, 1> yxyy; \
+Swizzle<T, 3, 1, 0, 1, 2> yxyz; \
+Swizzle<T, 3, 1, 0, 2, 0> yxzx; \
+Swizzle<T, 3, 1, 0, 2, 1> yxzy; \
+Swizzle<T, 3, 1, 0, 2, 2> yxzz; \
+Swizzle<T, 3, 1, 1, 0, 0> yyxx; \
+Swizzle<T, 3, 1, 1, 0, 1> yyxy; \
+Swizzle<T, 3, 1, 1, 0, 2> yyxz; \
+Swizzle<T, 3, 1, 1, 1, 0> yyyx; \
+Swizzle<T, 3, 1, 1, 1, 1> yyyy; \
+Swizzle<T, 3, 1, 1, 1, 2> yyyz; \
+Swizzle<T, 3, 1, 1, 2, 0> yyzx; \
+Swizzle<T, 3, 1, 1, 2, 1> yyzy; \
+Swizzle<T, 3, 1, 1, 2, 2> yyzz; \
+Swizzle<T, 3, 1, 2, 0, 0> yzxx; \
+Swizzle<T, 3, 1, 2, 0, 1> yzxy; \
+Swizzle<T, 3, 1, 2, 0, 2> yzxz; \
+Swizzle<T, 3, 1, 2, 1, 0> yzyx; \
+Swizzle<T, 3, 1, 2, 1, 1> yzyy; \
+Swizzle<T, 3, 1, 2, 1, 2> yzyz; \
+Swizzle<T, 3, 1, 2, 2, 0> yzzx; \
+Swizzle<T, 3, 1, 2, 2, 1> yzzy; \
+Swizzle<T, 3, 1, 2, 2, 2> yzzz; \
+Swizzle<T, 3, 2, 0, 0, 0> zxxx; \
+Swizzle<T, 3, 2, 0, 0, 1> zxxy; \
+Swizzle<T, 3, 2, 0, 0, 2> zxxz; \
+Swizzle<T, 3, 2, 0, 1, 0> zxyx; \
+Swizzle<T, 3, 2, 0, 1, 1> zxyy; \
+Swizzle<T, 3, 2, 0, 1, 2> zxyz; \
+Swizzle<T, 3, 2, 0, 2, 0> zxzx; \
+Swizzle<T, 3, 2, 0, 2, 1> zxzy; \
+Swizzle<T, 3, 2, 0, 2, 2> zxzz; \
+Swizzle<T, 3, 2, 1, 0, 0> zyxx; \
+Swizzle<T, 3, 2, 1, 0, 1> zyxy; \
+Swizzle<T, 3, 2, 1, 0, 2> zyxz; \
+Swizzle<T, 3, 2, 1, 1, 0> zyyx; \
+Swizzle<T, 3, 2, 1, 1, 1> zyyy; \
+Swizzle<T, 3, 2, 1, 1, 2> zyyz; \
+Swizzle<T, 3, 2, 1, 2, 0> zyzx; \
+Swizzle<T, 3, 2, 1, 2, 1> zyzy; \
+Swizzle<T, 3, 2, 1, 2, 2> zyzz; \
+Swizzle<T, 3, 2, 2, 0, 0> zzxx; \
+Swizzle<T, 3, 2, 2, 0, 1> zzxy; \
+Swizzle<T, 3, 2, 2, 0, 2> zzxz; \
+Swizzle<T, 3, 2, 2, 1, 0> zzyx; \
+Swizzle<T, 3, 2, 2, 1, 1> zzyy; \
+Swizzle<T, 3, 2, 2, 1, 2> zzyz; \
+Swizzle<T, 3, 2, 2, 2, 0> zzzx; \
+Swizzle<T, 3, 2, 2, 2, 1> zzzy; \
+Swizzle<T, 3, 2, 2, 2, 2> zzzz;
 
 // v4 swizzles
 #define swizzle_v4      \
