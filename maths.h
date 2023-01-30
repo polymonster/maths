@@ -88,6 +88,7 @@ namespace maths
     bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f& aabb_extent, vec4f* planes);
     bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes);
     bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr);
+    bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1);
     // todo: obb vs obb
 
     // Point Test
@@ -711,6 +712,51 @@ namespace maths
         auto cp = closest_point_on_line(cp0, cp1, s0);
         auto r2 = sqr(sr + cr);
         return dist2(s0, cp) < r2;
+    }
+
+    // resturns true if the capsule cp0-cp1 with radius cr0 overlaps the capsule cp2-cp3 with radius cr1
+    inline bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1)
+    {
+        f32 r2 = (cr0 + cr1) * (cr0 + cr1);
+        
+        vec3f start, end;
+        if(shortest_line_segment_between_line_segments(cp0, cp1, cp2, cp3, start, end))
+        {
+            f32 m = dist2(start, end);
+            if(m < r2)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            // we must be orthogonal, which means there is no one single closest point between the 2 lines
+            
+            // find the distance between the 2 axes
+            vec3f l0 = normalize(cp1 - cp0);
+            f32 t0 = dot(cp2 - cp0, l0);
+            vec3f ip0 = cp0 + l0 * t0;
+            f32 m0 = dist2(cp2, ip0);
+            
+            // check axes afre within distance
+            if(m0 < r2)
+            {
+                vec3f l1 = normalize(cp3 - cp2);
+                f32 t1 = dot(cp0 - cp2, l1);
+                
+                // now check if the axes overlap
+                if(t0 >= 0.0f && t0*t0 < dist2(cp1, cp0))
+                {
+                    return true;
+                }
+                else if(t1 > 0.0f && t1*t1 < dist2(cp2, cp3))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     // returns true if sphere with centre s0 and radius r0 contains point p0
