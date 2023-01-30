@@ -4,6 +4,7 @@
 #include "../maths.h"
 #include <stdio.h>
 
+#define CATCH_CONFIG_NO_POSIX_SIGNALS
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
@@ -48,6 +49,17 @@ namespace
     {
         return( a == b );
     }
+}
+
+TEST_CASE( "vec sizes", "[vec]" )
+{
+    REQUIRE(sizeof(vec2f) == 8);
+    REQUIRE(sizeof(vec3f) == 12);
+    REQUIRE(sizeof(vec4f) == 16);
+    
+    REQUIRE(sizeof(Vec<2, double>) == 16);
+    REQUIRE(sizeof(Vec<3, double>) == 24);
+    REQUIRE(sizeof(Vec<4, double>) == 32);
 }
 
 TEST_CASE( "vec operator +", "[vec]" )
