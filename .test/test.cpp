@@ -4960,6 +4960,110 @@ TEST_CASE("Shortest Line Segment Between Lines", "[maths]")
     }
 }
 
+TEST_CASE("Capsule vs Capsule", "[maths]")
+{
+    {
+        vec3f cp0 = {(f32)-8.959845, (f32)-8.782539, (f32)4.907854};
+        vec3f cp1 = {(f32)-0.980155, (f32)-4.677461, (f32)9.672148};
+        f32 cr = (f32)5.080000;
+        vec3f cp2 = {(f32)12.017217, (f32)2.311968, (f32)0.548064};
+        vec3f cp3 = {(f32)-0.817216, (f32)-3.651968, (f32)1.431936};
+        f32 cr1 = (f32)1.690000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f cp0 = {(f32)-5.426985, (f32)1.042825, (f32)10.367354};
+        vec3f cp1 = {(f32)8.486984, (f32)-6.882825, (f32)8.512647};
+        f32 cr = (f32)8.059999;
+        vec3f cp2 = {(f32)0.023970, (f32)0.023601, (f32)-5.752966};
+        vec3f cp3 = {(f32)14.416029, (f32)-6.703602, (f32)-3.267035};
+        f32 cr1 = (f32)8.040000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f cp0 = {(f32)-1.964608, (f32)-4.765986, (f32)-7.579928};
+        vec3f cp1 = {(f32)9.124608, (f32)8.305986, (f32)-4.480071};
+        f32 cr = (f32)8.709999;
+        vec3f cp2 = {(f32)8.991868, (f32)-13.625567, (f32)-5.660562};
+        vec3f cp3 = {(f32)3.708133, (f32)-0.414433, (f32)-11.499437};
+        f32 cr1 = (f32)7.690000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f cp0 = {(f32)-3.830595, (f32)-11.371892, (f32)0.618306};
+        vec3f cp1 = {(f32)0.450596, (f32)6.131892, (f32)0.521693};
+        f32 cr = (f32)6.709999;
+        vec3f cp2 = {(f32)7.213480, (f32)-11.195667, (f32)1.404247};
+        vec3f cp3 = {(f32)12.226519, (f32)-6.844334, (f32)0.495753};
+        f32 cr1 = (f32)3.210000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f cp0 = {(f32)-14.688107, (f32)-6.652096, (f32)8.329040};
+        vec3f cp1 = {(f32)-2.791893, (f32)-10.887905, (f32)1.790961};
+        f32 cr = (f32)7.110000;
+        vec3f cp2 = {(f32)-0.223576, (f32)-8.073273, (f32)-1.172043};
+        vec3f cp3 = {(f32)-12.456425, (f32)-1.246727, (f32)5.692044};
+        f32 cr1 = (f32)0.940000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f cp0 = {(f32)8.766312, (f32)-7.762488, (f32)1.417873};
+        vec3f cp1 = {(f32)-5.586311, (f32)0.222488, (f32)-2.477873};
+        f32 cr = (f32)8.440001;
+        vec3f cp2 = {(f32)1.619980, (f32)2.987260, (f32)-4.652875};
+        vec3f cp3 = {(f32)8.300020, (f32)-5.287259, (f32)-2.887125};
+        f32 cr1 = (f32)5.390000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f cp0 = {(f32)5.340000, (f32)-18.730000, (f32)-9.890000};
+        vec3f cp1 = {(f32)5.340000, (f32)-0.430000, (f32)-9.890000};
+        f32 cr = (f32)7.350000;
+        vec3f cp2 = {(f32)6.920000, (f32)5.200000, (f32)-0.090000};
+        vec3f cp3 = {(f32)6.920000, (f32)11.099999, (f32)-0.090000};
+        f32 cr1 = (f32)2.950000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f cp0 = {(f32)-4.400000, (f32)-16.049999, (f32)-0.160000};
+        vec3f cp1 = {(f32)-4.400000, (f32)-2.070001, (f32)-0.160000};
+        f32 cr = (f32)4.440000;
+        vec3f cp2 = {(f32)6.799999, (f32)-5.300000, (f32)-1.450000};
+        vec3f cp3 = {(f32)6.799999, (f32)14.400001, (f32)-1.450000};
+        f32 cr1 = (f32)9.850000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f cp0 = {(f32)-6.690000, (f32)5.200001, (f32)6.379999};
+        vec3f cp1 = {(f32)-6.690000, (f32)11.680000, (f32)6.379999};
+        f32 cr = (f32)3.240000;
+        vec3f cp2 = {(f32)-4.690000, (f32)-11.889999, (f32)4.190000};
+        vec3f cp3 = {(f32)-4.690000, (f32)-7.830000, (f32)4.190000};
+        f32 cr1 = (f32)1.510000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f cp0 = {(f32)-7.400000, (f32)-11.920001, (f32)5.450000};
+        vec3f cp1 = {(f32)-7.400000, (f32)6.660001, (f32)5.450000};
+        f32 cr = (f32)9.290001;
+        vec3f cp2 = {(f32)-3.520000, (f32)-0.399999, (f32)5.500000};
+        vec3f cp3 = {(f32)-3.520000, (f32)14.480001, (f32)5.500000};
+        f32 cr1 = (f32)7.440000;
+        bool overlap = maths::capsule_vs_capsule(cp0, cp1, cr, cp2, cp3, cr1);
+        REQUIRE(overlap == bool(1));
+    }
+}
+
 // TODO:
 // convex hull from points
 // point inside hull
