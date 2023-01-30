@@ -2,12 +2,15 @@
 // Copyright 2014 - 2020 Alex Dixon.
 // License: https://github.com/polymonster/maths/blob/master/license.md
 
+
 #pragma once
+
 
 #include "mat.h"
 #include "quat.h"
 #include "util.h"
 #include "vec.h"
+
 
 constexpr double M_PI_OVER_180 = 3.1415926535897932384626433832795 / 180.0;
 constexpr double M_180_OVER_PI = 180.0 / 3.1415926535897932384626433832795;
@@ -15,7 +18,9 @@ constexpr double M_TWO_PI      = M_PI * 2.0;
 constexpr double M_PHI         = 1.61803398875;
 constexpr double M_INV_PHI     = 0.61803398875;
 
+
 //extern int _test_stack_depth;
+
 
 namespace maths
 {
@@ -34,6 +39,7 @@ namespace maths
         vec3f scale = vec3f::one();
     };
 
+
     // a collection of tests and useful maths functions
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
@@ -50,11 +56,13 @@ namespace maths
     template<size_t N, typename T>
     Vec<3, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
 
+
     // Angles
     f32   deg_to_rad(f32 degree_angle);
     f32   rad_to_deg(f32 radian_angle);
     vec3f azimuth_altitude_to_xyz(f32 azimuth, f32 altitude);
     void  xyz_to_azimuth_altitude(vec3f v, f32& azimuth, f32& altitude);
+
 
     // Colours
     vec3f rgb_to_hsv(vec3f rgb);
@@ -73,6 +81,7 @@ namespace maths
     vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
     vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
     vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
+
 
     // Plane Classification
     classification point_vs_plane(const vec3f& p, const vec3f& x, const vec3f& n);
@@ -116,18 +125,20 @@ namespace maths
     vec2f     closest_point_on_convex_hull(const vec2f& p, std::vector<vec2f> hull);
     vec3f     closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
 
+
     // Shortest Line
     bool      shortest_line_segment_between_lines(
         const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
     bool      shortest_line_segment_between_line_segments(
         const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
 
+
     // Point Distance
     template<size_t N, typename T>
     T     point_aabb_distance(const Vec<N, T>& p0, const Vec<N, T>& aabb_min, const Vec<N, T>& aabb_max);
     template<size_t N, typename T>
     T     point_segment_distance(const Vec<N, T>& x0, const Vec<N, T>& x1, const Vec<N, T>& x2);
-    float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
+    f32   point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3);
     template<size_t N, typename T>
     T     distance_on_line(const Vec<N, T> & l1, const Vec<N, T> & l2, const Vec<N, T> & p);
     f32   point_plane_distance(const vec3f& p0, const vec3f& x0, const vec3f& xN);
@@ -186,7 +197,7 @@ namespace maths
         
         vec3f out_hsv;
         
-        float K = 0.f;
+        f32 K = 0.f;
         if (g < b)
         {
             std::swap(g, b);
@@ -198,7 +209,7 @@ namespace maths
             K = -2.f / 6.f - K;
         }
         
-        const float chroma = r - (g < b ? g : b);
+        const f32 chroma = r - (g < b ? g : b);
         out_hsv.r = fabsf(K + (g - b) / (6.f * chroma + 1e-20f));
         out_hsv.g = chroma / (r + 1e-20f);
         out_hsv.b = r;
@@ -225,10 +236,10 @@ namespace maths
         
         h = fmodf(h, 1.0f) / (60.0f/360.0f);
         int   i = (int)h;
-        float f = h - (float)i;
-        float p = v * (1.0f - s);
-        float q = v * (1.0f - s * f);
-        float t = v * (1.0f - s * (1.0f - f));
+        f32 f = h - (f32)i;
+        f32 p = v * (1.0f - s);
+        f32 q = v * (1.0f - s * f);
+        f32 t = v * (1.0f - s * (1.0f - f));
         
         switch (i)
         {
@@ -243,6 +254,7 @@ namespace maths
         return out_rgb;
     }
 
+
     // convert rgb8 packed in u32 to vec4 (f32) rgba
     inline vec4f rgba8_to_vec4f(u32 rgba)
     {
@@ -255,6 +267,7 @@ namespace maths
         );
     }
 
+
     // convert vec4 (f32) rgba into a packed u32 containing rgba8
     inline u32 vec4f_to_rgba8(vec4f v)
     {
@@ -266,7 +279,7 @@ namespace maths
         return rgba;
     }
     
-    // given the normalized vector n, constructs an orthonormal basis return in n, b1, b2
+    // given the normalized vector n, constructs an orthonormal basis returned in n, b1, b2
     inline void get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2)
     {
         // choose a vector orthogonal to n as the direction of b2.
@@ -303,7 +316,7 @@ namespace maths
         b2 = vec3f(b, 1.0f - n.y * n.y * a, -n.y);
     }
     
-    // returns the barycentric coordinates of point p within triangle t0-t10-t2
+    // returns the barycentric coordinates of point p within triangle t0-t1-t2
     // with the result packed into a vec (u = x, v = y, w = z)
     template<size_t N, typename T>
     Vec<3, T> barycentric(const Vec<N, T>& p, const Vec<N, T>& t0, const Vec<N, T>& t1, const Vec<N, T>& t2)
@@ -323,7 +336,7 @@ namespace maths
         return {u, v, w};
     }
     
-    // project point p by view_projection to normalized device coordinates, perfroming homogenous divide
+    // project point p by view_projection to normalized device coordinates, perfroming homogeneous divide
     inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
@@ -352,7 +365,7 @@ namespace maths
         return sc;
     }
     
-    // unproject normalized device coordinate p wih viewport using inverse view_projection
+    // unproject normalized device coordinate p with viewport using inverse view_projection
     inline vec3f unproject_ndc(const vec3f& p, const mat4& view_projection)
     {
         mat4 inv = mat::inverse4x4(view_projection);
@@ -360,7 +373,7 @@ namespace maths
         return ppc.xyz / ppc.w;
     }
     
-    // unproject screen coordinate p wih viewport using inverse view_projection
+    // unproject screen coordinate p with viewport using inverse view_projection
     // coordinates are vup in the y-axis y.0 = bottom y.height = top
     inline vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
@@ -369,7 +382,7 @@ namespace maths
         return unproject_ndc(ndc, view_projection);
     }
     
-    // unproject screen coordinate p wih viewport using inverse view_projection
+    // unproject screen coordinate p with viewport using inverse view_projection
     // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
     inline vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
     {
@@ -409,6 +422,7 @@ namespace maths
         return dot(p0, xN) + d;
     }
 
+
     // returns the unsigned distance from point p0 to the sphere centred at s0 with radius r
     maths_inline f32 point_sphere_distance(const vec3f& p0, const vec3f& s0, f32 r)
     {
@@ -416,11 +430,13 @@ namespace maths
         return dist(p0, cp);
     }
 
+
     // returns the unsigned distance from point p to polygon defined by pairs of points which define the polygons edges
     maths_inline f32 point_polygon_distance(const vec2f& p, std::vector<vec2f> poly)
     {
         return dist(p, closest_point_on_polygon(p, poly));
     }
+
 
     // returns the unsigned distance from point p to convex hull defined by pairs of points which define the hulls edges
     maths_inline f32 point_convex_hull_distance(const vec2f& p, std::vector<vec2f> hull)
@@ -428,7 +444,8 @@ namespace maths
         return dist(p, closest_point_on_polygon(p, hull));
     }
 
-    // retuns the unsigned distance from point p to the edge of the cone defined start poisiton cp, direction cv with height h and radius r
+
+    // returns the unsigned distance from point p to the edge of the cone defined start position cp, direction cv with height h and radius r
     maths_inline f32 point_cone_distance(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
         return dist(closest_point_on_cone(p, cp, cv, h, r), p);
@@ -450,7 +467,7 @@ namespace maths
     }
     
     // returns true if the ray (origin r0, direction rv) intersects with the triangle (t0,t1,t2)
-    // if it does intersect, ip is set to the intersectin point
+    // if it does intersect, ip is set to the intersection point
     inline bool ray_vs_triangle(const vec3f& r0, const vec3f& rv, const vec3f& t0, const vec3f& t1, const vec3f& t2, vec3f& ip)
     {
         vec3f n = get_normal(t0, t1, t2);
@@ -467,8 +484,9 @@ namespace maths
         return ray_vs_triangle(r0, rv, t0, t1, t2, ip);
     }
 
+
     // returns true if the ray (origin r0, direction rv) intersects with the sphere at s0 with radius r
-    // if it does intersect, ip is set to the intersectin point
+    // if it does intersect, ip is set to the intersection point
     inline bool ray_vs_sphere(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip)
     {
         vec3f oc = r0 - s0;
@@ -498,6 +516,7 @@ namespace maths
         }
         return hit;
     }
+
 
     // returns the classification of the point p vs the plane defined by point on plane x and normal n
     inline classification point_vs_plane(const vec3f& p, const vec3f& x, const vec3f& n)
@@ -551,6 +570,7 @@ namespace maths
         
         return INTERSECTS;
     }
+
 
     // returns the classification of a capsule defined by line c1-c2 with radius r vs a plane defined by point on plane x and normal n
     inline classification capsule_vs_plane(const vec3f& c1, const vec3f& c2, f32 r, const vec3f& x, const vec3f& n)
@@ -627,6 +647,7 @@ namespace maths
             if(p0.v[i] < min.v[i] || p0.v[i] > max.v[i])
                 return false;
 
+
         return true;
     }
     
@@ -682,6 +703,7 @@ namespace maths
             f32 pd = planes[p].w;
             f32 d2 = dot(aabb_pos + aabb_extent * sign_flip, planes[p].xyz);
 
+
             if (d2 > -pd)
             {
                 inside = false;
@@ -691,7 +713,7 @@ namespace maths
     }
     
     // returns true if the sphere defined by pos and radius is inside or intersecting frustum
-    // definined by 6 planes (xyz = plane normal, w = plane constant / distance)
+    // defined by 6 planes (xyz = plane normal, w = plane constant / distance)
     // sse/avx simd optimised variations can be found here: https://github.com/polymonster/pmtech/blob/master/core/put/source/ecs/ecs_cull.cpp
     inline bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes)
     {
@@ -706,6 +728,7 @@ namespace maths
         return true;
     }
 
+
     // returns true if the sphere with centre s0 and radius sr overlaps the capsule with line c0-c1 and radius cr
     inline bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr)
     {
@@ -714,11 +737,13 @@ namespace maths
         return dist2(s0, cp) < r2;
     }
 
-    // resturns true if the capsule cp0-cp1 with radius cr0 overlaps the capsule cp2-cp3 with radius cr1
+
+    // returns true if the capsule cp0-cp1 with radius cr0 overlaps the capsule cp2-cp3 with radius cr1
     inline bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1)
     {
         f32 r2 = (cr0 + cr1) * (cr0 + cr1);
         
+        // check shortest distance between the 2 capsule line segments, if less than the sq radius we overlap
         vec3f start, end;
         if(shortest_line_segment_between_line_segments(cp0, cp1, cp2, cp3, start, end))
         {
@@ -758,6 +783,7 @@ namespace maths
         
         return false;
     }
+
 
     // returns true if sphere with centre s0 and radius r0 contains point p0
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
@@ -822,6 +848,7 @@ namespace maths
         }
         return c;
     }
+
 
     // returns true if point pos inside the frustum defined by 6 planes, xyz = normal, w = plane constant (distance)
     inline bool point_inside_frustum(const vec3f& pos, vec4f* planes)
@@ -949,7 +976,7 @@ namespace maths
         return ips.empty() ? false : true;
     }
     
-    // returns the closest point to p on the line the ray r0 with diection rV
+    // returns the closest point to p on the line the ray r0 with direction rV
     inline vec3f closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p)
     {
         vec3f v1 = p - r0;
@@ -986,17 +1013,17 @@ namespace maths
     }
     
     // find distance x0 is from triangle x1-x2-x3
-    inline float point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3)
+    inline f32 point_triangle_distance(const vec3f& x0, const vec3f& x1, const vec3f& x2, const vec3f& x3)
     {
         // first find barycentric coordinates of closest point on infinite plane
         vec3f x13(x1 - x3), x23(x2 - x3), x03(x0 - x3);
-        float m13 = mag2(x13), m23 = mag2(x23), d = dot(x13, x23);
-        float invdet = 1.f / max(m13 * m23 - d * d, 1e-30f);
-        float a = dot(x13, x03), b = dot(x23, x03);
+        f32 m13 = mag2(x13), m23 = mag2(x23), d = dot(x13, x23);
+        f32 invdet = 1.f / max(m13 * m23 - d * d, 1e-30f);
+        f32 a = dot(x13, x03), b = dot(x23, x03);
         // the barycentric coordinates themselves
-        float w23 = invdet * (m23 * a - d * b);
-        float w31 = invdet * (m13 * b - d * a);
-        float w12 = 1 - w23 - w31;
+        f32 w23 = invdet * (m23 * a - d * b);
+        f32 w31 = invdet * (m13 * b - d * a);
+        f32 w12 = 1 - w23 - w31;
         if (w23 >= 0 && w31 >= 0 && w12 >= 0)
         {
             // if we're inside the triangle
@@ -1021,7 +1048,7 @@ namespace maths
         return w.x >= 0.0f && w.y >= 0.0f && w.z >= 0.0f;
     }
     
-    // returns the cloest point on triangle v1-v2-v3 to point p
+    // returns the closest point on triangle v1-v2-v3 to point p
     // side is 1 or -1 depending on whether the point is infront or behind the triangle
     inline vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side)
     {
@@ -1056,6 +1083,7 @@ namespace maths
         return cp;
     }
 
+
     // returns the closest point from p to the polygon defined by array of points
     // where each point pair defines an edge of the polygon
     inline vec2f closest_point_on_polygon(const vec2f& p, std::vector<vec2f> poly)
@@ -1079,6 +1107,7 @@ namespace maths
         return cp;
     }
 
+
     // returns the closest point from p to the convex hull defined by array of points
     // where each point pair defines an edge of the convex_hull
     inline vec2f closest_point_on_convex_hull(const vec2f& p, std::vector<vec2f> hull)
@@ -1086,13 +1115,14 @@ namespace maths
         return closest_point_on_polygon(p, hull);
     }
 
+
     // returns the closest point from p to the cone defined by cone defined by position cp facing direction cv with height h and radius r
     inline vec3f closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
         // centre point of the cones base (where radius is largest)
         auto l2 = cp + cv * h;
         
-        // find point onbase plane and clamp to the extent
+        // find point on base plane and clamp to the extent
         vec3f cplane = closest_point_on_plane(p, l2, cv);
         vec3f extent = l2 + normalize(cplane - l2) * r;
         
@@ -1107,6 +1137,7 @@ namespace maths
         
         return e2;
     }
+
 
     // return the shortest line segment between 2 infinite lines defined by points on the lines p1-p2 and p3-p4
     // storing the result in r0-r1 if any exists, returns false if the lines are orthogonal
@@ -1150,6 +1181,7 @@ namespace maths
         return true;
     }
 
+
     // return the shortest line segment between 2 line segments defined by points on the lines p1-p2 and p3-p4
     // storing the result in r0-r1 if any exists, returns false if the lines are orthogonal
     inline bool shortest_line_segment_between_line_segments(
@@ -1191,6 +1223,7 @@ namespace maths
         r1 = p3 + (p43 * mub);
         return true;
     }
+
 
     inline bool shortest_line_segment_between_line_and_line_segment(
         const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1)
@@ -1260,6 +1293,7 @@ namespace maths
             corners[1][i] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
         }
 
+
         // construct vectors to obtain normals
         vec3f plane_vectors[] = {
             corners[0][0], corners[1][0], corners[0][2], // left
@@ -1270,6 +1304,7 @@ namespace maths
             corners[1][0], corners[1][1], corners[1][2]  // far
         };
 
+
         // extract normals and distance
         for (size_t i = 0; i < 6; ++i)
         {
@@ -1277,10 +1312,12 @@ namespace maths
             vec3f v1 = normalize(plane_vectors[offset + 1] - plane_vectors[offset + 0]);
             vec3f v2 = normalize(plane_vectors[offset + 2] - plane_vectors[offset + 0]);
 
+
             planes_out[i].xyz = cross(v1, v2);
             planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);
         }
     }
+
 
     // gets frustum corners sorted as 4 near, 4 far into an array of vec3f corners[8];
     inline void get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners)
@@ -1300,6 +1337,7 @@ namespace maths
         }
     }
 
+
     // returns a transform extracting translation, scale and quaternion rotation from a 4x4 matrix
     inline transform get_transform_from_matrix(const mat4& mat)
     {
@@ -1311,6 +1349,7 @@ namespace maths
         t.scale.z = mag((vec3f)mat.get_row(2).xyz);
         return t;
     }
+
 
     // returns true if ray with origin r1 and direction rv intersects the aabb defined by emin and emax
     // Intersection point is stored in ip
@@ -1359,7 +1398,8 @@ namespace maths
         return ii;
     }
 
-    // returns true if there is an intersection between ray wih origin r0 and direction rv against the capsule with line c0 - c1 and radius cr
+
+    // returns true if there is an intersection between ray with origin r0 and direction rv against the capsule with line c0 - c1 and radius cr
     // the intersection point is stored in ip if one exists
     inline bool ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip)
     {
@@ -1411,7 +1451,7 @@ namespace maths
             }
         }
         
-        // if our line doesnt intersect the cylinder, we might still intersect the top / bottom sphere
+        // if our line does not intersect the cylinder, we might still intersect the top / bottom sphere
         // test intersections with the end spheres
         vec3f ips1 = vec3f::flt_max();
         bool bs1 = maths::ray_vs_sphere(r0, rv, c0, cr, ips1);
@@ -1449,11 +1489,12 @@ namespace maths
         return false;
     }
 
-    // returns true if there is an intersection between ray wih origin r0 and direction rv against the cylinder with line c0 - c1 and radius cr
+
+    // returns true if there is an intersection between ray with origin r0 and direction rv against the cylinder with line c0 - c1 and radius cr
     // the intersection point is stored in ip if one exists
     inline bool ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip)
     {
-        // intesection of ray and infinite cylinder about axis
+        // intersection of ray and infinite cylinder about axis
         // https://stackoverflow.com/questions/4078401/trying-to-optimize-line-vs-cylinder-intersection
         vec3f a = c0;
         vec3f b = c1;
@@ -1530,11 +1571,13 @@ namespace maths
         return false;
     }
 
+
     // returns the closest point to p on the plane defined by point on plane x and normal n
     maths_inline vec3f closest_point_on_plane(const vec3f& p, const vec3f& x, const vec3f& n)
     {
         return p - n * (dot(p, n) - dot(x, n));
     }
+
 
     // returns the closest point to point p on the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
