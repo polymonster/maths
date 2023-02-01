@@ -2,25 +2,18 @@
 // Copyright 2014 - 2020 Alex Dixon.
 // License: https://github.com/polymonster/maths/blob/master/license.md
 
-
 #pragma once
-
 
 #include "mat.h"
 #include "quat.h"
 #include "util.h"
 #include "vec.h"
 
-
 constexpr double M_PI_OVER_180 = 3.1415926535897932384626433832795 / 180.0;
 constexpr double M_180_OVER_PI = 180.0 / 3.1415926535897932384626433832795;
 constexpr double M_TWO_PI      = M_PI * 2.0;
 constexpr double M_PHI         = 1.61803398875;
 constexpr double M_INV_PHI     = 0.61803398875;
-
-
-//extern int _test_stack_depth;
-
 
 namespace maths
 {
@@ -121,9 +114,6 @@ namespace maths
     vec2f     closest_point_on_polygon(const vec2f& p, std::vector<vec2f> poly);
     vec2f     closest_point_on_convex_hull(const vec2f& p, std::vector<vec2f> hull);
     vec3f     closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
-
-    // Shortest Line
-
 
     // Point Distance
     template<size_t N, typename T>
@@ -415,14 +405,12 @@ namespace maths
         return dot(p0, xN) + d;
     }
 
-
     // returns the unsigned distance from point p0 to the sphere centred at s0 with radius r
     maths_inline f32 point_sphere_distance(const vec3f& p0, const vec3f& s0, f32 r)
     {
         vec3f cp = closest_point_on_sphere(s0, r, p0);
         return dist(p0, cp);
     }
-
 
     // returns the unsigned distance from point p to polygon defined by pairs of points which define the polygons edges
     maths_inline f32 point_polygon_distance(const vec2f& p, std::vector<vec2f> poly)
@@ -793,8 +781,16 @@ namespace maths
             if(p0.v[i] < min.v[i] || p0.v[i] > max.v[i])
                 return false;
 
-
         return true;
+    }
+
+    // returns if the point p is inside the obb defined by mat
+    // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
+    inline bool point_inside_obb(const mat4& mat, const vec3f& p)
+    {
+        mat4  invm = mat::inverse4x4(mat);
+        vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
+        return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
     
     // return true if point p is inside cone defined by position cp facing direction cv with height h and radius r
@@ -1580,15 +1576,6 @@ namespace maths
         
         vec3f tcp = mat.transform_vector(vec4f(cp, 1.0f)).xyz;
         return tcp;
-    }
-    
-    // returns if the point p is inside the obb defined by mat
-    // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
-    inline bool point_inside_obb(const mat4& mat, const vec3f& p)
-    {
-        mat4  invm = mat::inverse4x4(mat);
-        vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
-        return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
     
     // returns a convex hull wound clockwise from point cloud "points"
