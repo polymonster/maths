@@ -1292,7 +1292,6 @@ namespace maths
             corners[1][i] = maths::unproject_sc(vec3f(ndc_coords[i], 1.0f), view_projection, vpi);
         }
 
-
         // construct vectors to obtain normals
         vec3f plane_vectors[] = {
             corners[0][0], corners[1][0], corners[0][2], // left
@@ -1310,7 +1309,6 @@ namespace maths
             size_t offset = i * 3;
             vec3f v1 = normalize(plane_vectors[offset + 1] - plane_vectors[offset + 0]);
             vec3f v2 = normalize(plane_vectors[offset + 2] - plane_vectors[offset + 0]);
-
 
             planes_out[i].xyz = cross(v1, v2);
             planes_out[i].w = maths::plane_distance(plane_vectors[offset], planes_out[i].xyz);

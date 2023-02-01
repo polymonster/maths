@@ -1,10 +1,11 @@
 
 # maths  
+
 [![gcc_clang](https://github.com/polymonster/maths/actions/workflows/test.yaml/badge.svg)](https://github.com/polymonster/maths/actions)
 [![vc2017](https://ci.appveyor.com/api/projects/status/uny5ae4bf3kp2p0m?svg=true)](https://ci.appveyor.com/project/polymonster/maths)
 [![codecov](https://codecov.io/gh/polymonster/maths/branch/master/graph/badge.svg)](https://codecov.io/gh/polymonster/maths) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Another C++ maths library... you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.   
+A C++ maths library... you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.  
 
 There is a [Live Demo](https://www.polymonster.co.uk/pmtech/examples/maths_functions.html) via WebAssembly and WebGL.
 
@@ -12,7 +13,7 @@ There is a [Live Demo](https://www.polymonster.co.uk/pmtech/examples/maths_funct
 
 Supported Compilers: MSVC 2017+, GCC 7.0+, Clang 6.0+, EMCC 2.0.
 
-C++11 or later is required for template parameter packs to use swizzles and C++14 or upward is recommended to use `constexpr std::max` on parameter packs. Tested with C++20, C++17, C++14 and C++11. 
+C++11 or later is required. Tested with C++20, C++17, C++14 and C++11.  
 
 ## Usage
 
@@ -24,7 +25,41 @@ The entire library is header only, add the maths directory to your include searc
 #include "vec.h"   // vector of any dimension and type
 #include "mat.h"   // matrix of any dimension and type
 #include "quat.h"  // quaternion of any type
-``` 
+
+void func() {
+    // quick constructors
+    vec3f zero = vec3f::zero();
+    vec3f one = vec3f::one();
+    vec3f red = vec3f::red();
+    // ... and so on
+
+    // arithmetic operators
+    vec3f result_add = zero + one;
+    vec3f result_mul = zero * one;
+    result_add += red;
+    // etc
+
+    // overloaded functions and operations that feel lightweight and expressive
+    vec3f norm = normalize(va);
+    f32 dp = dot(va, vb);
+    vec3f cp = cross(va, vb);
+    quat q = normalize(q2);
+    quat qd = dot(q, q);
+    // + more
+
+    // shader style funcs with scalar variants
+    vec3f lerp = lerp(va, vb, 0.5f);
+    f32 lerp = lerp(fa, fb, 0.75f);
+    vec3f sat = saturate(va);
+    quat q = slerp(qa, qb, 0.25f);
+    // yeah!
+
+    // cmath functions for vectors and swizzles
+    vec2f v2_sin = sin(result_add.xy);
+    vec3f v3_cos = cos(result_mul);
+    // ... you get it!
+}
+```  
 
 ### Running Tests
 
