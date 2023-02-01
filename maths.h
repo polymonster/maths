@@ -45,14 +45,14 @@ namespace maths
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
     // convenience and to keep the library header only
     
-    // Generic
+    // Basis
     vec3f       get_normal(const vec3f& v1, const vec3f& v2, const vec3f& v3);
     void        get_orthonormal_basis_hughes_moeller(const vec3f& n, vec3f& b1, vec3f& b2);
     void        get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2);
     void        get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out);
     void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
     transform   get_transform_from_matrix(const mat4& mat);
-    
+
     template<size_t N, typename T>
     Vec<3, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
 
@@ -90,12 +90,12 @@ namespace maths
     // Overlaps
     bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1);
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
+    bool sphere_vs_obb(const vec3f& s0, f32 r0, const mat4f& obb);
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
     bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f& aabb_extent, vec4f* planes);
     bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes);
     bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr);
     bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1);
-    // todo: obb vs obb
 
     // Point Test
     template<size_t N, typename T>
@@ -142,6 +142,7 @@ namespace maths
     f32   point_polygon_distance(const vec2f& p, std::vector<vec2f> poly);
     f32   point_convex_hull_distance(const vec2f& p, std::vector<vec2f> hull);
     f32   point_cone_distance(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
+    f32   point_obb_distance(const vec3f& p, const mat4f& obb);
     
     // Ray / Line
     vec3f ray_vs_plane(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
@@ -441,6 +442,13 @@ namespace maths
     {
         return dist(closest_point_on_cone(p, cp, cv, h, r), p);
     }
+
+    // returns the unsidned distance from point p to the obb defined by matrix obb, where the matrix transforms a unit cube
+    // from -1 to 1 into an obb
+    inline f32 point_obb_distance(const vec3f& p, const mat4f& obb)
+    {
+        return dist(p, closest_point_on_obb(obb, p));
+    }
     
     // returns the intersection point of ray defined by origin r0 and direction rV,
     // with plane defined by point on plane x0 normal of plane xN
@@ -627,18 +635,6 @@ namespace maths
         return maths::INTERSECTS;
     }
     
-    // returns true if point p0 is inside aabb defined by min and max extents
-    template<size_t N, typename T>
-    inline bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0)
-    {
-        for(size_t i = 0; i < N; ++i)
-            if(p0.v[i] < min.v[i] || p0.v[i] > max.v[i])
-                return false;
-
-
-        return true;
-    }
-    
     // returns true if sphere with centre s0 and radius r0 overlaps
     // sphere with centre s1 and radius r1
     inline bool sphere_vs_sphere(const vec3f& s0, f32 r0, const vec3f& s1, f32 r1)
@@ -660,6 +656,20 @@ namespace maths
         f32   d  = dist(cp, s0);
         
         return d < r0;
+    }
+
+    // returns true if the sphere with centre s0 and radius r0 overlaps obb defined by matrix obb, where the matrix
+    // transforms a unit cube with extents -1 to 1 into an obb
+    inline bool sphere_vs_obb(const vec3f& s0, f32 r0, const mat4f& obb)
+    {
+        // test the distance to the closest point on the obb
+        vec3f cp = closest_point_on_obb(obb, s0);
+        if(dist2(s0, cp) < r0 * r0)
+        {
+            return true;
+        }
+        
+        return false;
     }
     
     // returns true if the aabb's defined by min0,max0 and min1,max1 overlap
@@ -774,6 +784,18 @@ namespace maths
     inline bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0)
     {
         return dist2(p0, s0) < r0 * r0;
+    }
+
+    // returns true if point p0 is inside aabb defined by min and max extents
+    template<size_t N, typename T>
+    inline bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0)
+    {
+        for(size_t i = 0; i < N; ++i)
+            if(p0.v[i] < min.v[i] || p0.v[i] > max.v[i])
+                return false;
+
+
+        return true;
     }
     
     // return true if point p is inside cone defined by position cp facing direction cv with height h and radius r
