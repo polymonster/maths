@@ -2931,6 +2931,11 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-7.98, (f32)0.31, (f32)-7.8};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-3.49981, (f32)-3.17162, (f32)-5.17936)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
+
     }
     {
         //point_inside_obb---------------------------
@@ -2953,6 +2958,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)2.73, (f32)8.63, (f32)4.16};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)1.28104, (f32)3.27264, (f32)0.730437)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -2975,6 +2984,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-4.73, (f32)6.14, (f32)7.15};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-4.73, (f32)6.14, (f32)7.15)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -2997,6 +3010,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-3.38, (f32)5.18, (f32)-1.47};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-2.47189, (f32)6.4115, (f32)2.83468)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3019,6 +3036,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-2.98, (f32)4.36, (f32)2.79};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-3.26612, (f32)-4.58507, (f32)2.66507)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3041,6 +3062,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)2.08, (f32)-2.94, (f32)-8.22};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-0.843953, (f32)-4.77934, (f32)-7.59307)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3063,6 +3088,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)6.56, (f32)6.63, (f32)6.37};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-8.61873, (f32)-3.13139, (f32)-2.30594)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3085,6 +3114,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-3.87, (f32)-9.27, (f32)9.62};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)5.48455, (f32)1.02231, (f32)-0.540381)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3107,6 +3140,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)1.94, (f32)5.97, (f32)4.24};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)3.99176, (f32)-0.188433, (f32)-3.52821)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3129,6 +3166,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)5.8, (f32)3.56, (f32)9.4};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)3.99812, (f32)0.973554, (f32)6.40428)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
 }
 
@@ -5076,6 +5117,110 @@ TEST_CASE("Capsule vs Capsule", "[maths]")
     }
 }
 
+TEST_CASE("Sphere vs OBB", "[maths]")
+{
+    {
+        vec3f sp = {(f32)-5.530000, (f32)-3.930000, (f32)-2.270000};
+        f32 sr = (f32)1.290000;
+        mat4f obb = {(f32)-3.059625, (f32)-2.970508, (f32)-3.205606, (f32)-4.460000,
+        (f32)-0.285940, (f32)5.311264, (f32)-5.107464, (f32)-2.030000,
+        (f32)2.201210, (f32)-3.438991, (f32)-5.119177, (f32)-4.960000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f sp = {(f32)8.980000, (f32)-8.450000, (f32)1.330000};
+        f32 sr = (f32)3.700000;
+        mat4f obb = {(f32)3.929071, (f32)-1.507176, (f32)3.827786, (f32)3.220000,
+        (f32)-0.177803, (f32)3.464077, (f32)2.775683, (f32)-6.950000,
+        (f32)-4.972564, (f32)-1.314759, (f32)2.925275, (f32)1.760000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f sp = {(f32)7.200001, (f32)-2.380000, (f32)-3.670000};
+        f32 sr = (f32)7.370001;
+        mat4f obb = {(f32)-3.926570, (f32)1.696256, (f32)-1.410042, (f32)5.570000,
+        (f32)6.954631, (f32)2.312607, (f32)-0.211337, (f32)-4.240000,
+        (f32)3.647408, (f32)-2.583441, (f32)-1.114998, (f32)1.780000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f sp = {(f32)3.030000, (f32)-5.270000, (f32)1.030000};
+        f32 sr = (f32)7.469999;
+        mat4f obb = {(f32)1.081971, (f32)-3.110237, (f32)-0.197211, (f32)-4.150000,
+        (f32)-3.035603, (f32)0.303731, (f32)-0.172018, (f32)7.290001,
+        (f32)1.536021, (f32)2.791106, (f32)-0.201041, (f32)0.150000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f sp = {(f32)-4.260000, (f32)5.490000, (f32)-4.580000};
+        f32 sr = (f32)2.200000;
+        mat4f obb = {(f32)0.116211, (f32)-0.499665, (f32)0.069225, (f32)-7.970000,
+        (f32)-2.739898, (f32)-0.013199, (f32)4.979045, (f32)9.000000,
+        (f32)-1.725414, (f32)-0.012694, (f32)-7.901894, (f32)-4.800000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f sp = {(f32)7.459999, (f32)-7.010000, (f32)2.300000};
+        f32 sr = (f32)0.290000;
+        mat4f obb = {(f32)-7.618527, (f32)1.478236, (f32)-1.899647, (f32)-7.510000,
+        (f32)5.610718, (f32)2.221995, (f32)-0.794782, (f32)-2.290000,
+        (f32)1.624151, (f32)-0.741927, (f32)-6.165197, (f32)-6.900000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f sp = {(f32)-6.850000, (f32)9.740000, (f32)4.450000};
+        f32 sr = (f32)5.170000;
+        mat4f obb = {(f32)-0.733257, (f32)-1.582668, (f32)3.443816, (f32)-0.900000,
+        (f32)-2.363755, (f32)-5.439856, (f32)-1.013725, (f32)2.000000,
+        (f32)5.311741, (f32)-2.639246, (f32)0.024287, (f32)-2.010000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f sp = {(f32)7.280001, (f32)-3.290000, (f32)6.610001};
+        f32 sr = (f32)3.840000;
+        mat4f obb = {(f32)-0.669247, (f32)0.838006, (f32)0.914998, (f32)7.200001,
+        (f32)2.725380, (f32)-0.009968, (f32)0.814005, (f32)-8.840000,
+        (f32)1.115713, (f32)0.527016, (f32)-1.439541, (f32)5.800000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+    {
+        vec3f sp = {(f32)8.270000, (f32)-2.050000, (f32)5.310000};
+        f32 sr = (f32)5.940000;
+        mat4f obb = {(f32)0.005842, (f32)-7.109931, (f32)-0.023274, (f32)0.450000,
+        (f32)-0.634803, (f32)0.026752, (f32)-5.536583, (f32)1.200000,
+        (f32)3.441946, (f32)0.017003, (f32)-1.021080, (f32)-7.600000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(0));
+    }
+    {
+        vec3f sp = {(f32)7.540001, (f32)-4.600000, (f32)-6.040000};
+        f32 sr = (f32)9.660000;
+        mat4f obb = {(f32)-0.260055, (f32)3.151180, (f32)0.258461, (f32)-1.750000,
+        (f32)0.769206, (f32)2.386325, (f32)0.070903, (f32)-2.330000,
+        (f32)-0.114426, (f32)8.879974, (f32)-0.110772, (f32)-3.110000,
+        (f32)0.000000, (f32)0.000000, (f32)0.000000, (f32)1.000000};
+        bool overlap = maths::sphere_vs_obb(sp, sr, obb);
+        REQUIRE(overlap == bool(1));
+    }
+}
+
 // TODO:
 // convex hull from points
 // point inside hull
@@ -5084,7 +5229,6 @@ TEST_CASE("Capsule vs Capsule", "[maths]")
 // point hull distance
 // point poly distance
 // point inside poly
-
 // basic tests
 // quat
 // vec
