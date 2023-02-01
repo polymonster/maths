@@ -2931,6 +2931,11 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-7.98, (f32)0.31, (f32)-7.8};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-3.49981, (f32)-3.17162, (f32)-5.17936)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
+
     }
     {
         //point_inside_obb---------------------------
@@ -2953,6 +2958,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)2.73, (f32)8.63, (f32)4.16};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)1.28104, (f32)3.27264, (f32)0.730437)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -2975,6 +2984,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-4.73, (f32)6.14, (f32)7.15};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-4.73, (f32)6.14, (f32)7.15)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -2997,6 +3010,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-3.38, (f32)5.18, (f32)-1.47};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-2.47189, (f32)6.4115, (f32)2.83468)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3019,6 +3036,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-2.98, (f32)4.36, (f32)2.79};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-3.26612, (f32)-4.58507, (f32)2.66507)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3041,6 +3062,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)2.08, (f32)-2.94, (f32)-8.22};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-0.843953, (f32)-4.77934, (f32)-7.59307)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3063,6 +3088,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)6.56, (f32)6.63, (f32)6.37};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)-8.61873, (f32)-3.13139, (f32)-2.30594)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3085,6 +3114,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)-3.87, (f32)-9.27, (f32)9.62};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)5.48455, (f32)1.02231, (f32)-0.540381)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3107,6 +3140,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)1.94, (f32)5.97, (f32)4.24};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)3.99176, (f32)-0.188433, (f32)-3.52821)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
     {
         //point_inside_obb---------------------------
@@ -3129,6 +3166,10 @@ TEST_CASE( "Point Inside OBB / Closest Point on OBB", "[maths]")
         const vec3f p = {(f32)5.8, (f32)3.56, (f32)9.4};
         vec3f result = closest_point_on_obb(mat, p);
         REQUIRE(require_func(result,vec3f((f32)3.99812, (f32)0.973554, (f32)6.40428)));
+
+        // point obb distance 
+        f32 d = point_obb_distance(p, mat);
+        REQUIRE(require_func(d, dist(p, result)));
     }
 }
 
