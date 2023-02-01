@@ -123,10 +123,7 @@ namespace maths
     vec3f     closest_point_on_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
 
     // Shortest Line
-    bool      shortest_line_segment_between_lines(
-        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
-    bool      shortest_line_segment_between_line_segments(
-        const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
+
 
     // Point Distance
     template<size_t N, typename T>
@@ -155,13 +152,15 @@ namespace maths
     bool  ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
     bool  line_vs_poly(const vec2f& l1, const vec2f& l2, const std::vector<vec2f>& poly, std::vector<vec2f>& ips);
+    bool  shortest_line_segment_between_lines(const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
+    bool  shortest_line_segment_between_line_segments(const vec3f& p1, const vec3f& p2, const vec3f& p3, const vec3f& p4, vec3f& r0, vec3f& r1);
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
     vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
     
     //
-    // Deprecated Functions
+    // Deprecated Functions (they still exist but have been renamed for api consitency)
     //
     
     maths_deprecated vec3f ray_plane_intersect(const vec3f& r0, const vec3f& rV, const vec3f& x0, const vec3f& xN);
