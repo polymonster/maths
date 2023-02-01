@@ -15,7 +15,7 @@ Supported Compilers: MSVC 2017+, GCC 7.0+, Clang 6.0+, EMCC 2.0.
 
 C++11 or later is required. Tested with C++20, C++17, C++14 and C++11.  
 
-## Usage
+## Features
 
 The entire library is header only, add the maths directory to your include search path and simply include:
 
@@ -61,18 +61,6 @@ void func() {
 }
 ```  
 
-### Running Tests
-
-```shell
-c++ --std=c++11 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
-```
-
-## Features
-
-### Scalar
-
-The types are thin wrappers around plain c-style arrays, all arithmetic is done using scalar floating point ops, there is no SIMD here for simplicity and portability.
-
 ### Swizzles
 
 For that shader like feeling.
@@ -90,12 +78,6 @@ vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmetic
 f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 ```
 
-### Debugger Tools
-
-There is a provided [display.natvis](https://github.com/polymonster/maths/blob/master/display.natvis) file which can be used with visual studio or vscode, this will display swizzles correctly when hovering in the debugger and prevent the huge union expansion from the swizzles.
-
-Append the contents of [display.lldb](https://github.com/polymonster/maths/blob/master/display.lldb) to your `~/.lldbinit` for improved readability in xcode or commandline lldb debugging.
-
 ### Functions
 
 Here is a list of the functions found in the library.
@@ -110,4 +92,18 @@ Closest Point: `closest_point_on_aabb, closest_point_on_line, closest_point_on_p
 
 Point Distance: `point_aabb_distance, point_segment_distance, point_triangle_distance, distance_on_line, point_plane_distance, plane_distance, point_sphere_distance, point_polygon_distance, point_convex_hull_distance, point_cone_distance, point_obb_distance`.  
 
-Ray / Line: `ray_vs_plane, ray_vs_triangle, ray_vs_sphere, ray_vs_line_segment, ray_vs_aabb, ray_vs_obb, ray_vs_capsule, ray_vs_cylinder, line_vs_line, line_vs_poly, shortest_line_segment_between_lines, shortest_line_segment_between_line_segments`.
+Ray / Line: `ray_vs_plane, ray_vs_triangle, ray_vs_sphere, ray_vs_line_segment, ray_vs_aabb, ray_vs_obb, ray_vs_capsule, ray_vs_cylinder, line_vs_line, line_vs_poly, shortest_line_segment_between_lines, shortest_line_segment_between_line_segments`.  
+
+\+ Many more included!
+
+### Running Tests
+
+```shell
+c++ --std=c++11 -Wno-braced-scalar-init .test/test.cpp -o .test/test && ./".test/test"
+```
+
+### Debugger Tools
+
+There is a provided [display.natvis](https://github.com/polymonster/maths/blob/master/display.natvis) file which can be used with visual studio or vscode, this will display swizzles correctly when hovering in the debugger and prevent the huge union expansion from the swizzles.
+
+Append the contents of [display.lldb](https://github.com/polymonster/maths/blob/master/display.lldb) to your `~/.lldbinit` for improved readability in xcode or commandline lldb debugging.  
