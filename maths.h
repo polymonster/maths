@@ -147,7 +147,9 @@ namespace maths
     
     // Convex Hull
     void  convex_hull_from_points(std::vector<vec2f>& hull, const std::vector<vec2f>& p);
-    vec2f get_convex_hull_centre(const std::vector<vec2f>& hull);
+    
+    template<size_t N, typename T>
+    Vec<N, T> get_convex_hull_centre(const std::vector<Vec<N, T>>& hull);
     
     //
     // Deprecated Functions (they still exist but have been renamed for api consitency)
@@ -1635,10 +1637,11 @@ namespace maths
         }
     }
     
-    // return the centre point of a 2d convex hull
-    inline vec2f get_convex_hull_centre(const std::vector<vec2f>& hull)
+    // return the centre point of a convex hull 2D or 3D
+    template<size_t N, typename T>
+    Vec<N, T> get_convex_hull_centre(const std::vector<Vec<N, T>>& hull)
     {
-        vec2f cp = vec2f::zero();
+        Vec<N, T> cp = Vec<N, T>::zero();
         for(auto& p : hull)
             cp += p;
         return cp / (f32)hull.size();
