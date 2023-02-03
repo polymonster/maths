@@ -44,7 +44,7 @@ namespace maths
     void        get_orthonormal_basis_frisvad(const vec3f& n, vec3f& b1, vec3f& b2);
     void        get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out);
     void        get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners);
-    transform   get_transform_from_matrix(const mat4& mat);
+    transform   get_transform_from_matrix(const mat4f& mat);
 
     template<size_t N, typename T>
     Vec<3, T>   barycentric(const Vec<N, T>& p, const Vec<N, T>& a, const Vec<N, T>& b, const Vec<N, T>& c);
@@ -66,12 +66,12 @@ namespace maths
     // sc = screen coordinates (viewport (0,0) to (width, height)
     // vdown = y.0 = top, y.height = bottom
     // vup (no suffix) = y.0 bottom, y.height = top
-    vec3f project_to_ndc(const vec3f& p, const mat4& view_projection);
-    vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
-    vec3f project_to_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
-    vec3f unproject_ndc(const vec3f& p, const mat4& view_projection);
-    vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
-    vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport);
+    vec3f project_to_ndc(const vec3f& p, const mat4f& view_projection);
+    vec3f project_to_sc(const vec3f& p, const mat4f& view_projection, const vec2i& viewport);
+    vec3f project_to_sc_vdown(const vec3f& p, const mat4f& view_projection, const vec2i& viewport);
+    vec3f unproject_ndc(const vec3f& p, const mat4f& view_projection);
+    vec3f unproject_sc(const vec3f& p, const mat4f& view_projection, const vec2i& viewport);
+    vec3f unproject_sc_vdown(const vec3f& p, const mat4f& view_projection, const vec2i& viewport);
 
     // Plane Classification
     classification point_vs_plane(const vec3f& p, const vec3f& x, const vec3f& n);
@@ -94,7 +94,7 @@ namespace maths
     template<size_t N, typename T>
     bool point_inside_aabb(const Vec<N, T>& min, const Vec<N, T>& max, const Vec<N, T>& p0);
     bool point_inside_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
-    bool point_inside_obb(const mat4& mat, const vec3f& p);
+    bool point_inside_obb(const mat4f& mat, const vec3f& p);
     bool point_inside_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3);
     bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r);
     bool point_inside_convex_hull(const vec2f& p, const std::vector<vec2f>& hull);
@@ -107,7 +107,7 @@ namespace maths
     template<size_t N, typename T>
     Vec<N, T> closest_point_on_line(const Vec<N, T>& l1, const Vec<N, T>& l2, const Vec<N, T>& p);
     vec3f     closest_point_on_plane(const vec3f& p, const vec3f& x, const vec3f& n);
-    vec3f     closest_point_on_obb(const mat4& mat, const vec3f& p);
+    vec3f     closest_point_on_obb(const mat4f& mat, const vec3f& p);
     vec3f     closest_point_on_sphere(const vec3f& s0, f32 r0, const vec3f& p0);
     vec3f     closest_point_on_ray(const vec3f& r0, const vec3f& rV, const vec3f& p);
     vec3f     closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side);
@@ -137,7 +137,7 @@ namespace maths
     bool  ray_vs_sphere(const vec3f& r0, const vec3f& rv, const vec3f& s0, f32 r, vec3f& ip);
     bool  ray_vs_line_segment(const vec3f& l1, const vec3f& l2, const vec3f& r0, const vec3f& rV, vec3f& ip);
     bool  ray_vs_aabb(const vec3f& min, const vec3f& max, const vec3f& r1, const vec3f& rv, vec3f& ip);
-    bool  ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
+    bool  ray_vs_obb(const mat4f& mat, const vec3f& r1, const vec3f& rv, vec3f& ip);
     bool  ray_vs_capsule(const vec3f& r0, const vec3f& rv, const vec3f& c1, const vec3f& c2, f32 r, vec3f& ip);
     bool  ray_vs_cylinder(const vec3f& r0, const vec3f& rv, const vec3f& c0, const vec3f& c1, f32 cr, vec3f& ip);
     bool  line_vs_line(const vec3f& l1, const vec3f& l2, const vec3f& s1, const vec3f& s2, vec3f& ip);
@@ -322,7 +322,7 @@ namespace maths
     }
     
     // project point p by view_projection to normalized device coordinates, perfroming homogeneous divide
-    inline vec3f project_to_ndc(const vec3f& p, const mat4& view_projection)
+    inline vec3f project_to_ndc(const vec3f& p, const mat4f& view_projection)
     {
         vec4f ndc = view_projection.transform_vector(vec4f(p, 1.0f));
         ndc /= ndc.w;
@@ -331,7 +331,7 @@ namespace maths
     
     // project point p to screen coordinates of viewport after projecting to normalized device coordinates first
     // coordinates are vup in the y-axis y.0 = bottom y.height = top
-    inline vec3f project_to_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    inline vec3f project_to_sc(const vec3f& p, const mat4f& view_projection, const vec2i& viewport)
     {
         vec3f ndc = project_to_ndc(p, view_projection);
         vec3f sc  = ndc * 0.5f + 0.5f;
@@ -341,7 +341,7 @@ namespace maths
     
     // project point p to screen coordinates of viewport after projecting to normalized device coordinates first
     // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
-    inline vec3f project_to_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    inline vec3f project_to_sc_vdown(const vec3f& p, const mat4f& view_projection, const vec2i& viewport)
     {
         vec3f ndc = project_to_ndc(p, view_projection);
         ndc.y *= -1.0f;
@@ -351,16 +351,16 @@ namespace maths
     }
     
     // unproject normalized device coordinate p with viewport using inverse view_projection
-    inline vec3f unproject_ndc(const vec3f& p, const mat4& view_projection)
+    inline vec3f unproject_ndc(const vec3f& p, const mat4f& view_projection)
     {
-        mat4 inv = mat::inverse4x4(view_projection);
+        mat4f inv = mat::inverse4x4(view_projection);
         vec4f ppc = inv.transform_vector(vec4f(p, 1.0f));
         return ppc.xyz / ppc.w;
     }
     
     // unproject screen coordinate p with viewport using inverse view_projection
     // coordinates are vup in the y-axis y.0 = bottom y.height = top
-    inline vec3f unproject_sc(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    inline vec3f unproject_sc(const vec3f& p, const mat4f& view_projection, const vec2i& viewport)
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
         vec3f ndc    = vec3f(ndc_xy, p.z);
@@ -369,7 +369,7 @@ namespace maths
     
     // unproject screen coordinate p with viewport using inverse view_projection
     // coordinates are vdown in the y-axis vdown = y.0 = top y.height = bottom
-    inline vec3f unproject_sc_vdown(const vec3f& p, const mat4& view_projection, const vec2i& viewport)
+    inline vec3f unproject_sc_vdown(const vec3f& p, const mat4f& view_projection, const vec2i& viewport)
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);
         ndc_xy.y *= -1.0f;
@@ -788,9 +788,9 @@ namespace maths
 
     // returns if the point p is inside the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
-    inline bool point_inside_obb(const mat4& mat, const vec3f& p)
+    inline bool point_inside_obb(const mat4f& mat, const vec3f& p)
     {
-        mat4  invm = mat::inverse4x4(mat);
+        mat4f invm = mat::inverse4x4(mat);
         vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
         return point_inside_aabb(-vec3f::one(), vec3f::one(), tp);
     }
@@ -1273,7 +1273,7 @@ namespace maths
     
     // extracts frustum planes in the form of (xyz = planes normal, w = plane constant / distance from origin)
     // planes must be a pointer to an array of 6 vec4f's
-    inline void get_frustum_planes_from_matrix(const mat4& view_projection, vec4f* planes_out)
+    inline void get_frustum_planes_from_matrix(const mat4f& view_projection, vec4f* planes_out)
     {
         // unproject matrix to get frustum corners grouped as 4 near, 4 far.
         static vec2f ndc_coords[] = {
@@ -1314,7 +1314,7 @@ namespace maths
     }
 
     // gets frustum corners sorted as 4 near, 4 far into an array of vec3f corners[8];
-    inline void get_frustum_corners_from_matrix(const mat4& view_projection, vec3f* corners)
+    inline void get_frustum_corners_from_matrix(const mat4f& view_projection, vec3f* corners)
     {
         // unproject matrix to get frustum corners grouped as 4 near, 4 far.
         static vec2f ndc_coords[] = {
@@ -1332,7 +1332,7 @@ namespace maths
     }
 
     // returns a transform extracting translation, scale and quaternion rotation from a 4x4 matrix
-    inline transform get_transform_from_matrix(const mat4& mat)
+    inline transform get_transform_from_matrix(const mat4f& mat)
     {
         transform t;
         t.translation = mat.get_translation();
@@ -1376,9 +1376,9 @@ namespace maths
     
     // returns true if there is an intersection bewteen ray with origin r1 and direction rv and obb defined by matrix mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
-    inline bool ray_vs_obb(const mat4& mat, const vec3f& r1, const vec3f& rv, vec3f& ip)
+    inline bool ray_vs_obb(const mat4f& mat, const vec3f& r1, const vec3f& rv, vec3f& ip)
     {
-        mat4  invm = mat::inverse4x4(mat);
+        mat4f invm = mat::inverse4x4(mat);
         vec3f tr1  = invm.transform_vector(vec4f(r1, 1.0f)).xyz;
         
         invm.set_translation(vec3f::zero());
@@ -1569,9 +1569,9 @@ namespace maths
 
     // returns the closest point to point p on the obb defined by mat
     // mat will transform an aabb centred at 0 with extents -1 to 1 into an obb
-    inline vec3f closest_point_on_obb(const mat4& mat, const vec3f& p)
+    inline vec3f closest_point_on_obb(const mat4f& mat, const vec3f& p)
     {
-        mat4  invm = mat::inverse4x4(mat);
+        mat4f invm = mat::inverse4x4(mat);
         vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
         
         vec3f cp = closest_point_on_aabb(tp, -vec3f::one(), vec3f::one());
