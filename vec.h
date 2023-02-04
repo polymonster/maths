@@ -801,6 +801,23 @@ maths_inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T 
 }
 
 template <size_t N, typename T>
+maths_inline Vec<N, T> nlerp(const Vec<N, T>& value0, const Vec<N, T>& value1, T f)
+{
+    return normalize(lerp(value0, value1, f));
+}
+
+template <size_t N, typename T>
+maths_inline Vec<N, T> slerp(const Vec<N, T>& e0, const Vec<N, T>& e1, T t)
+{
+    // https://blog.demofox.org/2016/02/19/normalized-vector-interpolation-tldr/
+    T dot = dot(e0, e1);
+    dot = clamp(dot, (T)-1, (T)1);
+    T theta = std::acos(dot) * t;
+    Vec<N, T> v = normalize(e1 - e0 * dot);
+    return ((e0 * std::cos(theta)) + (v * std::sin(theta)));
+}
+
+template <size_t N, typename T>
 maths_inline Vec<N, T> lerp(const Vec<N, T>& value0, const Vec<N, T>& value1, const Vec<N, T>& f)
 {
     return value0 * (1 - f) + value1 * f;
@@ -1081,11 +1098,19 @@ maths_inline Vec<3, T> cross(const Vec<3, T>& a, const Vec<3, T>& b)
     return Vec<3, T>(a.v[1] * b.v[2] - a.v[2] * b.v[1], a.v[2] * b.v[0] - a.v[0] * b.v[2], a.v[0] * b.v[1] - a.v[1] * b.v[0]);
 }
 
+// scalar triple product
 template <typename T>
 maths_inline T triple(const Vec<3, T>& a, const Vec<3, T>& b, const Vec<3, T>& c)
 {
     return a.v[0] * (b.v[1] * c.v[2] - b.v[2] * c.v[1]) + a.v[1] * (b.v[2] * c.v[0] - b.v[0] * c.v[2]) +
            a.v[2] * (b.v[0] * c.v[1] - b.v[1] * c.v[0]);
+}
+
+// vector triple product
+template <typename T>
+maths_inline Vec<3, T> vector_triple(const Vec<3, T>& a, const Vec<3, T>& b, const Vec<3, T>& c)
+{
+    return cross(cross(a, b), c);
 }
 
 template <size_t N, typename T>

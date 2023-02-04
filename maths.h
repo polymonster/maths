@@ -85,10 +85,15 @@ namespace maths
     bool sphere_vs_aabb(const vec3f& s0, f32 r0, const vec3f& aabb_min, const vec3f& aabb_max);
     bool sphere_vs_obb(const vec3f& s0, f32 r0, const mat4f& obb);
     bool aabb_vs_aabb(const vec3f& min0, const vec3f& max0, const vec3f& min1, const vec3f& max1);
+    bool aabb_vs_obb(const vec3f& aabb_min, const vec3f& aabb_max, const mat4f& obb);
     bool aabb_vs_frustum(const vec3f& aabb_pos, const vec3f& aabb_extent, vec4f* planes);
     bool sphere_vs_frustum(const vec3f& pos, f32 radius, vec4f* planes);
     bool sphere_vs_capsule(const vec3f s0, f32 sr, const vec3f& cp0, const vec3f& cp1, f32 cr);
     bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1);
+    bool obb_vs_obb(const mat4f& obb0, const mat4f& obb1);
+    bool convex_hull_vs_convex_hull(const std::vector<vec2f>& hull0, const std::vector<vec2f>& hull1);
+    bool gjk_2d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1);
+    bool gjk_3d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1);
 
     // Point Test
     template<size_t N, typename T>
@@ -676,6 +681,70 @@ namespace maths
         
         return true;
     }
+
+    // returns true if the 3d aabb defined by aabb_min-aabb_max overlaps with the obb defined by matrix obb, where
+    // the matrix transforms a unit aabb with extents -1 to 1 into an obb
+    inline bool aabb_vs_obb(const vec3f& aabb_min, const vec3f& aabb_max, const mat4f& obb)
+    {
+        // this function is for convenience, you can extract vertices and pass to gjk_3d yourself
+        static const vec3f corners[8] = {
+            vec3f(-1.0f, -1.0f, -1.0f),
+            vec3f( 1.0f, -1.0f, -1.0f),
+            vec3f( 1.0f,  1.0f, -1.0f),
+            vec3f(-1.0f,  1.0f, -1.0f),
+            vec3f(-1.0f, -1.0f,  1.0f),
+            vec3f( 1.0f, -1.0f,  1.0f),
+            vec3f( 1.0f,  1.0f,  1.0f),
+            vec3f(-1.0f,  1.0f,  1.0f),
+        };
+        
+        std::vector<vec3f> verts0 = {
+            aabb_min,
+            vec3f(aabb_min.x, aabb_min.y, aabb_max.z),
+            vec3f(aabb_max.x, aabb_min.y, aabb_min.z),
+            vec3f(aabb_max.x, aabb_min.y, aabb_max.z),
+            vec3f(aabb_min.x, aabb_max.y, aabb_max.z),
+            vec3f(aabb_max.x, aabb_max.y, aabb_min.z),
+            vec3f(aabb_max.x, aabb_max.y, aabb_max.z),
+            aabb_max
+        };
+        
+        std::vector<vec3f> verts1;
+        for(u32 i = 0; i < 8; ++i)
+        {
+            verts1.push_back(obb.transform_vector(corners[i]));
+        }
+        
+        return gjk_3d(verts0, verts1);
+    }
+
+    // returns true if the 3d obb defined by matrix obb0 and obb defined by matrix obb1 overlap, matrices will transform
+    // unit aabb with extents -1 to 1 into an obb
+    inline bool obb_vs_obb(const mat4f& obb0, const mat4f& obb1)
+    {
+        // this function is for convenience, you can extract vertices and pass to gjk_3d yourself
+        static const vec3f corners[8] = {
+            vec3f(-1.0f, -1.0f, -1.0f),
+            vec3f( 1.0f, -1.0f, -1.0f),
+            vec3f( 1.0f,  1.0f, -1.0f),
+            vec3f(-1.0f,  1.0f, -1.0f),
+            vec3f(-1.0f, -1.0f,  1.0f),
+            vec3f( 1.0f, -1.0f,  1.0f),
+            vec3f( 1.0f,  1.0f,  1.0f),
+            vec3f(-1.0f,  1.0f,  1.0f),
+        };
+        
+        std::vector<vec3f> verts0;
+        std::vector<vec3f> verts1;
+            
+        for(u32 i = 0; i < 8; ++i)
+        {
+            verts0.push_back(obb0.transform_vector(corners[i]));
+            verts1.push_back(obb1.transform_vector(corners[i]));
+        }
+        
+        return gjk_3d(verts0, verts1);
+    }
     
     // returns true if an aabb defined by aabb_pos (centre) and aabb_extent (half extent) is inside or intersecting the frustum
     // defined by 6 planes (xyz = plane normal, w = plane constant / distance from origin)
@@ -767,6 +836,26 @@ namespace maths
         }
         
         return false;
+    }
+
+    // returns true if the convex hull hull0 overlaps hull1
+    inline bool convex_hull_vs_convex_hull(const std::vector<vec2f>& hull0, const std::vector<vec2f>& hull1)
+    {
+        // TODO: this can be optimised away directly using 2d vertices in the gjk_2d algorithm
+        std::vector<vec3f> verts0;
+        std::vector<vec3f> verts1;
+        
+        for(auto& v : hull0)
+        {
+            verts0.push_back(vec3f(v.x, 0.0f, v.y));
+        }
+        
+        for(auto& v : hull1)
+        {
+            verts1.push_back(vec3f(v.x, 0.0f, v.y));
+        }
+        
+        return gjk_2d(verts0, verts1);
     }
 
     // returns true if sphere with centre s0 and radius r0 contains point p0
@@ -1645,5 +1734,244 @@ namespace maths
         for(auto& p : hull)
             cp += p;
         return cp / (f32)hull.size();
+    }
+
+    // finds support vertices for gjk based on convex meshses where convex0 and convex1 are an array of vertices that form a convex hull
+    inline vec3f gjk_mesh_support_function(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1, vec3f dir)
+    {
+        auto furthest_point = [](const vec3f& dir, const std::vector<vec3f>& vertices) -> vec3f
+        {
+            f32 fd = -FLT_MAX;
+            vec3f fv = vertices[0];
+            
+            for(auto& v : vertices)
+            {
+                f32 d = dot(dir, v);
+                if(d > fd)
+                {
+                    fv = v;
+                    fd = d;
+                }
+            }
+            
+            return fv;
+        };
+        
+        vec3f fp0 = furthest_point(dir, convex0);
+        vec3f fp1 = furthest_point(-dir, convex1);
+        vec3f s = fp0 - fp1;
+        
+        return s;
+    }
+
+    // simplex evolution for 2d mesh overlaps
+    inline bool handle_simplex_2d(std::vector<vec3f>& simplex, vec3f& dir)
+    {
+        if(simplex.size() == 2)
+        {
+            vec3f a = simplex[1];
+            vec3f b = simplex[0];
+            
+            vec3f ab = b - a;
+            vec3f ao = -a;
+            
+            dir = vector_triple(ab, ao, ab);
+            
+            return false;
+        }
+        else if(simplex.size() == 3)
+        {
+            vec3f a = simplex[2];
+            vec3f b = simplex[1];
+            vec3f c = simplex[0];
+            
+            vec3f ab = b - a;
+            vec3f ac = c - a;
+            vec3f ao = -a;
+            
+            vec3f abperp = vector_triple(ac, ab, ab);
+            vec3f acperp = vector_triple(ab, ac, ac);
+            
+            if(dot(abperp, ao) > 0.0f)
+            {
+                simplex.erase(simplex.begin() + 0);
+                dir = abperp;
+                return false;
+            }
+            else if (dot(acperp, ao) > 0.0f)
+            {
+                simplex.erase(simplex.begin() + 1);
+                dir = acperp;
+                return false;
+            }
+            return true;
+        }
+        
+        // we shouldnt hit this case, we should always have 2 or 3 points in the simplex
+        assert(0);
+        return false;
+    }
+
+    // returns true if the 2d convex hull convex0 overlaps with convex1 using the gjk algorithm
+    inline bool gjk_2d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1)
+    {
+        // TODO: this can be optimised to use vec2f
+        // implemented following details in this insightful video: https://www.youtube.com/watch?v=ajv46BSqcK4
+        
+        // start with arbitrary direction
+        vec3f dir = vec3f::unit_x();
+        vec3f support = gjk_mesh_support_function(convex0, convex1, dir);
+        dir = normalize(-support);
+        
+        // iterative build and test simplex
+        std::vector<vec3f> simplex;
+        simplex.push_back(support);
+        for(;;)
+        {
+            vec3f a = gjk_mesh_support_function(convex0, convex1, dir);
+            if(dot(a, dir) < 0.0f)
+            {
+                return false;
+            }
+            simplex.push_back(a);
+            
+            if(handle_simplex_2d(simplex, dir))
+            {
+                return true;
+            }
+        }
+    }
+
+    // simplex evolution for 3d mesh overlaps
+    inline bool handle_simplex_3d(std::vector<vec3f>& simplex, vec3f& dir)
+    {
+        if(simplex.size() == 2)
+        {
+            vec3f a = simplex[1];
+            vec3f b = simplex[0];
+            
+            vec3f ab = b - a;
+            vec3f ao = -a;
+            
+            dir = vector_triple(ab, ao, ab);
+            
+            return false;
+        }
+        else if(simplex.size() == 3)
+        {
+            vec3f a = simplex[2];
+            vec3f b = simplex[1];
+            vec3f c = simplex[0];
+            
+            vec3f ab = b - a;
+            vec3f ac = c - a;
+            vec3f ao = -a;
+            
+            dir = cross(ac, ab);
+
+            // flip normal so it points toward the origin
+            if(dot(dir, ao) < 0.0f)
+            {
+                dir *= -1.0f;
+            }
+
+            return false;
+        }
+        else if(simplex.size() == 4)
+        {
+            vec3f a = simplex[3];
+            vec3f b = simplex[2];
+            vec3f c = simplex[1];
+            vec3f d = simplex[0];
+            
+            vec3f centre = (a+b+c+d) * 0.25f;
+            
+            vec3f ab = b - a;
+            vec3f ac = c - a;
+            vec3f ad = d - a;
+            vec3f ao = -a;
+            
+            vec3f abac = cross(ab, ac);
+            vec3f acad = cross(ac, ad);
+            vec3f adab = cross(ad, ab);
+            
+            // flip the normals so they always face outward
+            vec3f centre_abc = (a + b + c) / 3.0f;
+            vec3f centre_acd = (a + c + d) / 3.0f;
+            vec3f centre_adb = (a + d + b) / 3.0f;
+            
+            if(dot(centre - centre_abc, abac) > 0.0f)
+            {
+                abac *= -1.0f;
+            }
+            
+            if(dot(centre - centre_acd, acad) > 0.0f)
+            {
+                acad *= -1.0f;
+            }
+            
+            if(dot(centre - centre_adb, adab) > 0.0f)
+            {
+                adab *= -1.0f;
+            }
+            
+            if(dot(abac, ao) > 0.0f) // orange
+            {
+                // erase c
+                simplex.erase(simplex.begin() + 0);
+                dir = abac;
+                
+                return false;
+            }
+            else if(dot(acad, ao) > 0.0f) // yellow
+            {
+                // erase a
+                simplex.erase(simplex.begin() + 1);
+                dir = acad;
+                return false;
+            }
+            else if(dot(adab, ao) > 0.0f) // red
+            {
+                // erase b
+                simplex.erase(simplex.begin() + 2);
+                dir = adab;
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // we shouldnt hit this case, we should always have 2 or 3 points in the simplex
+        assert(0);
+        return false;
+    }
+
+    // returns true if the 3d convex mesh convex0 overlaps with convex1 using the gjk algorithm
+    inline bool gjk_3d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1)
+    {
+        // implemented following details in this insightful video: https://www.youtube.com/watch?v=ajv46BSqcK4
+        
+        // start with arbitrary direction
+        vec3f dir = vec3f::unit_x();
+        vec3f support = gjk_mesh_support_function(convex0, convex1, dir);
+        dir = normalize(-support);
+        
+        // iterative build and test simplex
+        std::vector<vec3f> simplex;
+        simplex.push_back(support);
+        for(;;)
+        {
+            vec3f a = gjk_mesh_support_function(convex0, convex1, dir);
+            if(dot(a, dir) < 0.0f)
+            {
+                return false;
+            }
+            simplex.push_back(a);
+            
+            if(handle_simplex_3d(simplex, dir))
+            {
+                return true;
+            }
+        }
     }
 } // namespace maths

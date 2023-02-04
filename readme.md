@@ -5,7 +5,7 @@
 [![vc2017](https://ci.appveyor.com/api/projects/status/uny5ae4bf3kp2p0m?svg=true)](https://ci.appveyor.com/project/polymonster/maths)
 [![codecov](https://codecov.io/gh/polymonster/maths/branch/master/graph/badge.svg)](https://codecov.io/gh/polymonster/maths) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-A C++ maths library... you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling and other handy features.  
+A C++ maths library... you might find this useful for games and graphics dev, it has a lot of useful intersection, geometric test and conversion functions, vector swizzling, gjk implementation and other handy features.  
 
 There is a [Live Demo](https://www.polymonster.co.uk/pmtech/examples/maths_functions.html) via WebAssembly and WebGL.
 
@@ -26,17 +26,31 @@ The entire library is header only, add the maths directory to your include searc
 #include "mat.h"   // matrix of any dimension and type
 #include "quat.h"  // quaternion of any type
 
-void func() {
-    // quick constructors
+void maths() {
+    // templated by size and type
+    Vec<3, float> float3;
+    Vec<2, int> int3;
+    Mat<4, 4, double> double4x4;
+    Quat<float> q;
+
+    // common abbreviations for convenience
+    Vec<3, float> vec3f;
+    Vec<2, float> vec2f;
+    Mat<3, 3, float> mat3f;
+    // + common sizes and types for 2, 3, 4 dimensions, float, doubles, ints
+
+    // quick common constructors
     vec3f zero = vec3f::zero();
     vec3f one = vec3f::one();
     vec3f red = vec3f::red();
+    mat4f identity = mat4f::identity();
     // ... and so on
 
     // arithmetic operators
     vec3f result_add = zero + one;
     vec3f result_mul = zero * one;
     result_add += red;
+    mat4f mat_result = mata * matb;
     // etc
 
     // overloaded functions and operations that feel lightweight and expressive
@@ -57,34 +71,28 @@ void func() {
     // cmath functions for vectors and swizzles
     vec2f v2_sin = sin(result_add.xy);
     vec3f v3_cos = cos(result_mul);
+    vec2f v2_floor = floor(v2);
     // ... you get it!
+
+    // swizzles for that shader like feeling!
+    vec4f swizz = v.wzyx;       // construct from swizzle
+    swizz = v.xxxx;             // assign from swizzle
+    swizz.wyxz = v.xxyy;        // assign swizzle to swizzle
+    vec2f v2 = swizz.yz;        // construct truncated
+    swizz.wx = v.xy;            // assign truncated
+    swizz.xyz *= swizz2.www;    // arithmetic on swizzles
+    vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmetic
+
+    // sometimes you may need to cast from swizzle to vec if c++ cant apply implicit casts
+    f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
 }
 ```  
 
-### Swizzles
-
-For that shader like feeling.
-
-```c++
-vec4f swizz = v.wzyx;       // construct from swizzle
-swizz = v.xxxx;             // assign from swizzle
-swizz.wyxz = v.xxyy;        // assign swizzle to swizzle
-vec2f v2 = swizz.yz;        // construct truncated
-swizz.wx = v.xy;            // assign truncated
-swizz.xyz *= swizz2.www;    // arithmetic on swizzles
-vec2 v2 = swizz.xy * 2.0f;  // swizzle / scalar arithmetic
-
-// sometimes you may need to cast from swizzle to vec if c++ cant apply implicit casts
-f32 dp = dot((vec2f)swizz.xz, (vec2f)swizz.yy):
-```
-
 ### Functions
-
-Here is a list of the functions found in the library.
 
 Plane Classification: `point_vs_plane, aabb_vs_plane, sphere_vs_plane, capsule_vs_plane, cone_vs_plane`.  
 
-Overlaps: `sphere_vs_sphere, sphere_vs_aabb, sphere_vs_obb, aabb_vs_aabb, aabb_vs_frustum, sphere_vs_frustum, sphere_vs_capsule, capsule_vs_capsule`.  
+Overlaps: `sphere_vs_sphere, sphere_vs_aabb, sphere_vs_obb, aabb_vs_aabb, aabb_vs_frustum, sphere_vs_frustum, sphere_vs_capsule, capsule_vs_capsule, obb_vs_obb, aabb_vs_obb, convex_hull_vs_convex_hull, gjk_2d, gjk_3d`.  
 
 Point Inside: `point_inside_aabb, point_inside_sphere, point_inside_obb, point_inside_triangle, point_inside_cone, point_inside_convex_hull, point_inside_poly, point_inside_frustum`.  
 
@@ -94,7 +102,9 @@ Point Distance: `point_aabb_distance, point_segment_distance, point_triangle_dis
 
 Ray / Line: `ray_vs_plane, ray_vs_triangle, ray_vs_sphere, ray_vs_line_segment, ray_vs_aabb, ray_vs_obb, ray_vs_capsule, ray_vs_cylinder, line_vs_line, line_vs_poly, shortest_line_segment_between_lines, shortest_line_segment_between_line_segments`.  
 
-\+ Many more included!
+Shader Style Functions: `dot, cross, normalize, mag, mag2, dist, dist2, triple, vector_triple, lerp, nlerp, slerp, saturate, clamp, normalize, all, any, min, max, smoothstep, step, round, floor, ceil, abs, frac, trunc, exp, exp2, log, log2, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh`.  
+
+\+ More included!
 
 ### Running Tests
 

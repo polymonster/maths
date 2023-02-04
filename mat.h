@@ -358,9 +358,9 @@ std::ostream& operator<<(std::ostream& out, const Mat<R, C, T>& m)
 template <size_t R, size_t C>
 std::ostream& operator<<(std::ostream& out, const Mat<R, C, float>& m)
 {
-    out << "(f32)" << m.m[0];
+    out << "(float)" << m.m[0];
     for (size_t i = 1; i < R * C; ++i)
-        out << ", " << "(f32)" << m.m[i];
+        out << ", " << "(float)" << m.m[i];
     return out;
 }
 
@@ -893,17 +893,18 @@ namespace mat
     }
 } // namespace mat
 
-typedef Mat<3, 3, f32> Mat3f;
-typedef Mat<4, 4, f32> Mat4f;
-typedef Mat<3, 4, f32> Mat34f;
-typedef Mat<3, 3, f32> mat3;
-typedef Mat<4, 4, f32> mat4;
-typedef Mat<2, 2, f32> mat2;
-typedef Mat<3, 3, f32> mat3f;
-typedef Mat<4, 4, f32> mat4f;
-typedef Mat<2, 2, f32> mat2f;
-typedef Mat<4, 4, f32> float4x4;
-typedef Mat<3, 4, f32> float3x4;
-typedef Mat<4, 3, f32> float4x3;
-typedef Mat<3, 3, f32> float3x3;
-typedef Mat<2, 2, f32> float2x2;
+// abbreviations
+typedef Mat<3, 3, float> Mat3f;
+typedef Mat<4, 4, float> Mat4f;
+typedef Mat<3, 4, float> Mat34f;
+typedef Mat<3, 3, float> mat3;
+typedef Mat<4, 4, float> mat4;
+typedef Mat<2, 2, float> mat2;
+typedef Mat<3, 3, float> mat3f;
+typedef Mat<4, 4, float> mat4f;
+typedef Mat<2, 2, float> mat2f;
+typedef Mat<4, 4, float> float4x4;
+typedef Mat<3, 4, float> float3x4;
+typedef Mat<4, 3, float> float4x3;
+typedef Mat<3, 3, float> float3x3;
+typedef Mat<2, 2, float> float2x2;

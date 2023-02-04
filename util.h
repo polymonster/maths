@@ -379,7 +379,7 @@ maths_inline unsigned int round_down_to_power_of_two(unsigned int n)
     return 1 << exponent;
 }
 
-inline void morton_xy2d(u64 x, u64 y, u64 *d)
+inline void morton_xy2d(uint64_t x, uint64_t y, uint64_t *d)
 {
     x = (x | (x << 16)) & 0x0000FFFF0000FFFF;
     x = (x | (x << 8)) & 0x00FF00FF00FF00FF;
@@ -397,8 +397,7 @@ inline void morton_xy2d(u64 x, u64 y, u64 *d)
 }
 
 // morton_1 - extract even bits
-
-inline u32 morton_1(u64 x)
+inline uint32_t morton_1(uint64_t x)
 {
     x = x & 0x5555555555555555;
     x = (x | (x >> 1))  & 0x3333333333333333;
@@ -409,7 +408,7 @@ inline u32 morton_1(u64 x)
     return (uint32_t)x;
 }
 
-inline void morton_d2xy(u64 d, u64 &x, u64 &y)
+inline void morton_d2xy(uint64_t d, uint64_t &x, uint64_t &y)
 {
     x = morton_1(d);
     y = morton_1(d >> 1);
@@ -520,24 +519,24 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3)
 template <class T>
 inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3, float alpha)
 {
-    auto getT = [](f32 t, T p0, T p1, float alpha) -> f32
+    auto getT = [](float t, T p0, T p1, float alpha) -> float
     {
         T square = sqr(p1-p0);
         
-        f32 sum = 0.0f;
-        size_t numComponents = sizeof(p1) / sizeof(((f32*)&p1)[0]);
+        float sum = 0.0f;
+        size_t numComponents = sizeof(p1) / sizeof(((float*)&p1)[0]);
         for(size_t i = 0; i < numComponents; ++i)
-            sum += ((f32*)&square)[i];
+            sum += ((float*)&square)[i];
         
-        f32 b = sqrt(sum);
-        f32 c = pow(b, alpha);
+        float b = sqrt(sum);
+        float c = pow(b, alpha);
         return c + t;
     };
     
-    f32 t0 = 0.0f;
-    f32 t1 = getT(t0, p0, p1, alpha);
-    f32 t2 = getT(t1, p1, p2, alpha);
-    f32 t3 = getT(t2, p2, p3, alpha);
+    float t0 = 0.0f;
+    float t1 = getT(t0, p0, p1, alpha);
+    float t2 = getT(t1, p1, p2, alpha);
+    float t3 = getT(t2, p2, p3, alpha);
     
     t = lerp(t1, t2, t);
     
