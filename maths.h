@@ -703,9 +703,9 @@ namespace maths
             vec3f(aabb_min.x, aabb_min.y, aabb_max.z),
             vec3f(aabb_max.x, aabb_min.y, aabb_min.z),
             vec3f(aabb_max.x, aabb_min.y, aabb_max.z),
+            vec3f(aabb_min.x, aabb_max.y, aabb_min.z),
             vec3f(aabb_min.x, aabb_max.y, aabb_max.z),
             vec3f(aabb_max.x, aabb_max.y, aabb_min.z),
-            vec3f(aabb_max.x, aabb_max.y, aabb_max.z),
             aabb_max
         };
         
@@ -1436,6 +1436,7 @@ namespace maths
     // Intersection point is stored in ip
     inline bool ray_vs_aabb(const vec3f& emin, const vec3f& emax, const vec3f& r1, const vec3f& rv, vec3f& ip)
     {
+        // thanks: http://gamedev.stackexchange.com/a/18459
         vec3f dirfrac = vec3f(1.0f) / rv;
         
         f32 t1 = (emin.x - r1.x) * dirfrac.x;
