@@ -246,7 +246,7 @@ inline void Quat<T>::euler_angles(T z_theta, T y_theta, T x_theta)
     T sin_y_2 = (T)sin(half_y);
     T sin_x_2 = (T)sin(half_x);
 
-    // compute Quat
+    // compute quat
     w = cos_z_2 * cos_y_2 * cos_x_2 + sin_z_2 * sin_y_2 * sin_x_2;
     x = cos_z_2 * cos_y_2 * sin_x_2 - sin_z_2 * sin_y_2 * cos_x_2;
     y = cos_z_2 * sin_y_2 * cos_x_2 + sin_z_2 * cos_y_2 * sin_x_2;

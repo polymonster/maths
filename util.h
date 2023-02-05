@@ -674,4 +674,3 @@ inline T exp_sustained_impulse(T x, T f, T k)
     T s = max<T>(x-f, (T)0);
     return min<T>(x*x/(f*f), (T)1 + ((T)2/f)*s*(T)exp(-k*s));
 }
-

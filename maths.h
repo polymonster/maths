@@ -759,7 +759,6 @@ namespace maths
             f32 pd = planes[p].w;
             f32 d2 = dot(aabb_pos + aabb_extent * sign_flip, planes[p].xyz);
 
-
             if (d2 > -pd)
             {
                 inside = false;
@@ -888,12 +887,10 @@ namespace maths
     inline bool point_inside_cone(const vec3f& p, const vec3f& cp, const vec3f& cv, f32 h, f32 r)
     {
         vec3f l2 = cp + cv * h;
-        
         f32   dh = distance_on_line(cp, l2, p) / h;
         vec3f x0 = closest_point_on_line(cp, l2, p);
         
         f32 d = dist(x0, p);
-        
         if (d < dh * r && dh < 1.0f)
             return true;
         
@@ -1145,13 +1142,10 @@ namespace maths
     inline vec3f closest_point_on_triangle(const vec3f& p, const vec3f& v1, const vec3f& v2, const vec3f& v3, f32& side)
     {
         vec3f n = normalize(cross(v3 - v1, v2 - v1));
-        
         f32 d = point_plane_distance(p, v1, n);
-        
         side = d <= 0.0f ? -1.0f : 1.0f;
         
         vec3f cp = p - n * d;
-        
         if (maths::point_inside_triangle(v1, v2, v3, cp))
             return cp;
         
@@ -1662,8 +1656,7 @@ namespace maths
     inline vec3f closest_point_on_obb(const mat4f& mat, const vec3f& p)
     {
         mat4f invm = mat::inverse4x4(mat);
-        vec3f tp   = invm.transform_vector(vec4f(p, 1.0f)).xyz;
-        
+        vec3f tp = invm.transform_vector(vec4f(p, 1.0f)).xyz;
         vec3f cp = closest_point_on_aabb(tp, -vec3f::one(), vec3f::one());
         
         vec3f tcp = mat.transform_vector(vec4f(cp, 1.0f)).xyz;

@@ -465,8 +465,7 @@ struct Vec<4, T>
             v[i] = (T)v3[i];
 
         v[3] = _w;
-    }
-    
+    }    
 
     T& operator[](size_t index)
     {

@@ -785,8 +785,7 @@ namespace mat
         return create_perspective_projection(left, right, bottom, top, znear, zfar);
     }
 
-    // y-is down, someone modified this and it shipped in a game
-    // recommended to use create_perspective_projection_yup instead
+    // y-is down
     template <typename T>
     inline Mat<4, 4, T> create_perspective_projection(T fov, T aspect, T znear, T zfar)
     {
