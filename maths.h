@@ -1827,7 +1827,9 @@ namespace maths
         // iterative build and test simplex
         std::vector<vec3f> simplex;
         simplex.push_back(support);
-        for(;;)
+        
+        constexpr size_t max_iters = 32;
+        for(size_t i = 0; i < max_iters; ++i)
         {
             vec3f a = gjk_mesh_support_function(convex0, convex1, dir);
             if(dot(a, dir) < 0.0f)
@@ -1841,6 +1843,9 @@ namespace maths
                 return true;
             }
         }
+        
+        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching
+        return false;
     }
 
     // simplex evolution for 3d mesh overlaps
@@ -1953,14 +1958,16 @@ namespace maths
         // implemented following details in this insightful video: https://www.youtube.com/watch?v=ajv46BSqcK4
         
         // start with arbitrary direction
-        vec3f dir = vec3f::unit_x();
+        vec3f dir = get_convex_hull_centre(convex0) - get_convex_hull_centre(convex1);
         vec3f support = gjk_mesh_support_function(convex0, convex1, dir);
         dir = normalize(-support);
         
         // iterative build and test simplex
         std::vector<vec3f> simplex;
         simplex.push_back(support);
-        for(;;)
+        
+        constexpr size_t max_iters = 32;
+        for(size_t i = 0; i < max_iters; ++i)
         {
             vec3f a = gjk_mesh_support_function(convex0, convex1, dir);
             if(dot(a, dir) < 0.0f)
@@ -1974,5 +1981,8 @@ namespace maths
                 return true;
             }
         }
+
+        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching
+        return false;
     }
 } // namespace maths
