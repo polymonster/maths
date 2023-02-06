@@ -633,11 +633,11 @@ maths_inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
     return c;
 }
 
+// thanks to inigo quilez for the following functions: https://iquilezles.org/articles/functions/
 // returns an exponential impulse (y position on a graph for x); k controls the stretching of the function
 template<class T>
 maths_inline T impulse(T k, T x)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     const T h = k * x;
     return h * exp((T)1.0 - h);
 }
@@ -646,7 +646,6 @@ maths_inline T impulse(T k, T x)
 template<class T>
 maths_inline T cubic_pulse(T c, T w, T x)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     x = fabs(x - c);
     if (x > w) return (T)0.0;
     x /= w;
@@ -657,7 +656,6 @@ maths_inline T cubic_pulse(T c, T w, T x)
 template<class T>
 maths_inline T exp_step(T x, T k, T n)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     return exp(-k * pow(x, n));
 }
 
@@ -665,7 +663,6 @@ maths_inline T exp_step(T x, T k, T n)
 template<class T>
 maths_inline T parabola(T x, T k)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     return pow((T)4.0 * x * ((T)1.0 - x), k);
 }
 
@@ -673,7 +670,6 @@ maths_inline T parabola(T x, T k)
 template<class T>
 maths_inline T pcurve(T x, T a, T b)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     T k = pow(a + b, a + b) / (pow(a, a)*pow(b, b));
     return k * pow(x, a) * pow((T)1.0 - x, b);
 }
@@ -682,7 +678,6 @@ maths_inline T pcurve(T x, T a, T b)
 template<class T>
 maths_inline T exp_sustained_impulse(T x, T f, T k)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     T s = max<T>(x-f, (T)0);
     return min<T>(x*x/(f*f), (T)1 + ((T)2/f)*s*(T)exp(-k*s));
 }
@@ -691,7 +686,6 @@ maths_inline T exp_sustained_impulse(T x, T f, T k)
 template<class T>
 maths_inline T sinc(T x, T k)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     auto a = (T)M_PI * (k*x-(T)1);
     return std::sin(a)/a;
 }
@@ -700,47 +694,41 @@ maths_inline T sinc(T x, T k)
 template<class T>
 maths_inline T gain(T x, T k)
 {
-    // inigo quilez: https://iquilezles.org/articles/functions/
     const T a = (T)0.5*pow((T)2.0*((x<(T)0.5)?x:(T)1.0-x), k);
     return (x<(T)0.5)?a:(T)1.0-a;
 }
 
-/*
-/// returns soft clipping (in a cubic fashion) of x; let m be the threshold (anything above m stays unchanged), and n the value things will take when the signal is zero
-pub fn almost_identity<T: Number + Float>(x: T, m: T, n: T) -> T {
-    // <https://iquilezles.org/articles/functions/>
-    let a = T::two()*n - m;
-    let b = T::two()*m - T::three()*n;
-    let t = x/m;
-    if x > m {
-        x
-    }
-    else {
-        (a*t + b)*t*t + n
-    }
+// returns soft clipping (in a cubic fashion) of x; let m be the threshold (anything above m stays unchanged), and n the value things will take when the signal is zero
+template<class T>
+maths_inline T almost_identity(T x, T m, T n)
+{
+    if(x>m)
+        return x;
+    const T a = (T)2.0*n - m;
+    const T b = (T)2.0*m - (T)3.0*n;
+    const T t = x/m;
+    return (a*t + b)*t*t + n;
 }
 
-/// returns the integral smoothstep of x it's derivative is never larger than 1
-pub fn integral_smoothstep<T: Number + Float + FloatOps<T>>(x: T, t: T) -> T {
-    // inigo quilez: https://iquilezles.org/articles/functions/
-    if x > t {
-        x - t/T::two()
-    }
-    else {
-        x*x*x*(T::one()-x*T::point_five()/t)/t/t
-    }
+// returns the integral smoothstep of x it's derivative is never larger than 1
+template<class T>
+maths_inline T integral_smoothstep(T x, T t)
+{
+    if(x>t)
+        return x - t/(T)2.0;
+    return x*x*x*((T)1.0-x*(T)0.5/t)/t/t;
 }
 
-/// returns an quadratic impulse (y position on a graph for x); k controls the stretching of the function
-pub fn quad_impulse<T: Number + Float + Base<T> + FloatOps<T>>(k: T, x: T) -> T {
-    // inigo quilez: https://iquilezles.org/articles/functions/
-    T::two() * T::sqrt(k) * x / (T::one()+k*x*x)
+// returns an quadratic impulse (y position on a graph for x); k controls the stretching of the function
+template<class T>
+maths_inline T quad_impulse(T k, T x)
+{
+    return (T)2.0*sqrt(k)*x/((T)1.0+k*x*x);
 }
 
-/// returns a quadratic impulse (y position on a graph for x); n is the degree of the polynomial and k controls the stretching of the function
-pub fn poly_impulse<T: Number + Float + Base<T> + FloatOps<T>>(k: T, x: T, n: T) -> T {
-    // inigo quilez: https://iquilezles.org/articles/functions/
-    let one = T::one();
-    (n/(n-one))* T::powf((n-one)*k,one/n)*x/(one+k*T::powf(x,n))
+// returns a quadratic impulse (y position on a graph for x); n is the degree of the polynomial and k controls the stretching of the function
+template<class T>
+maths_inline T poly_impulse(T k, T n, T x)
+{
+    return (n/(n-(T)1.0))*pow((n-(T)1.0)*k,(T)1.0/n)*x/((T)1.0+k*pow(x,n));
 }
-*/

@@ -104,6 +104,8 @@ Ray / Line: `ray_vs_plane, ray_vs_triangle, ray_vs_sphere, ray_vs_line_segment, 
 
 Shader Style Functions: `dot, cross, normalize, mag, mag2, dist, dist2, triple, vector_triple, lerp, nlerp, slerp, saturate, clamp, normalize, all, any, min, max, smoothstep, step, round, floor, ceil, abs, frac, trunc, exp, exp2, log, log2, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh`.  
 
+Graph Functions: `smooth_start, smooth_stop, impulse, cubic_pulse, exp_step, parabola, pcurve, exp_sustained_impulse, sinc, gain, almost_identity, integral_smoothstep, quad_impulse, poly_impulse`.  
+
 \+ More included!
 
 ### Running Tests
