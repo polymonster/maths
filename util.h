@@ -557,41 +557,6 @@ inline T catmul_rom_spline_centripital(float t, T p0, T p1, T p2, T p3)
 }
 
 template<class T>
-maths_inline T impulse(T k, T x)
-{
-    const T h = k * x;
-    return h * exp((T)1.0 - h);
-}
-
-template<class T>
-maths_inline T cubic_pulse(T c, T w, T x)
-{
-    x = fabs(x - c);
-    if (x > w) return (T)0.0;
-    x /= w;
-    return (T)1.0 - x * x*((T)3.0 - (T)2.0*x);
-}
-
-template<class T>
-maths_inline T exp_step(T x, T k, T n)
-{
-    return exp(-k * pow(x, n));
-}
-
-template<class T>
-maths_inline T parabola(T x, T k)
-{
-    return pow((T)4.0 * x * ((T)1.0 - x), k);
-}
-
-template<class T>
-maths_inline T pcurve(T x, T a, T b)
-{
-    T k = pow(a + b, a + b) / (pow(a, a)*pow(b, b));
-    return k * pow(x, a) * pow((T)1.0 - x, b);
-}
-
-template<class T>
 maths_inline T smooth_start2(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 {
     t /= d;
@@ -648,7 +613,7 @@ maths_inline T smooth_stop5(T t, T b = 0.0, T c = 1.0, T d = 1.0)
 }
 
 template<class T>
-inline T soften_towards_edge(T c, T p, T e, T r)
+maths_inline T soften_towards_edge(T c, T p, T e, T r)
 {
     T pd = abs(e - p);
     T cd = abs(e - c);
@@ -661,16 +626,121 @@ inline T soften_towards_edge(T c, T p, T e, T r)
 }
 
 template<class T>
-inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
+maths_inline T soften_towards_edges(T c, T p, T e0, T e1, T r)
 {
     c = soften_towards_edge(c, p, e0, r);
     c = soften_towards_edge(c, p, e1, r);
     return c;
 }
 
+// returns an exponential impulse (y position on a graph for x); k controls the stretching of the function
 template<class T>
-inline T exp_sustained_impulse(T x, T f, T k)
+maths_inline T impulse(T k, T x)
 {
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    const T h = k * x;
+    return h * exp((T)1.0 - h);
+}
+
+// returns a cubic pulse (y position on a graph for x); equivalent to: smoothstep(c-w,c,x)-smoothstep(c,c+w,x)
+template<class T>
+maths_inline T cubic_pulse(T c, T w, T x)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    x = fabs(x - c);
+    if (x > w) return (T)0.0;
+    x /= w;
+    return (T)1.0 - x * x*((T)3.0 - (T)2.0*x);
+}
+
+// returns an exponential step (y position on a graph for x); k is control parameter, n is power which gives sharper curves.
+template<class T>
+maths_inline T exp_step(T x, T k, T n)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    return exp(-k * pow(x, n));
+}
+
+// returns a parabola (y position on a graph for x); use k to control its shape
+template<class T>
+maths_inline T parabola(T x, T k)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    return pow((T)4.0 * x * ((T)1.0 - x), k);
+}
+
+// returns a power curve (y position on a graph for x); this is a generalziation of the parabola
+template<class T>
+maths_inline T pcurve(T x, T a, T b)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    T k = pow(a + b, a + b) / (pow(a, a)*pow(b, b));
+    return k * pow(x, a) * pow((T)1.0 - x, b);
+}
+
+// returns an exponential sustained impulse (y position on a graph for x); control on the width of attack with k and release with f
+template<class T>
+maths_inline T exp_sustained_impulse(T x, T f, T k)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
     T s = max<T>(x-f, (T)0);
     return min<T>(x*x/(f*f), (T)1 + ((T)2/f)*s*(T)exp(-k*s));
 }
+
+// returns a sin curve (y position on a graph for x); can be used for some bouncing behaviors. give k different integer values to tweak the amount of bounces
+template<class T>
+maths_inline T sinc(T x, T k)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    auto a = (T)M_PI * (k*x-(T)1);
+    return std::sin(a)/a;
+}
+
+// returns gain (y position on a graph for x); remapping the unit interval into the unit interval by expanding the sides and compressing the center
+template<class T>
+maths_inline T gain(T x, T k)
+{
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    const T a = (T)0.5*pow((T)2.0*((x<(T)0.5)?x:(T)1.0-x), k);
+    return (x<(T)0.5)?a:(T)1.0-a;
+}
+
+/*
+/// returns soft clipping (in a cubic fashion) of x; let m be the threshold (anything above m stays unchanged), and n the value things will take when the signal is zero
+pub fn almost_identity<T: Number + Float>(x: T, m: T, n: T) -> T {
+    // <https://iquilezles.org/articles/functions/>
+    let a = T::two()*n - m;
+    let b = T::two()*m - T::three()*n;
+    let t = x/m;
+    if x > m {
+        x
+    }
+    else {
+        (a*t + b)*t*t + n
+    }
+}
+
+/// returns the integral smoothstep of x it's derivative is never larger than 1
+pub fn integral_smoothstep<T: Number + Float + FloatOps<T>>(x: T, t: T) -> T {
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    if x > t {
+        x - t/T::two()
+    }
+    else {
+        x*x*x*(T::one()-x*T::point_five()/t)/t/t
+    }
+}
+
+/// returns an quadratic impulse (y position on a graph for x); k controls the stretching of the function
+pub fn quad_impulse<T: Number + Float + Base<T> + FloatOps<T>>(k: T, x: T) -> T {
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    T::two() * T::sqrt(k) * x / (T::one()+k*x*x)
+}
+
+/// returns a quadratic impulse (y position on a graph for x); n is the degree of the polynomial and k controls the stretching of the function
+pub fn poly_impulse<T: Number + Float + Base<T> + FloatOps<T>>(k: T, x: T, n: T) -> T {
+    // inigo quilez: https://iquilezles.org/articles/functions/
+    let one = T::one();
+    (n/(n-one))* T::powf((n-one)*k,one/n)*x/(one+k*T::powf(x,n))
+}
+*/
