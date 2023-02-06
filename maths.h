@@ -365,6 +365,7 @@ namespace maths
     
     // unproject screen coordinate p with viewport using inverse view_projection
     // coordinates are vup in the y-axis y.0 = bottom y.height = top
+    // this function expects z in -1 to 1 range
     inline vec3f unproject_sc(const vec3f& p, const mat4f& view_projection, const vec2i& viewport)
     {
         vec2f ndc_xy = (p.xy / (vec2f)viewport) * vec2f(2.0) - vec2f(1.0);

@@ -5948,7 +5948,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-5.080000, (f32)0.420000, (f32)9.870001};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)643.410583, (f32)298.322327, (f32)0.998102}));
         REQUIRE(require_func(unproj_point, {(f32)-5.080000, (f32)0.420000, (f32)9.870001}));
     }
@@ -5960,7 +5960,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-4.970000, (f32)-6.730000, (f32)7.290001};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)555.795349, (f32)278.564850, (f32)0.998355}));
         REQUIRE(require_func(unproj_point, {(f32)-4.970000, (f32)-6.730000, (f32)7.290001}));
     }
@@ -5972,7 +5972,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-1.600000, (f32)-3.880000, (f32)-6.970000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)713.182983, (f32)320.543335, (f32)0.998454}));
         REQUIRE(require_func(unproj_point, {(f32)-1.600000, (f32)-3.880000, (f32)-6.970000}));
     }
@@ -5984,7 +5984,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)1.690000, (f32)7.090000, (f32)1.570000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)638.092896, (f32)437.494415, (f32)0.998432}));
         REQUIRE(require_func(unproj_point, {(f32)1.690000, (f32)7.090000, (f32)1.570000}));
     }
@@ -5996,7 +5996,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)5.600000, (f32)-0.670000, (f32)0.990000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)690.717468, (f32)361.736267, (f32)0.998503}));
         REQUIRE(require_func(unproj_point, {(f32)5.600000, (f32)-0.670000, (f32)0.990000}));
     }
@@ -6008,7 +6008,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-7.220000, (f32)8.160000, (f32)3.350000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)592.373108, (f32)301.829865, (f32)0.998114}));
         REQUIRE(require_func(unproj_point, {(f32)-7.220000, (f32)8.160000, (f32)3.350000}));
     }
@@ -6020,7 +6020,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)0.970000, (f32)8.260000, (f32)5.120000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)686.450439, (f32)343.276825, (f32)0.998143}));
         REQUIRE(require_func(unproj_point, {(f32)0.970000, (f32)8.260000, (f32)5.120000}));
     }
@@ -6032,7 +6032,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)0.970000, (f32)8.260000, (f32)5.120000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)746.891602, (f32)498.507294, (f32)0.995589}));
         REQUIRE(require_func(unproj_point, {(f32)0.970000, (f32)8.260000, (f32)5.120000}));
     }
@@ -6044,7 +6044,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)2.670000, (f32)8.100000, (f32)6.330000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)804.766968, (f32)494.470581, (f32)0.995611}));
         REQUIRE(require_func(unproj_point, {(f32)2.670000, (f32)8.100000, (f32)6.330000}));
     }
@@ -6056,7 +6056,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-0.210000, (f32)1.490000, (f32)-4.210000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)587.721069, (f32)420.166504, (f32)0.996936}));
         REQUIRE(require_func(unproj_point, {(f32)-0.210000, (f32)1.490000, (f32)-4.210000}));
     }
@@ -6068,7 +6068,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-1.790000, (f32)9.670000, (f32)-3.280000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)624.503235, (f32)537.422607, (f32)0.995406}));
         REQUIRE(require_func(unproj_point, {(f32)-1.790000, (f32)9.670000, (f32)-3.280000}));
     }
@@ -6080,7 +6080,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)3.930000, (f32)3.360000, (f32)4.850000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)510.251587, (f32)437.891876, (f32)0.996664}));
         REQUIRE(require_func(unproj_point, {(f32)3.930000, (f32)3.360000, (f32)4.850000}));
     }
@@ -6092,7 +6092,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)7.450001, (f32)2.280000, (f32)-9.090000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)825.672546, (f32)307.535034, (f32)0.994926}));
         REQUIRE(require_func(unproj_point, {(f32)7.450001, (f32)2.280000, (f32)-9.090000}));
     }
@@ -6104,7 +6104,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)-8.059999, (f32)-6.430000, (f32)0.010000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)686.695068, (f32)308.304352, (f32)0.997538}));
         REQUIRE(require_func(unproj_point, {(f32)-8.059999, (f32)-6.430000, (f32)0.010000}));
     }
@@ -6116,7 +6116,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)1.530000, (f32)-2.920000, (f32)9.440001};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)768.687134, (f32)350.665802, (f32)0.997345}));
         REQUIRE(require_func(unproj_point, {(f32)1.530000, (f32)-2.920000, (f32)9.440001}));
     }
@@ -6128,7 +6128,7 @@ TEST_CASE("Project / Unproject", "[maths]")
         vec3f p = {(f32)6.680000, (f32)4.900000, (f32)-8.760000};
         vec2i vp = {(s32)1280, (s32)720};
         vec3f screen_point = maths::project_to_sc(p, view_proj, vp);
-        vec3f unproj_point = maths::unproject_sc(screen_point, view_proj, vp);
+        vec3f unproj_point = maths::unproject_sc(screen_point * vec3f(1.0f, 1.0f, 2.0f) - vec3f(0.0f, 0.0f, 1.0f), view_proj, vp);
         REQUIRE(require_func(screen_point, {(f32)408.321289, (f32)468.944641, (f32)0.996693}));
         REQUIRE(require_func(unproj_point, {(f32)6.680000, (f32)4.900000, (f32)-8.760000}));
     }
