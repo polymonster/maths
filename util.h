@@ -379,7 +379,8 @@ maths_inline unsigned int round_down_to_power_of_two(unsigned int n)
     return 1 << exponent;
 }
 
-inline void morton_xy2d(uint64_t x, uint64_t y, uint64_t *d)
+// return the morton index from x,y position
+inline uint64_t morton_xy(uint64_t x, uint64_t y)
 {
     x = (x | (x << 16)) & 0x0000FFFF0000FFFF;
     x = (x | (x << 8)) & 0x00FF00FF00FF00FF;
@@ -393,11 +394,33 @@ inline void morton_xy2d(uint64_t x, uint64_t y, uint64_t *d)
     y = (y | (y << 2)) & 0x3333333333333333;
     y = (y | (y << 1)) & 0x5555555555555555;
 
-    *d = x | (y << 1);
+    return x | (y << 1);
 }
 
-// morton_1 - extract even bits
-inline uint32_t morton_1(uint64_t x)
+/// returns the morten order index from x,y,z position
+inline uint64_t morton_xyz(uint64_t x, uint64_t y, uint64_t z)
+{
+    x = (x | (x << 16)) & 0xFFFF00000000FFFF;
+    x = (x | (x <<  8)) & 0xF00F00F00F00F;
+    x = (x | (x <<  4)) & 0x30C30C30C30C30C3;
+    x = (x | (x <<  2)) & 0x9249249249249249;
+
+    y = (y | (y << 16)) & 0xFFFF00000000FFFF;
+    y = (y | (y <<  8)) & 0xF00F00F00F00F;
+    y = (y | (y <<  4)) & 0x30C30C30C30C30C3;
+    y = (y | (y <<  2)) & 0x9249249249249249;
+
+    z = (z | (z << 16)) & 0xFFFF00000000FFFF;
+    z = (z | (z <<  8)) & 0xF00F00F00F00F;
+    z = (z | (z <<  4)) & 0x30C30C30C30C30C3;
+    z = (z | (z <<  2)) & 0x9249249249249249;
+
+    return (x << 0) | (y << 1) | (z << 2);
+}
+
+
+// morton_1 - extract even bits value 0b010101 returns 0b111
+inline uint64_t morton_1(uint64_t x)
 {
     x = x & 0x5555555555555555;
     x = (x | (x >> 1))  & 0x3333333333333333;
@@ -405,13 +428,33 @@ inline uint32_t morton_1(uint64_t x)
     x = (x | (x >> 4))  & 0x00FF00FF00FF00FF;
     x = (x | (x >> 8))  & 0x0000FFFF0000FFFF;
     x = (x | (x >> 16)) & 0x00000000FFFFFFFF;
-    return (uint32_t)x;
+    return x;
 }
 
-inline void morton_d2xy(uint64_t d, uint64_t &x, uint64_t &y)
+// returns the number of bits divisible by 3. value 0b001001001 returns 0b111
+inline uint64_t morton_2(uint64_t x) {
+    x = x & 0x9249249249249249;
+    x = (x | (x >> 2)) & 0x30C30C30C30C30C3;
+    x = (x | (x >> 4)) & 0xF00F00F00F00F;
+    x = (x | (x >> 8)) & 0xFF0000FF0000FF;
+    x = (x | (x >> 16)) &  0xFFFF00000000FFFF;
+    x = (x | (x >> 32)) & 0x00000000FFFFFFFF;
+    return x;
+}
+
+// returns the x,y grid position for morton order index d
+inline void morton_to_xy(uint64_t d, uint64_t &x, uint64_t &y)
 {
     x = morton_1(d);
     y = morton_1(d >> 1);
+}
+
+// returns the x,y,z grid position for morton order index d
+inline void morton_to_xyz(uint64_t d, uint64_t &x, uint64_t &y, uint64_t &z)
+{
+    x = morton_2(d >> 0);
+    y = morton_2(d >> 1);
+    z = morton_2(d >> 2);
 }
 
 inline int intlog2(int x)
