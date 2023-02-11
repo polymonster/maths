@@ -1112,6 +1112,12 @@ maths_inline Vec<3, T> vector_triple(const Vec<3, T>& a, const Vec<3, T>& b, con
     return cross(cross(a, b), c);
 }
 
+template <typename T>
+maths_inline Vec<2, T> vector_triple(const Vec<2, T>& a, const Vec<2, T>& b, const Vec<2, T>& c)
+{
+    return cross(Vec<3, T>(0.0, 0.0, cross(a, b)), Vec<3, T>(c.x, c.y, 0.0)).xy;
+}
+
 template <size_t N, typename T>
 maths_inline size_t hash(const Vec<N, T>& a)
 {

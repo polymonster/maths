@@ -32,7 +32,6 @@ namespace maths
         vec3f scale = vec3f::one();
     };
 
-
     // a collection of tests and useful maths functions
     // see inline implementation below file for explanation of args and return values.
     // .. consider moving large functions into a cpp instead of keeping them inline, just leaving them inline here for
@@ -92,7 +91,7 @@ namespace maths
     bool capsule_vs_capsule(const vec3f& cp0, const vec3f& cp1, f32 cr0, const vec3f& cp2, const vec3f& cp3, f32 cr1);
     bool obb_vs_obb(const mat4f& obb0, const mat4f& obb1);
     bool convex_hull_vs_convex_hull(const std::vector<vec2f>& hull0, const std::vector<vec2f>& hull1);
-    bool gjk_2d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1);
+    bool gjk_2d(const std::vector<vec2f>& convex0, const std::vector<vec2f>& convex1);
     bool gjk_3d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1);
 
     // Point Test
@@ -438,7 +437,7 @@ namespace maths
         return dist(closest_point_on_cone(p, cp, cv, h, r), p);
     }
 
-    // returns the unsidned distance from point p to the obb defined by matrix obb, where the matrix transforms a unit cube
+    // returns the unsigned distance from point p to the obb defined by matrix obb, where the matrix transforms a unit cube
     // from -1 to 1 into an obb
     inline f32 point_obb_distance(const vec3f& p, const mat4f& obb)
     {
@@ -841,21 +840,7 @@ namespace maths
     // returns true if the convex hull hull0 overlaps hull1
     inline bool convex_hull_vs_convex_hull(const std::vector<vec2f>& hull0, const std::vector<vec2f>& hull1)
     {
-        // TODO: this can be optimised away directly using 2d vertices in the gjk_2d algorithm
-        std::vector<vec3f> verts0;
-        std::vector<vec3f> verts1;
-        
-        for(auto& v : hull0)
-        {
-            verts0.push_back(vec3f(v.x, 0.0f, v.y));
-        }
-        
-        for(auto& v : hull1)
-        {
-            verts1.push_back(vec3f(v.x, 0.0f, v.y));
-        }
-        
-        return gjk_2d(verts0, verts1);
+        return gjk_2d(hull0, hull1);
     }
 
     // returns true if sphere with centre s0 and radius r0 contains point p0
@@ -1732,16 +1717,17 @@ namespace maths
     }
 
     // finds support vertices for gjk based on convex meshses where convex0 and convex1 are an array of vertices that form a convex hull
-    inline vec3f gjk_mesh_support_function(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1, vec3f dir)
+    template<size_t N, typename T>
+    inline Vec<N, T> gjk_mesh_support_function(const std::vector<Vec<N, T>>& convex0, const std::vector<Vec<N, T>>& convex1, Vec<N, T> dir)
     {
-        auto furthest_point = [](const vec3f& dir, const std::vector<vec3f>& vertices) -> vec3f
+        auto furthest_point = [](const Vec<N, T>& dir, const std::vector<Vec<N, T>>& vertices) -> Vec<N, T>
         {
-            f32 fd = -FLT_MAX;
-            vec3f fv = vertices[0];
+            T fd = -FLT_MAX;
+            Vec<N, T> fv = vertices[0];
             
             for(auto& v : vertices)
             {
-                f32 d = dot(dir, v);
+                T d = dot(dir, v);
                 if(d > fd)
                 {
                     fv = v;
@@ -1752,23 +1738,23 @@ namespace maths
             return fv;
         };
         
-        vec3f fp0 = furthest_point(dir, convex0);
-        vec3f fp1 = furthest_point(-dir, convex1);
-        vec3f s = fp0 - fp1;
-        
+        Vec<N, T> fp0 = furthest_point(dir, convex0);
+        Vec<N, T> fp1 = furthest_point(-dir, convex1);
+        Vec<N, T> s = fp0 - fp1;
         return s;
     }
 
     // simplex evolution for 2d mesh overlaps
-    inline bool handle_simplex_2d(std::vector<vec3f>& simplex, vec3f& dir)
+    template<typename T>
+    inline bool handle_simplex_2d(std::vector<Vec<2, T>>& simplex, Vec<2, T>& dir)
     {
         if(simplex.size() == 2)
         {
-            vec3f a = simplex[1];
-            vec3f b = simplex[0];
+            Vec<2, T> a = simplex[1];
+            Vec<2, T> b = simplex[0];
             
-            vec3f ab = b - a;
-            vec3f ao = -a;
+            Vec<2, T> ab = b - a;
+            Vec<2, T> ao = -a;
             
             dir = vector_triple(ab, ao, ab);
             
@@ -1776,16 +1762,16 @@ namespace maths
         }
         else if(simplex.size() == 3)
         {
-            vec3f a = simplex[2];
-            vec3f b = simplex[1];
-            vec3f c = simplex[0];
+            Vec<2, T> a = simplex[2];
+            Vec<2, T> b = simplex[1];
+            Vec<2, T> c = simplex[0];
             
-            vec3f ab = b - a;
-            vec3f ac = c - a;
-            vec3f ao = -a;
+            Vec<2, T> ab = b - a;
+            Vec<2, T> ac = c - a;
+            Vec<2, T> ao = -a;
             
-            vec3f abperp = vector_triple(ac, ab, ab);
-            vec3f acperp = vector_triple(ab, ac, ac);
+            Vec<2, T> abperp = vector_triple(ac, ab, ab);
+            Vec<2, T> acperp = vector_triple(ab, ac, ac);
             
             if(dot(abperp, ao) > 0.0f)
             {
@@ -1808,24 +1794,23 @@ namespace maths
     }
 
     // returns true if the 2d convex hull convex0 overlaps with convex1 using the gjk algorithm
-    inline bool gjk_2d(const std::vector<vec3f>& convex0, const std::vector<vec3f>& convex1)
+    inline bool gjk_2d(const std::vector<vec2f>& convex0, const std::vector<vec2f>& convex1)
     {
-        // TODO: this can be optimised to use vec2f
         // implemented following details in this insightful video: https://www.youtube.com/watch?v=ajv46BSqcK4
         
         // start with arbitrary direction
-        vec3f dir = vec3f::unit_x();
-        vec3f support = gjk_mesh_support_function(convex0, convex1, dir);
+        vec2f dir = vec2f::unit_x();
+        vec2f support = gjk_mesh_support_function(convex0, convex1, dir);
         dir = normalize(-support);
         
         // iterative build and test simplex
-        std::vector<vec3f> simplex;
+        std::vector<vec2f> simplex;
         simplex.push_back(support);
         
         constexpr size_t max_iters = 32;
         for(size_t i = 0; i < max_iters; ++i)
         {
-            vec3f a = gjk_mesh_support_function(convex0, convex1, dir);
+            vec2f a = gjk_mesh_support_function(convex0, convex1, dir);
             if(dot(a, dir) < 0.0f)
             {
                 return false;
@@ -1838,7 +1823,7 @@ namespace maths
             }
         }
         
-        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching
+        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching but not intersecting
         return false;
     }
 
@@ -1976,7 +1961,7 @@ namespace maths
             }
         }
 
-        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching
+        // if we reach here we likely have got stuck in a simplex building loop, we assume the shapes are touching but not intersecting
         return false;
     }
 } // namespace maths
