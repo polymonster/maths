@@ -984,7 +984,7 @@ maths_inline Vec<N, T> normalize(const Vec<N, T>& a)
 template <size_t N, typename T>
 maths_inline Vec<N, T> chebyshev_normalize(const Vec<N, T>& a)
 {
-    return a / max(abs(a));
+    return a / max(fabs(a));
 }
 
 template <size_t N, typename T>
