@@ -982,6 +982,12 @@ maths_inline Vec<N, T> normalize(const Vec<N, T>& a)
 }
 
 template <size_t N, typename T>
+maths_inline Vec<N, T> chebyshev_normalize(const Vec<N, T>& a)
+{
+    return a / max(abs(a));
+}
+
+template <size_t N, typename T>
 maths_inline T infnorm(const Vec<N, T>& a)
 {
     T d = std::fabs(a.v[0]);
@@ -997,6 +1003,7 @@ maths_inline void zero(Vec<N, T>& a)
         a.v[i] = 0;
 }
 
+// returns the minimum scalar component of the vector, for hlsl style min use min_union
 template <size_t N, typename T>
 maths_inline T min(const Vec<N, T>& a)
 {
@@ -1007,6 +1014,7 @@ maths_inline T min(const Vec<N, T>& a)
     return m;
 }
 
+// returns the maximum scalar component of the vector, for hlsl style min use max_union
 template <size_t N, typename T>
 maths_inline T max(const Vec<N, T>& a)
 {
@@ -1017,6 +1025,7 @@ maths_inline T max(const Vec<N, T>& a)
     return m;
 }
 
+// component wise min
 template <size_t N, typename T>
 maths_inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
 {
@@ -1026,6 +1035,7 @@ maths_inline Vec<N, T> min_union(const Vec<N, T>& a, const Vec<N, T>& b)
     return m;
 }
 
+// component wise max
 template <size_t N, typename T>
 maths_inline Vec<N, T> max_union(const Vec<N, T>& a, const Vec<N, T>& b)
 {

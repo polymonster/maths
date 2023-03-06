@@ -6134,6 +6134,23 @@ TEST_CASE("Project / Unproject", "[maths]")
     }
 }
 
+TEST_CASE("Chebyshev normalize", "[maths]")
+{
+    auto v1 = vec4f(1.0, 2.0, 3.0, 4.0);
+    auto v2 = vec4f(8.0, 7.0, 6.0, 5.0);
+
+    REQUIRE(max(v1) == 4.0);
+    REQUIRE(max(v2) == 8.0);
+    REQUIRE(min(v1) == 1.0);
+    REQUIRE(min(v2) ==  5.0);
+
+    auto c1 = vec3f(0.5, 0.5, 0.5);
+    REQUIRE(chebyshev_normalize(c1) == vec3f(1.0, 1.0, 1.0));
+
+    auto c2 = vec3f(-0.5, -0.5, -0.5);
+    REQUIRE(chebyshev_normalize(c2) == vec3f(-1.0, -1.0, -1.0));
+}
+
 // TODO:
 // convex hull from points
 // point inside hull

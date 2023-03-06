@@ -102,7 +102,7 @@ Point Distance: `point_aabb_distance, point_segment_distance, point_triangle_dis
 
 Ray / Line: `ray_vs_plane, ray_vs_triangle, ray_vs_sphere, ray_vs_line_segment, ray_vs_aabb, ray_vs_obb, ray_vs_capsule, ray_vs_cylinder, line_vs_line, line_vs_poly, shortest_line_segment_between_lines, shortest_line_segment_between_line_segments`.  
 
-Shader Style Functions: `dot, cross, normalize, mag, mag2, dist, dist2, triple, vector_triple, lerp, nlerp, slerp, saturate, clamp, normalize, all, any, min, max, smoothstep, step, round, floor, ceil, abs, frac, trunc, exp, exp2, log, log2, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh`.  
+Shader Style Functions: `dot, cross, normalize, mag, mag2, dist, dist2, triple, vector_triple, lerp, nlerp, slerp, saturate, clamp, normalize, chebyshev_normalize, all, any, min, max, min_union, max_union, smoothstep, step, round, floor, ceil, abs, frac, trunc, exp, exp2, log, log2, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh`.  
 
 Graph Functions: `smooth_start, smooth_stop, impulse, cubic_pulse, exp_step, parabola, pcurve, exp_sustained_impulse, sinc, gain, almost_identity, integral_smoothstep, quad_impulse, poly_impulse`.  
 
