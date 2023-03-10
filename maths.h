@@ -53,6 +53,8 @@ namespace maths
     f32   rad_to_deg(f32 radian_angle);
     vec3f azimuth_altitude_to_xyz(f32 azimuth, f32 altitude);
     void  xyz_to_azimuth_altitude(vec3f v, f32& azimuth, f32& altitude);
+    f32   focal_length_to_fov(f32 focal_length, f32 aperture_width);
+    f32   fov_to_focal_length(f32 fov, f32 aperture_width);
 
     // Colours
     vec3f rgb_to_hsv(vec3f rgb);
@@ -397,6 +399,18 @@ namespace maths
     {
         azimuth  = atan2(v.y, v.x);
         altitude = atan2(v.z, sqrt(v.x * v.x + v.y * v.y));
+    }
+
+    // convert focal length to field of view with the specified aperture_width
+    inline f32 focal_length_to_fov(f32 focal_length, f32 aperture_width)
+    {
+        return (2.0f * rad_to_deg(atan((aperture_width * 25.4f) / (2.0f * focal_length))));
+    }
+
+    // convert field of view to focal length with the specified aperture_width
+    inline f32 fov_to_focal_length(f32 fov, f32 aperture_width)
+    {
+        return (aperture_width * 25.4f) / (2.0f * tan(maths::deg_to_rad(fov / 2.0f)));
     }
     
     // get distance to plane x defined by point on plane x0 and normal of plane xN
