@@ -11,6 +11,10 @@
 #include <iostream>
 #include <vector>
 
+#if __linux__
+#include <cstdint>
+#endif
+
 #define MATHS_ALWAYS_INLINE
 
 #ifndef MATHS_ALWAYS_INLINE
@@ -319,7 +323,7 @@ maths_inline T linear_step(T l, T r, T v)
 {
     if (v <= l)
         return 0.0;
-    
+
     if (v >= r)
         return 1.0;
 
@@ -565,31 +569,31 @@ inline T catmul_rom_spline(float t, T p0, T p1, T p2, T p3, float alpha)
     auto getT = [](float t, T p0, T p1, float alpha) -> float
     {
         T square = sqr(p1-p0);
-        
+
         float sum = 0.0f;
         size_t numComponents = sizeof(p1) / sizeof(((float*)&p1)[0]);
         for(size_t i = 0; i < numComponents; ++i)
             sum += ((float*)&square)[i];
-        
+
         float b = sqrt(sum);
         float c = pow(b, alpha);
         return c + t;
     };
-    
+
     float t0 = 0.0f;
     float t1 = getT(t0, p0, p1, alpha);
     float t2 = getT(t1, p1, p2, alpha);
     float t3 = getT(t2, p2, p3, alpha);
-    
+
     t = lerp(t1, t2, t);
-    
+
     T a1 = (t1-t)/(t1-t0)*p0 + (t-t0)/(t1-t0)*p1;
     T a2 = (t2-t)/(t2-t1)*p1 + (t-t1)/(t2-t1)*p2;
     T a3 = (t3-t)/(t3-t2)*p2 + (t-t2)/(t3-t2)*p3;
-    
+
     T b1 = (t2-t)/(t2-t0)*a1 + (t-t0)/(t2-t0)*a2;
     T b2 = (t3-t)/(t3-t1)*a2 + (t-t1)/(t3-t1)*a3;
-    
+
     return (t2-t)/(t2-t1)*b1 + (t-t1)/(t2-t1)*b2;
 }
 
